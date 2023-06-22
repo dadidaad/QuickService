@@ -94,7 +94,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<User> GetUsers()
+        public IEnumerable<User> GetUsers()
         {
             try
             {

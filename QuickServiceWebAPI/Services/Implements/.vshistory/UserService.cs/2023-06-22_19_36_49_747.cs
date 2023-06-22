@@ -23,7 +23,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task CreateUser(RegisterDTO registerDTO)
         {
-            if (await _repository.GetUserByEmail(registerDTO.Email) != null)
+            if (_repository.GetUserByEmail(registerDTO.Email) != null)
             {
                 throw new AppException("Email " + registerDTO.Email + " is already taken");
             }
@@ -57,7 +57,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<AuthenticateResponseDTO> Authenticate(AuthenticateRequestDTO authenticateRequestDTO)
         {
             var user = await _repository.GetUserByEmail(authenticateRequestDTO.Email);
-            if(user == null  || !BCrypt.Net.BCrypt.Verify(authenticateRequestDTO.Password, user.Password))
+            if(user == null  || BCrypt.Net.BCrypt.Verify(authenticateRequestDTO.Password, user.Password))
             {
                 throw new AppException("Email or password is incorrect");
             }
@@ -76,7 +76,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return user;
         }
 
-        public List<User> GetUsers()
+        public IEnumerable<User> GetUsers()
         {
             return _repository.GetUsers();
         }

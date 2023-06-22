@@ -24,7 +24,7 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(AuthenticateRequestDTO authenticateRequestDTO)
         {
-            var response = await _userService.Authenticate(authenticateRequestDTO);
+            var response = _userService.Authenticate(authenticateRequestDTO);
             return Ok(response);
         }
 

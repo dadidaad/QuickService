@@ -57,7 +57,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<AuthenticateResponseDTO> Authenticate(AuthenticateRequestDTO authenticateRequestDTO)
         {
             var user = await _repository.GetUserByEmail(authenticateRequestDTO.Email);
-            if(user == null  || !BCrypt.Net.BCrypt.Verify(authenticateRequestDTO.Password, user.Password))
+            if(user == null  || BCrypt.Net.BCrypt.Verify(authenticateRequestDTO.Password, user.Password))
             {
                 throw new AppException("Email or password is incorrect");
             }

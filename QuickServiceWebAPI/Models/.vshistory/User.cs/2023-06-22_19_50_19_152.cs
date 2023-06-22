@@ -39,7 +39,7 @@ public partial class User
 
     public virtual ICollection<RequestTicket> RequestTicketRequesters { get; set; } = new List<RequestTicket>();
 
-    public virtual Role? Role { get; set; } = null!;
+    public virtual Role Role { get; set; } = null!;
 
     public virtual ICollection<Service> ServiceCreatedByNavigations { get; set; } = new List<Service>();
 

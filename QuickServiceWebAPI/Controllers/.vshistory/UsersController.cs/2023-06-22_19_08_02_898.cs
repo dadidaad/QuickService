@@ -24,7 +24,7 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(AuthenticateRequestDTO authenticateRequestDTO)
         {
-            var response = await _userService.Authenticate(authenticateRequestDTO);
+            var response = _userService.Authenticate(authenticateRequestDTO);
             return Ok(response);
         }
 
@@ -32,16 +32,8 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser(RegisterDTO registerDTO)
         {
-            await _userService.CreateUser(registerDTO);
+            _userService.CreateUser(registerDTO);
             return Ok(new { message = "Create successfully" });
-        }
-
-        [AllowAnonymous]
-        [HttpGet("getall")]
-        public IActionResult GetAllUser()
-        {
-            IEnumerable<User> users  = _userService.GetUsers();
-            return Ok(users);
         }
     }
 }

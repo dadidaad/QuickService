@@ -4,7 +4,7 @@ namespace QuickServiceWebAPI.Repositories
 {
     public interface IUserRepository
     {
-        public List<User> GetUsers();
+        public IEnumerable<User> GetUsers();
         public Task<User> GetUserDetails(string userId);
         public Task<User> GetUserByEmail(string email);
         public Task AddUser(User user);

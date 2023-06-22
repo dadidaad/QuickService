@@ -70,12 +70,12 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User? user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
                 return user;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "An error occurred while retrieving user");
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
@@ -94,7 +94,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<User> GetUsers()
+        public IEnumerable<User> GetUsers()
         {
             try
             {
