@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace QuickServiceWebAPI.Models;
+
+public partial class Group
+{
+    public string GroupId { get; set; } = null!;
+
+    public string GroupName { get; set; } = null!;
+
+    public string? Description { get; set; }
+
+    public bool IsRestricted { get; set; }
+
+    public bool NeedApprovalByLeader { get; set; }
+
+    public string GroupLeader { get; set; } = null!;
+
+    public string BusinessHourId { get; set; } = null!;
+
+    public virtual BusinessHour BusinessHour { get; set; } = null!;
+
+    public virtual User GroupLeaderNavigation { get; set; } = null!;
+
+    public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
+
+    public virtual ICollection<Service> Services { get; set; } = new List<Service>();
+
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
+}
