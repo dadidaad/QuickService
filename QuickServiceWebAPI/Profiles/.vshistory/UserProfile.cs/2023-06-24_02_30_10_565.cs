@@ -11,7 +11,7 @@ namespace QuickServiceWebAPI.Profiles
         {
             CreateMap<User, AuthenticateResponseDTO>();
             CreateMap<RegisterDTO, User>();
-            CreateMap<UpdateDTO, User>().IgnoreAllNonExisting();
+            CreateMap<UpdateDTO, User>(MemberList.Destination).ForMember(u => u.CreatedTime, opt => opt.Ignore());
         }
     }
 }

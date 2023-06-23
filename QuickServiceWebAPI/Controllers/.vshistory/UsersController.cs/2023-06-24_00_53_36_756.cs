@@ -46,7 +46,7 @@ namespace QuickServiceWebAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateUser([FromForm]UpdateDTO updateDTO)
+        public async Task<IActionResult> UpdateUser([FromForm]UpdateDTO updateDTO, IFormFile avatar)
         {
             await _userService.UpdateUser(updateDTO);
             return Ok(new { message = "Update successfully" });

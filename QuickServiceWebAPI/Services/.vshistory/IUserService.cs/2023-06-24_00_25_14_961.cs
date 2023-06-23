@@ -12,6 +12,6 @@ namespace QuickServiceWebAPI.Services
         public Task<User> DeactiveUser(string userId);
         public List<User> GetUsers();
         public Task<string> GetNextId();
-        Task<string> UpdateAvatar(IFormFile image, string userId);
+        Task<string> UpdateAvatar(IFormFile image, string email);
     }
 }

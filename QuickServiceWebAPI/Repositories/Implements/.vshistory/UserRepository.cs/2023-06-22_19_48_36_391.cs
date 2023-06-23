@@ -70,7 +70,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                User? user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
                 return user;
             }
             catch (Exception ex)

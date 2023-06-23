@@ -40,16 +40,8 @@ namespace QuickServiceWebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAllUser()
         {
-            IEnumerable<User> users = _userService.GetUsers();
+            IEnumerable<User> users  = _userService.GetUsers();
             return Ok(users);
-        }
-
-        [AllowAnonymous]
-        [HttpPost("update")]
-        public async Task<IActionResult> UpdateUser([FromForm]UpdateDTO updateDTO)
-        {
-            await _userService.UpdateUser(updateDTO);
-            return Ok(new { message = "Update successfully" });
         }
     }
 }

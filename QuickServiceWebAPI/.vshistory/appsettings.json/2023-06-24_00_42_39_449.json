@@ -15,7 +15,7 @@
   "AzureStorageConfig": {
     "AccountName": "myblobstorage1453417637",
     "AccountKey": "bHuOUEcG43TvmfLwRtxA4Z+E24UNw28yTKfEGXCPs0HeXRW6iwhJ8XfKRSeAT/TUxewCWEmXYRlw+ASt/jVq0g==",
-    "ImageContainer": "avatars",
+    "ImageContainer": "images",
     "ThumbnailContainer": "thumbnails",
     "AttachmentContainer": "attachments"
   }

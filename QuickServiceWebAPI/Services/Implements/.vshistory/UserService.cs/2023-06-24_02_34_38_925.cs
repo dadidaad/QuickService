@@ -133,8 +133,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     {
                         using (Stream stream = image.OpenReadStream())
                         {
-                            string fileName = userId + Path.GetExtension(image.FileName);
-                            filePath = await CloudHelper.UploadImageToStorage(stream, fileName, _storageConfig);
+                            filePath = await CloudHelper.UploadImageToStorage(stream, userId, _storageConfig);
                         }
                     }
                     else

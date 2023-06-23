@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BCrypt.Net;
-using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
@@ -16,13 +15,13 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IMapper _mapper;
         private IJWTUtils _jWTUtils;
         private readonly AzureStorageConfig _storageConfig;
-        public UserService(IUserRepository repository, ILogger<UserService> logger, IJWTUtils jWTUtils, IMapper mapper, IOptions<AzureStorageConfig> storageConfig)
+        public UserService(IUserRepository repository, ILogger<UserService> logger, IJWTUtils jWTUtils, IMapper mapper, AzureStorageConfig storageConfig)
         {
             _repository = repository;
             _logger = logger;
             _jWTUtils = jWTUtils;
             _mapper = mapper;
-            _storageConfig = storageConfig.Value;
+            _storageConfig = storageConfig;
         }
 
         public async Task CreateUser(RegisterDTO registerDTO)
@@ -32,7 +31,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("Email " + registerDTO.Email + " is already taken");
             }
             var user = _mapper.Map<User>(registerDTO);
-            user.Password = HashPassword(registerDTO.Password);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password);
             user.CreatedTime = DateTime.Now;
             user.UserId =  await GetNextId();
             await _repository.AddUser(user);
@@ -85,11 +84,6 @@ namespace QuickServiceWebAPI.Services.Implements
             return _repository.GetUsers();
         }
 
-        private string HashPassword(string password)
-        {
-            return BCrypt.Net.BCrypt.HashPassword(password);
-        }
-
         public async Task UpdateUser(UpdateDTO updateDTO)
         {
             User user = await _repository.GetUserByEmail(updateDTO.Email);
@@ -97,27 +91,15 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("User not found");
             }
-            string filePath = "";
             if(updateDTO.Avatar != null)
             {
-                filePath = await UpdateAvatar(updateDTO.Avatar, user.UserId);
+
             }
-            if (!String.IsNullOrEmpty(updateDTO.Password))
-            {
-                updateDTO.Password = HashPassword(updateDTO.Password);
-            }
-            else
-            {
-                updateDTO.Password = user.Password;
-            }
-            user = _mapper.Map<UpdateDTO, User>(updateDTO, user);
-            user.Avatar = filePath;
-            await _repository.UpdateUser(user);
         }
 
-        public async Task<string> UpdateAvatar(IFormFile image, string userId)
+        async Task UpdateAvatar(IFormFile image, string userId)
         {
-            string filePath = "";
+            bool isUploaded = false;
 
             try
             {
@@ -129,12 +111,11 @@ namespace QuickServiceWebAPI.Services.Implements
 
                 if (CloudHelper.IsImage(image))
                 {
-                    if (image.Length > 0 && image.Length <= 2097152)
+                    if(image.Length > 0 && image.Length <= 2097152)
                     {
-                        using (Stream stream = image.OpenReadStream())
+                        using(Stream stream = image.OpenReadStream())
                         {
-                            string fileName = userId + Path.GetExtension(image.FileName);
-                            filePath = await CloudHelper.UploadImageToStorage(stream, fileName, _storageConfig);
+                            isUploaded = await CloudHelper.UploadFileToStorage(stream, userId, _storageConfig);
                         }
                     }
                     else
@@ -147,19 +128,13 @@ namespace QuickServiceWebAPI.Services.Implements
                     throw new AppException("Unsupported media format");
                 }
 
-                if (filePath != null)
+                if (isUploaded)
                 {
-                    return filePath;
+                    if(_storageConfig.ThumbnailContainer != string.Empty)
+                    {
+                        return 
+                    }
                 }
-                else
-                {
-                    throw new AppException("Error when try to upload image!!");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw new AppException("Error when try to upload image!!");
             }
         }
     }

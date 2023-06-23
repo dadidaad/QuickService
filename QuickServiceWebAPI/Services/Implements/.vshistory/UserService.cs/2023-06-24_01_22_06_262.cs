@@ -106,11 +106,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 updateDTO.Password = HashPassword(updateDTO.Password);
             }
-            else
-            {
-                updateDTO.Password = user.Password;
-            }
-            user = _mapper.Map<UpdateDTO, User>(updateDTO, user);
+            user = _mapper.Map<User>(updateDTO);
             user.Avatar = filePath;
             await _repository.UpdateUser(user);
         }
@@ -133,8 +129,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     {
                         using (Stream stream = image.OpenReadStream())
                         {
-                            string fileName = userId + Path.GetExtension(image.FileName);
-                            filePath = await CloudHelper.UploadImageToStorage(stream, fileName, _storageConfig);
+                            filePath = await CloudHelper.UploadImageToStorage(stream, userId, _storageConfig);
                         }
                     }
                     else
