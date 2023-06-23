@@ -1,0 +1,21 @@
+{
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "AZURE_SQL_CONNECTIONSTRING": "Data Source=tcp:quick-service.database.windows.net,1433;Initial Catalog=Quick Service;User Id=@quick-service;Password=admin123!"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AppSettings": {
+    "Secret": "98d52c42-28ef-4e8c-baeb-30cacbc39327"
+  },
+  "AzureStorageConfig": {
+    "AccountName": "",
+    "AccountKey": "",
+    "ImageContainer": "images",
+    "ThumbnailContainer": "thumbnails"
+  }
+}

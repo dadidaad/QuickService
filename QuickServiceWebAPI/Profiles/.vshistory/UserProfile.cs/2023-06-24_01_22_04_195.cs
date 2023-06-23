@@ -1,0 +1,18 @@
+﻿using AutoMapper;
+using QuickServiceWebAPI.DTOs.User;
+using QuickServiceWebAPI.Models;
+
+namespace QuickServiceWebAPI.Profiles
+{
+    public class UserProfile : Profile
+    {
+        public UserProfile()
+        {
+            CreateMap<User, AuthenticateResponseDTO>();
+            CreateMap<RegisterDTO, User>();
+            CreateMap<UpdateDTO, User>()
+                .ForMember(u => u.Avatar, opt => opt.Ignore())
+                 .ForMember(u => u.Password, opt => opt.Ignore());
+        }
+    }
+}

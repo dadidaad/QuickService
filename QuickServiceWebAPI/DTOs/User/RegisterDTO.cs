@@ -7,20 +7,20 @@ namespace QuickServiceWebAPI.DTOs.User
         [Required]
         [MaxLength(100)]
         [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         [MaxLength(20)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [MaxLength(20)]
-        public string MiddleName { get; set; }
+        public string? MiddleName { get; set; }
 
         [MaxLength(20)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
         public bool IsActive { get; set; }
     }

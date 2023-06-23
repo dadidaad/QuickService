@@ -75,7 +75,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while retrieving user");
+                _logger.LogError(ex.Message);
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
@@ -94,7 +94,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public IEnumerable<User> GetUsers()
+        public List<User> GetUsers()
         {
             try
             {

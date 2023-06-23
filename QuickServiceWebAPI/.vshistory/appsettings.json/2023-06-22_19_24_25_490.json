@@ -1,0 +1,15 @@
+{
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "AZURE_SQL_CONNECTIONSTRING": "Server=tcp:quick-service.database.windows.net,1433;Initial Catalog=Quick Service;Persist Security Info=False;User ID=quickservice;Password=admin123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AppSettings": {
+    "Secret": "98d52c42-28ef-4e8c-baeb-30cacbc39327"
+  }
+}

@@ -6,12 +6,12 @@ namespace QuickServiceWebAPI.Models;
 
 public partial class User
 {
-    public string UserId { get; set; } = null!;
+    public string? UserId { get; set; } = null!;
 
-    public string Email { get; set; } = null!;
+    public string? Email { get; set; } = null!;
 
     [JsonIgnore]
-    public string Password { get; set; } = null!;
+    public string? Password { get; set; } = null!;
 
     public string? FirstName { get; set; }
 
@@ -19,15 +19,15 @@ public partial class User
 
     public string? LastName { get; set; }
 
-    public string PhoneNumber { get; set; } = null!;
+    public string? PhoneNumber { get; set; } = null!;
 
-    public DateTime CreatedTime { get; set; }
+    public DateTime? CreatedTime { get; set; }
 
-    public string RoleId { get; set; } = null!;
+    public string? RoleId { get; set; } = null!;
 
     public string? Avatar { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
     public virtual ICollection<AssetAssignment> AssetAssignments { get; set; } = new List<AssetAssignment>();
 
@@ -39,7 +39,7 @@ public partial class User
 
     public virtual ICollection<RequestTicket> RequestTicketRequesters { get; set; } = new List<RequestTicket>();
 
-    public virtual Role Role { get; set; } = null!;
+    public virtual Role? Role { get; set; } = null!;
 
     public virtual ICollection<Service> ServiceCreatedByNavigations { get; set; } = new List<Service>();
 
