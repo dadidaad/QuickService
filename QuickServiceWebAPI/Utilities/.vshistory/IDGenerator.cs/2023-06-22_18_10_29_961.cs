@@ -17,12 +17,5 @@ namespace QuickServiceWebAPI.Utilities
             string resultNumber = Regex.Match(id, REGEXNUMBER).Value;
             return Int32.Parse(resultNumber);
         }
-
-        public static string GenerateRoleId(int roleId)
-        {
-            string formattedId = $"ROLE{roleId.ToString("D6")}";
-            return formattedId;
-        }
-
     }
 }
