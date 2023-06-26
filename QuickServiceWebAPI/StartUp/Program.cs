@@ -33,6 +33,10 @@ builder.Services.Configure<AzureStorageConfig>(builder.Configuration.GetSection(
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IServiceTypeRepository, ServiceTypeRepository>();
+builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
 
 builder.Services.AddDbContext<QuickServiceContext>(options =>
     options.UseSqlServer(connection));
