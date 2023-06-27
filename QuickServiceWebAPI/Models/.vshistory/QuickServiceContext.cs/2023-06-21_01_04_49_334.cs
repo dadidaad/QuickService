@@ -421,8 +421,7 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.RoleType)
                 .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasConversion(e => e.ToString(), e => (RoleType)Enum.Parse(typeof(RoleType), e));
+                .IsUnicode(false);
 
             entity.HasMany(d => d.Permissions).WithMany(p => p.Roles)
                 .UsingEntity<Dictionary<string, object>>(

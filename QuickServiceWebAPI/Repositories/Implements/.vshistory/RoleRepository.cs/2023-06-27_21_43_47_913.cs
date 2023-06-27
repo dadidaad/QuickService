@@ -15,12 +15,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _logger = logger;
         }
 
-        public int CountUserHaveRole(string roleId)
-        {
-            return _context.Users.GroupBy(u => u.RoleId)
-                .Where(u => u.Key == roleId).Count();
-        }
-
         public async Task CreateRole(Role role)
         {
             try

@@ -19,8 +19,6 @@ namespace QuickServiceWebAPI.DTOs.User
         [MaxLength(20)]
         public string? MiddleName { get; set; }
 
-        [MaxLength(10)]
-        public string? RoleId { get; set;}
         [MaxLength(20)]
         public string? LastName { get; set; }
 
@@ -30,7 +28,7 @@ namespace QuickServiceWebAPI.DTOs.User
 
         [Display(Name = "Avatar")]
         [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
-        public IFormFile? AvatarUpload { get; set; }
+        public IFormFile? Avatar { get; set; }
 
         public bool IsActive { get; set; } = true;
     }

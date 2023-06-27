@@ -33,7 +33,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Role not found");
             }
-            if(_repository.CountUserHaveRole(roleId) > 0) // Check if existing user have this role so update it to null
+            if(role.TotalUserInRole > 0) // Check if existing user have this role so update it to null
             {
                 foreach(var user in role.Users)
                 {

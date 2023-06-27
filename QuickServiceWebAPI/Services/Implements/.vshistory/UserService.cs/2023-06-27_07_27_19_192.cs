@@ -16,15 +16,13 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IMapper _mapper;
         private IJWTUtils _jWTUtils;
         private readonly AzureStorageConfig _storageConfig;
-        private readonly IRoleRepository _roleRepository;   
-        public UserService(IUserRepository repository, ILogger<UserService> logger, IJWTUtils jWTUtils, IMapper mapper, IOptions<AzureStorageConfig> storageConfig, IRoleRepository roleRepository)
+        public UserService(IUserRepository repository, ILogger<UserService> logger, IJWTUtils jWTUtils, IMapper mapper, IOptions<AzureStorageConfig> storageConfig)
         {
             _repository = repository;
             _logger = logger;
             _jWTUtils = jWTUtils;
             _mapper = mapper;
             _storageConfig = storageConfig.Value;
-            _roleRepository = roleRepository;
         }
 
         public async Task CreateUser(RegisterDTO registerDTO)
@@ -100,9 +98,9 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("User not found");
             }
             string filePath = "";
-            if(updateDTO.AvatarUpload != null && CloudHelper.IsImage(updateDTO.AvatarUpload))
+            if(updateDTO.Avatar != null)
             {
-                filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
+                filePath = await UpdateAvatar(updateDTO.Avatar, existingUser.UserId);
             }
             if (!String.IsNullOrEmpty(updateDTO.Password))
             {
@@ -112,28 +110,14 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 updateDTO.Password = existingUser.Password;
             }
-            if (!string.IsNullOrEmpty(updateDTO.RoleId))
-            {
-                var existingRole = await _roleRepository.GetRoleById(updateDTO.RoleId);
-                if(existingRole == null)
-                {
-                    throw new AppException("Role not found");
-                }
-                existingUser.RoleId = updateDTO.RoleId;
-                var updateRole = _mapper.Map<Role>(existingRole);
-                await _roleRepository.UpdateRole(existingRole, updateRole);
-            }
             var updateUser = _mapper.Map<UpdateDTO, User>(updateDTO, existingUser);
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                updateUser.Avatar = filePath;
-            }
+            updateUser.Avatar = filePath;
             await _repository.UpdateUser(existingUser, updateUser);
         }
 
         public async Task<string> UpdateAvatar(IFormFile image, string userId)
         {
-            string filePath = null;
+            string filePath = "";
 
             try
             {

@@ -14,6 +14,5 @@ namespace QuickServiceWebAPI.Repositories
         public List<Role> GetRolesByType(RoleType roleType);
         public Task UpdateUserRole(Role existingRole);
         public Task DeleteRolePermissions(Role role);
-        public int CountUserHaveRole(string roleId);
     }
 }

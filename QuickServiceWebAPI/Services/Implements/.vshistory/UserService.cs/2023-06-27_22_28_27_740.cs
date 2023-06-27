@@ -100,9 +100,9 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("User not found");
             }
             string filePath = "";
-            if(updateDTO.AvatarUpload != null && CloudHelper.IsImage(updateDTO.AvatarUpload))
+            if(updateDTO.Avatar != null)
             {
-                filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
+                filePath = await UpdateAvatar(updateDTO.Avatar, existingUser.UserId);
             }
             if (!String.IsNullOrEmpty(updateDTO.Password))
             {
@@ -121,13 +121,11 @@ namespace QuickServiceWebAPI.Services.Implements
                 }
                 existingUser.RoleId = updateDTO.RoleId;
                 var updateRole = _mapper.Map<Role>(existingRole);
+                updateRole.TotalUserInRole++;
                 await _roleRepository.UpdateRole(existingRole, updateRole);
             }
             var updateUser = _mapper.Map<UpdateDTO, User>(updateDTO, existingUser);
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                updateUser.Avatar = filePath;
-            }
+            updateUser.Avatar = filePath;
             await _repository.UpdateUser(existingUser, updateUser);
         }
 

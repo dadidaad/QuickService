@@ -92,7 +92,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while retrieving user with ID: {UserId}", updateUser.UserId);
+                _logger.LogError(ex, "An error occurred while retrieving user with ID: {UserId}", user.UserId);
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
