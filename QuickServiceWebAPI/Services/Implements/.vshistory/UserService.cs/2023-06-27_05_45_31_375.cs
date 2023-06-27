@@ -92,15 +92,15 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task UpdateUser(UpdateDTO updateDTO)
         {
-            User existingUser = await _repository.GetUserByEmail(updateDTO.Email);
-            if(existingUser == null)
+            User user = await _repository.GetUserByEmail(updateDTO.Email);
+            if(user == null)
             {
                 throw new AppException("User not found");
             }
             string filePath = "";
             if(updateDTO.Avatar != null)
             {
-                filePath = await UpdateAvatar(updateDTO.Avatar, existingUser.UserId);
+                filePath = await UpdateAvatar(updateDTO.Avatar, user.UserId);
             }
             if (!String.IsNullOrEmpty(updateDTO.Password))
             {
@@ -108,11 +108,11 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             else
             {
-                updateDTO.Password = existingUser.Password;
+                updateDTO.Password = user.Password;
             }
-            var updateUser = _mapper.Map<UpdateDTO, User>(updateDTO, existingUser);
-            updateUser.Avatar = filePath;
-            await _repository.UpdateUser(existingUser, updateUser);
+            user = _mapper.Map<UpdateDTO, User>(updateDTO, user);
+            user.Avatar = filePath;
+            await _repository.UpdateUser(user);
         }
 
         public async Task<string> UpdateAvatar(IFormFile image, string userId)

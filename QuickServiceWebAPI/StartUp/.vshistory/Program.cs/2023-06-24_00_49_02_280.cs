@@ -31,10 +31,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.Configure<AzureStorageConfig>(builder.Configuration.GetSection("AzureStorageConfig"));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddDbContext<QuickServiceContext>(options =>
     options.UseSqlServer(connection));
 var app = builder.Build();

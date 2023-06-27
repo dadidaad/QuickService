@@ -106,15 +106,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
 
         public List<Role> GetRolesByType(RoleType roleType)
         {
-            try
-            {
-                return _context.Roles.Where(r => r.RoleType == roleType).ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving roles");
-                throw; // Rethrow the exception to propagate it up the call stack if necessary
-            }
+            return _context.Roles.Where(r => r.RoleType == roleType).ToList();
         }
 
         public async Task UpdateRole(Role existingRole, Role updateRole)
