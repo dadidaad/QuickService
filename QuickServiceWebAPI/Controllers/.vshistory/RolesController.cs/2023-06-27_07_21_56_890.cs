@@ -59,7 +59,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("get/{roleType:int}")]
+        [HttpGet("get/{roleType}")]
         public IActionResult GetRoleByType(RoleType roleType)
         {
             return Ok(_roleService.GetRolesByType(roleType));

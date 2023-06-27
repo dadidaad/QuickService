@@ -30,7 +30,7 @@ namespace QuickServiceWebAPI.DTOs.User
 
         [Display(Name = "Avatar")]
         [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
-        public IFormFile? AvatarUpload { get; set; }
+        public IFormFile? Avatar { get; set; }
 
         public bool IsActive { get; set; } = true;
     }

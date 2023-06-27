@@ -23,6 +23,7 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var role = _mapper.Map<Role>(createDTO);
             role.RoleId = await GetNextId();
+            role.TotalUserInRole = 0;
             await _repository.CreateRole(role);
         }
 

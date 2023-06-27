@@ -35,7 +35,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("get/{roleId}")]
+        [HttpGet("get/{roleId:string}")]
         public async Task<IActionResult> GetRole(string roleId)
         {
             var role = await _roleService.GetRoleById(roleId);

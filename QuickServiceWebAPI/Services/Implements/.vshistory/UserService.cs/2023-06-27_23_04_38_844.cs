@@ -100,9 +100,9 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("User not found");
             }
             string filePath = "";
-            if(updateDTO.AvatarUpload != null && CloudHelper.IsImage(updateDTO.AvatarUpload))
+            if(updateDTO.Avatar != null && CloudHelper.IsImage(updateDTO.Avatar))
             {
-                filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
+                filePath = await UpdateAvatar(updateDTO.Avatar, existingUser.UserId);
             }
             if (!String.IsNullOrEmpty(updateDTO.Password))
             {
