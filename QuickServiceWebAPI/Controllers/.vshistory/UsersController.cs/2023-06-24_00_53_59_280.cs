@@ -10,7 +10,7 @@ using QuickServiceWebAPI.Services;
 namespace QuickServiceWebAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {

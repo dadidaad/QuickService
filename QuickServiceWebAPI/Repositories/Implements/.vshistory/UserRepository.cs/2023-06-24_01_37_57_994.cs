@@ -29,6 +29,30 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        public async Task<User> DeactiveUser(string userId)
+        {
+            try
+            {
+                User user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+                if(user != null)
+                {
+                    user.IsActive = false;
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                    return user;
+                }
+                else
+                {
+                    throw new ArgumentNullException();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving user with ID: {UserId}", userId);
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
         public async Task<User> GetLastUser()
         {
             try
@@ -83,11 +107,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task UpdateUser(User existingUser, User updateUser)
+        public async Task UpdateUser(User user)
         {
             try
             {
-                _context.Entry(existingUser).CurrentValues.SetValues(updateUser);
+                _context.Users.Update(user);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

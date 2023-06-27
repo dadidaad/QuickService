@@ -14,7 +14,6 @@ public partial class Role
     public string? Description { get; set; }
 
     public int? TotalUserInRole { get; set; }
-
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 
     public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
@@ -23,5 +22,6 @@ public partial class Role
 public enum RoleType
 {
     Admin,
-    Agent
+    Agent,
+    Customer
 }
