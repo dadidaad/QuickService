@@ -12,6 +12,24 @@ namespace QuickServiceWebAPI.Utilities
             return formattedId;
         }
 
+        public static string GenerateServiceId(int serviceId)
+        {
+            string formattedId = $"SERV{serviceId.ToString("D6")}";
+            return formattedId;
+        }
+
+        public static string GenerateServiceCategoryId(int serviceCategoryId)
+        {
+            string formattedId = $"SECA{serviceCategoryId.ToString("D6")}";
+            return formattedId;
+        }
+
+        public static string GenerateServiceTypeId(int serviceTypeId)
+        {
+            string formattedId = $"SETY{serviceTypeId.ToString("D6")}";
+            return formattedId;
+        }
+
         public static int ExtractNumberFromId(string id)
         {
             string resultNumber = Regex.Match(id, REGEXNUMBER).Value;
