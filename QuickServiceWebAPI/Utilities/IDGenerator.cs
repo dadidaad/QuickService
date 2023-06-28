@@ -30,6 +30,12 @@ namespace QuickServiceWebAPI.Utilities
             return formattedId;
         }
 
+        public static string GenerateBusinessHourId(int businessHourId)
+        {
+            string formattedId = $"BUSI{businessHourId.ToString("D6")}";
+            return formattedId;
+        }
+
         public static int ExtractNumberFromId(string id)
         {
             string resultNumber = Regex.Match(id, REGEXNUMBER).Value;
