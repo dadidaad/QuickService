@@ -40,6 +40,11 @@ namespace QuickServiceWebAPI.Utilities
             string formattedId = $"SLA{slaId.ToString("D6")}";
             return formattedId;
         }
+        public static string GenerateWorkflowId(int workflowId)
+        {
+            string formattedId = $"WORK{workflowId.ToString("D6")}";
+            return formattedId;
+        }
 
         public static int ExtractNumberFromId(string id)
         {

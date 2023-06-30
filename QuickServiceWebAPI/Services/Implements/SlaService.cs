@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.ServiceCategory;
 using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
