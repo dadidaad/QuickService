@@ -35,6 +35,12 @@ namespace QuickServiceWebAPI.Utilities
             string formattedId = $"BUSI{businessHourId.ToString("D6")}";
             return formattedId;
         }
+
+        public static string GenerateGroupId(int groupId)
+        {
+            string formattedId = $"GROU{groupId.ToString("D6")}";
+            return formattedId;
+        }
         public static string GenerateSlaId(int slaId)
         {
             string formattedId = $"SLA{slaId.ToString("D6")}";

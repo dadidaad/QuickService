@@ -23,6 +23,5 @@ namespace QuickServiceWebAPI.DTOs.Service
         public string ManagedBy { get; set; } = null!;
 
         public string? ManagedByGroup { get; set; }
-
     }
 }

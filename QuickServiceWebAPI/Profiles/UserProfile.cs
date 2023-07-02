@@ -9,6 +9,9 @@ namespace QuickServiceWebAPI.Profiles
     {
         public UserProfile()
         {
+            CreateMap<User, UserDTO>()
+                .ForMember(dest => dest.Role,
+                opt => opt.MapFrom(src => src.Role));
             CreateMap<User, AuthenticateResponseDTO>();
             CreateMap<RegisterDTO, User>();
             CreateMap<UpdateDTO, User>().IgnoreAllNonExisting();

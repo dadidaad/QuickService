@@ -44,8 +44,12 @@ builder.Services.AddScoped<IBusinessHourRepository, BusinessHourRepository>();
 builder.Services.AddScoped<IBusinessHourService, BusinessHourService>();
 builder.Services.AddScoped<ISlaRepository, SlaRepository>();
 builder.Services.AddScoped<ISlaService, SlaService>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IWorkflowRepository, WorkflowRepository>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
+
+
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddDbContext<QuickServiceContext>(options =>
     options.UseSqlServer(connection));

@@ -3,21 +3,21 @@ using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
-    public class WorkflowRepository : IWorkflowRepository
+    public class WorkflowStepRepository : IWorkflowStepRepository
     {
         private readonly QuickServiceContext _context;
 
-        private readonly ILogger<WorkflowRepository> _logger;
-        public WorkflowRepository(QuickServiceContext context, ILogger<WorkflowRepository> logger)
+        private readonly ILogger<WorkflowStepRepository> _logger;
+        public WorkflowStepRepository(QuickServiceContext context, ILogger<WorkflowStepRepository> logger)
         {
             _context = context;
             _logger = logger;
         }
-        public async Task AddWorkflow(Workflow Workflow)
+        public async Task AddWorkflowStep(WorkflowStep WorkflowStep)
         {
             try
             {
-                _context.Workflows.Add(Workflow);
+                _context.WorkflowSteps.Add(WorkflowStep);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -27,12 +27,12 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<Workflow> GetWorkflowById(string workflowId)
+        public async Task<WorkflowStep> GetWorkflowStepById(string workflowStepId)
         {
             try
             {
-                Workflow Workflow = await _context.Workflows.Include(u => u.CreatedByNavigation).FirstOrDefaultAsync(x => x.WorkflowId == workflowId);
-                return Workflow;
+                WorkflowStep workflowStep = await _context.WorkflowSteps.FirstOrDefaultAsync(x => x.WorkflowStepId == workflowStepId);
+                return workflowStep;
             }
             catch (Exception ex)
             {
@@ -41,11 +41,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<Workflow> GetWorkflows()
+        public List<WorkflowStep> GetWorkflowSteps()
         {
             try
             {
-                return _context.Workflows.Include(u => u.CreatedByNavigation.Role).ToList();
+                return _context.WorkflowSteps.ToList();
             }
             catch (Exception ex)
             {
@@ -54,11 +54,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task UpdateWorkflow(Workflow Workflow)
+        public async Task UpdateWorkflowStep(WorkflowStep WorkflowStep)
         {
             try
             {
-                _context.Workflows.Update(Workflow);
+                _context.WorkflowSteps.Update(WorkflowStep);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -68,11 +68,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task DeleteWorkflow(Workflow Workflow)
+        public async Task DeleteWorkflowStep(WorkflowStep WorkflowStep)
         {
             try
             {
-                _context.Workflows.Remove(Workflow);
+                _context.WorkflowSteps.Remove(WorkflowStep);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -82,11 +82,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<Workflow> GetLastWorkflow()
+        public async Task<WorkflowStep> GetLastWorkflowStep()
         {
             try
             {
-                return await _context.Workflows.OrderByDescending(u => u.WorkflowId).FirstOrDefaultAsync();
+                return await _context.WorkflowSteps.OrderByDescending(u => u.WorkflowStepId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

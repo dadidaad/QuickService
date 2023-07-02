@@ -1,4 +1,6 @@
-﻿namespace QuickServiceWebAPI.DTOs.Workflow
+﻿using QuickServiceWebAPI.DTOs.User;
+
+namespace QuickServiceWebAPI.DTOs.Workflow
 {
     public class WorkflowDTO
     {
@@ -12,6 +14,8 @@
 
         public string? Description { get; set; }
 
-        public string CreatedBy { get; set; } = null!;
+        public string CreatedBy { get; set; }
+
+        public virtual UserDTO User { get; set; } = null!;
     }
 }

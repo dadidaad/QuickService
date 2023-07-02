@@ -8,7 +8,9 @@ namespace QuickServiceWebAPI.Profiles
     {
         public WorkflowProfile()
         {
-            CreateMap<Workflow, WorkflowDTO>();
+            CreateMap<Workflow, WorkflowDTO>()
+                .ForMember(dest => dest.User,
+                opt => opt.MapFrom(src => src.CreatedByNavigation));
             CreateMap<CreateUpdateWorkflowDTO, Workflow>();
         }
     }

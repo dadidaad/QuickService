@@ -6,6 +6,7 @@ using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
@@ -40,7 +41,9 @@ namespace QuickServiceWebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAllUser()
         {
-            IEnumerable<User> users = _userService.GetUsers();
+            //IEnumerable<User> users = _userService.GetUsers();
+            //return Ok(users);
+            var users = _userService.GetUsers();
             return Ok(users);
         }
 

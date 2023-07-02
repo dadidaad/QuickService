@@ -3,21 +3,21 @@ using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
-    public class WorkflowRepository : IWorkflowRepository
+    public class GroupRepository : IGroupRepository
     {
         private readonly QuickServiceContext _context;
 
-        private readonly ILogger<WorkflowRepository> _logger;
-        public WorkflowRepository(QuickServiceContext context, ILogger<WorkflowRepository> logger)
+        private readonly ILogger<GroupRepository> _logger;
+        public GroupRepository(QuickServiceContext context, ILogger<GroupRepository> logger)
         {
             _context = context;
             _logger = logger;
         }
-        public async Task AddWorkflow(Workflow Workflow)
+        public async Task AddGroup(Group group)
         {
             try
             {
-                _context.Workflows.Add(Workflow);
+                _context.Groups.Add(group);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -27,12 +27,12 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<Workflow> GetWorkflowById(string workflowId)
+        public async Task<Group> GetGroupById(string groupId)
         {
             try
             {
-                Workflow Workflow = await _context.Workflows.Include(u => u.CreatedByNavigation).FirstOrDefaultAsync(x => x.WorkflowId == workflowId);
-                return Workflow;
+                Group group = await _context.Groups.Include(b => b.BusinessHour).Include(u => u.GroupLeaderNavigation.Role).FirstOrDefaultAsync(x => x.GroupId == groupId);
+                return group;
             }
             catch (Exception ex)
             {
@@ -41,11 +41,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<Workflow> GetWorkflows()
+        public List<Group> GetGroups()
         {
             try
             {
-                return _context.Workflows.Include(u => u.CreatedByNavigation.Role).ToList();
+                return _context.Groups.Include(b => b.BusinessHour).Include(u => u.GroupLeaderNavigation.Role).ToList();
             }
             catch (Exception ex)
             {
@@ -54,11 +54,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task UpdateWorkflow(Workflow Workflow)
+        public async Task UpdateGroup(Group group)
         {
             try
             {
-                _context.Workflows.Update(Workflow);
+                _context.Groups.Update(group);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -68,11 +68,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task DeleteWorkflow(Workflow Workflow)
+        public async Task DeleteGroup(Group group)
         {
             try
             {
-                _context.Workflows.Remove(Workflow);
+                _context.Groups.Remove(group);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -82,11 +82,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<Workflow> GetLastWorkflow()
+        public async Task<Group> GetLastGroup()
         {
             try
             {
-                return await _context.Workflows.OrderByDescending(u => u.WorkflowId).FirstOrDefaultAsync();
+                return await _context.Groups.OrderByDescending(u => u.GroupId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
