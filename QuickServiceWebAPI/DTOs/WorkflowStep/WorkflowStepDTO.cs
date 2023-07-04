@@ -1,4 +1,6 @@
-﻿namespace QuickServiceWebAPI.DTOs.WorkflowStep
+﻿using QuickServiceWebAPI.DTOs.Workflow;
+
+namespace QuickServiceWebAPI.DTOs.WorkflowStep
 {
     public class WorkflowStepDTO
     {
@@ -10,6 +12,8 @@
 
         public string ActionDetails { get; set; } 
 
-        public string WorkflowId { get; set; } 
+        public string WorkflowId { get; set; }
+
+        public virtual WorkflowDTO WorkflowEntity { get; set; } = null!;
     }
 }

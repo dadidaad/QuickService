@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Sla;
+using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
@@ -20,6 +21,12 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var slas = _repository.GetSLAs();
             return slas.Select(sla => _mapper.Map<SlaDTO>(sla)).ToList();
+        }
+
+        public async Task<SlaDTO> GetSlaById(string slaId)
+        {
+            var sla = await _repository.GetSLAById(slaId);
+            return _mapper.Map<SlaDTO>(sla);
         }
 
         public async Task CreateSLA(CreateUpdateSlaDTO createUpdateSlaDTO)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.Workflow;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
@@ -17,10 +18,17 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("getall")]
-        public IActionResult GetAllSLA()
+        public IActionResult GetAllWorkflow()
         {
             var workflows = _workflowService.GetWorkflows();
             return Ok(workflows);
+        }
+
+        [HttpGet("{workflowId}")]
+        public async Task<IActionResult> GetWorkflowById(string workflowId)
+        {
+            var workflow = await _workflowService.GetWorkflowById(workflowId);
+            return Ok(workflow);
         }
 
         [HttpPost("create")]

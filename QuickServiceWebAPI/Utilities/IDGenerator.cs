@@ -52,6 +52,12 @@ namespace QuickServiceWebAPI.Utilities
             return formattedId;
         }
 
+        public static string GenerateWorkflowStepId(int workflowStepId)
+        {
+            string formattedId = $"WOST{workflowStepId.ToString("D6")}";
+            return formattedId;
+        }
+
         public static int ExtractNumberFromId(string id)
         {
             string resultNumber = Regex.Match(id, REGEXNUMBER).Value;

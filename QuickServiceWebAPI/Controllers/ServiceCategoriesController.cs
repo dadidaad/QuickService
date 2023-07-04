@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.ServiceCategory;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
@@ -18,8 +19,15 @@ namespace QuickServiceWebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAllServiceCategory()
         {
-            var services = _serviceCategoryService.GetServiceCategories();
-            return Ok(services);
+            var serviceCategories = _serviceCategoryService.GetServiceCategories();
+            return Ok(serviceCategories);
+        }
+
+        [HttpGet("{serviceCategoryId}")]
+        public async Task<IActionResult> GetServiceCategoryById(string serviceCategoryId)
+        {
+            var serviceCategory = await _serviceCategoryService.GetServiceCategoryById(serviceCategoryId);
+            return Ok(serviceCategory);
         }
 
         [HttpPost("create")]

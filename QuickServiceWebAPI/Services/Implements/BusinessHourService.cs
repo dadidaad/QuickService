@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.BusinessHour;
+using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
@@ -20,6 +21,12 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var businessHours = _repository.GetBusinessHours();
             return businessHours.Select(businessHour => _mapper.Map<BusinessHourDTO>(businessHour)).ToList();
+        }
+
+        public async Task<BusinessHourDTO> GetBusinessHourById(string businessHourId)
+        {
+            var businessHour = await _repository.GetBusinessHourById(businessHourId);
+            return _mapper.Map<BusinessHourDTO>(businessHour);
         }
 
         public async Task CreateBusinessHour(CreateUpdateBusinessHourDTO createUpdateBusinessHourDTO)

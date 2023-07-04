@@ -48,8 +48,8 @@ builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IWorkflowRepository, WorkflowRepository>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
-
-
+builder.Services.AddScoped<IWorkflowStepRepository, WorkflowStepRepository>();
+builder.Services.AddScoped<IWorkflowStepService, WorkflowStepService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddDbContext<QuickServiceContext>(options =>
     options.UseSqlServer(connection));

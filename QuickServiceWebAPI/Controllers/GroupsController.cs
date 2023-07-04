@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.ServiceType;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
@@ -19,8 +20,15 @@ namespace QuickServiceWebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAllGroup()
         {
-            var serviceTypes = _groupService.GetGroups();
-            return Ok(serviceTypes);
+            var groups = _groupService.GetGroups();
+            return Ok(groups);
+        }
+
+        [HttpGet("{groupId}")]
+        public async Task<IActionResult> GetWorkflowStepById(string groupId)
+        {
+            var group = await _groupService.GetGroupById(groupId);
+            return Ok(group);
         }
 
         [HttpPost("create")]

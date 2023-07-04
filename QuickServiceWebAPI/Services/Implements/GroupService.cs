@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.ServiceType;
+using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
+using System.Text.RegularExpressions;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -27,6 +29,12 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var groups = _repository.GetGroups();
             return groups.Select(group => _mapper.Map<GroupDTO>(group)).ToList();
+        }
+
+        public async Task<GroupDTO> GetGroupById(string groupId)
+        {
+            var group = await _repository.GetGroupById(groupId);
+            return _mapper.Map<GroupDTO>(group);
         }
 
         public async Task UpdateGroup(string groupId, CreateUpdateGroupDTO createUpdateGroupDTO)

@@ -45,7 +45,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Services.ToList();
+                return _context.Services.Include(u => u.CreatedByNavigation).Include(g => g.ManagedByGroupNavigation)
+                        .Include(u => u.ManagedByNavigation).Include(s => s.ServiceType).ToList();
             }
             catch (Exception ex)
             {

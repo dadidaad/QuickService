@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Workflow;
+using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
@@ -20,6 +21,12 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var workflows = _repository.GetWorkflows();
             return workflows.Select(workflow => _mapper.Map<WorkflowDTO>(workflow)).ToList();
+        }
+
+        public async Task<WorkflowDTO> GetWorkflowById(string workflowId)
+        {
+            var workflow = await _repository.GetWorkflowById(workflowId);
+            return _mapper.Map<WorkflowDTO>(workflow);
         }
 
         public async Task CreateWorkflow(CreateUpdateWorkflowDTO createUpdateWorkflowDTO)

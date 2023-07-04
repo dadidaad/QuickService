@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.BusinessHour;
+using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Services.Implements;
 
@@ -19,8 +20,15 @@ namespace QuickServiceWebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAllBusinessHour()
         {
-            var services = _businessHourService.GetBusinessHours();
-            return Ok(services);
+            var businessHours = _businessHourService.GetBusinessHours();
+            return Ok(businessHours);
+        }
+
+        [HttpGet("{businessHourId}")]
+        public async Task<IActionResult> GetWorkflowStepById(string businessHourId)
+        {
+            var businessHour = await _businessHourService.GetBusinessHourById(businessHourId);
+            return Ok(businessHour);
         }
 
         [HttpPost("create")]

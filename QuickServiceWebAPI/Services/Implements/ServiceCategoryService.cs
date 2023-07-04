@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.ServiceCategory;
+using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
@@ -20,6 +21,12 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var serviceCategories = _repository.GetServiceCategories();
             return serviceCategories.Select(serviceCategory => _mapper.Map<ServiceCategoryDTO>(serviceCategory)).ToList();
+        }
+
+        public async Task<ServiceCategoryDTO> GetServiceCategoryById(string serviceCategoryId)
+        {
+            var serviceCategory = await _repository.GetServiceCategoryById(serviceCategoryId);
+            return _mapper.Map<ServiceCategoryDTO>(serviceCategory);
         }
 
         public async Task CreateServiceCategory(CreateUpdateServiceCategoryDTO createUpdateServiceCategoryDTO)

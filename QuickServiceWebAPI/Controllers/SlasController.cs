@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.ServiceCategory;
 using QuickServiceWebAPI.DTOs.Sla;
+using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
@@ -21,6 +23,13 @@ namespace QuickServiceWebAPI.Controllers
         {
             var slas = _slaService.GetSLAs();
             return Ok(slas);
+        }
+
+        [HttpGet("{slaId}")]
+        public async Task<IActionResult> GetSLAById(string slaId)
+        {
+            var sla = await _slaService.GetSlaById(slaId);
+            return Ok(sla);
         }
 
         [HttpPost("create")]

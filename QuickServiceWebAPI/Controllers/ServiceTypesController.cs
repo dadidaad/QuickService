@@ -26,6 +26,13 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(serviceTypes);
         }
 
+        [HttpGet("{workflowStepId}")]
+        public async Task<IActionResult> GetServiceTypeById(string serviceTypeId)
+        {
+            var serviceType = await _serviceTypeService.GetServiceTypeById(serviceTypeId);
+            return Ok(serviceType);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateServiceType(CreateUpdateServiceTypeDTO createUpdateServiceTypeDTO)
         {
