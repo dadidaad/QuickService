@@ -9,6 +9,7 @@ namespace QuickServiceWebAPI.Profiles
     {
         public RoleProfile()
         {
+            CreateMap<Role, RoleDTO>();
             CreateMap<CreateDTO, Role>();
             CreateMap<UpdateDTO, Role>().IgnoreAllNonExisting();
         }

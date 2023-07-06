@@ -44,14 +44,18 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.DeleteRole(role);
         }
 
-        public async Task<Role> GetRoleById(string roleId)
+        public async Task<RoleDTO> GetRoleById(string roleId)
         {
-            return await _repository.GetRoleById(roleId);
+            //return await _repository.GetRoleById(roleId);
+            var role = await _repository.GetRoleById(roleId);
+            return _mapper.Map<RoleDTO>(role);
         }
 
-        public List<Role> GetRoles()
+        public List<RoleDTO> GetRoles()
         {
-            return _repository.GetRoles();
+            //return _repository.GetRoles();
+            var roles = _repository.GetRoles();
+            return roles.Select(role => _mapper.Map<RoleDTO>(role)).ToList();
         }
 
         public List<Role> GetRolesByType(RoleType roleType)

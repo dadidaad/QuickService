@@ -2,6 +2,7 @@
 using BCrypt.Net;
 using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.Role;
+using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
@@ -74,19 +75,21 @@ namespace QuickServiceWebAPI.Services.Implements
             return response;
         }
 
-        public async Task<User> GetUserById(string userId)
+        public async Task<UserDTO> GetUserById(string userId)
         {
             User user = await _repository.GetUserDetails(userId);
             if(user == null)
             {
                 throw new KeyNotFoundException("User not found");
             }
-            return user;
+            return _mapper.Map<UserDTO>(user);
         }
 
-        public List<User> GetUsers()
+        public List<UserDTO> GetUsers()
         {
-            return _repository.GetUsers();
+            //return _repository.GetUsers();
+            var users = _repository.GetUsers();
+            return users.Select(user => _mapper.Map<UserDTO>(user)).ToList();
         }
 
         private string HashPassword(string password)

@@ -40,6 +40,18 @@ builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IServiceCategoryRepository, ServiceCategoryRepository>();
 builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
+builder.Services.AddScoped<IBusinessHourRepository, BusinessHourRepository>();
+builder.Services.AddScoped<IBusinessHourService, BusinessHourService>();
+builder.Services.AddScoped<ISlaRepository, SlaRepository>();
+builder.Services.AddScoped<ISlaService, SlaService>();
+builder.Services.AddScoped<ISlametricRepository, SlametricRepository>();
+builder.Services.AddScoped<ISlametricService, SlametricService>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IWorkflowRepository, WorkflowRepository>();
+builder.Services.AddScoped<IWorkflowService, WorkflowService>();
+builder.Services.AddScoped<IWorkflowStepRepository, WorkflowStepRepository>();
+builder.Services.AddScoped<IWorkflowStepService, WorkflowStepService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddDbContext<QuickServiceContext>(options =>
     options.UseSqlServer(connection));

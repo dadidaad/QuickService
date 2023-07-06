@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.Service;
+using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Services.Implements;
 
@@ -21,6 +22,13 @@ namespace QuickServiceWebAPI.Controllers
         {
             var services = _serviceService.GetServices();
             return Ok(services);
+        }
+
+        [HttpGet("{serviceId}")]
+        public async Task<IActionResult> GetServiceById(string serviceId)
+        {
+            var service = await _serviceService.GetServiceById(serviceId);
+            return Ok(service);
         }
 
         [HttpPost("create")]

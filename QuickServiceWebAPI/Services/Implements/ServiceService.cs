@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Service;
+using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
@@ -20,6 +21,12 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var services = _repository.GetServices();
             return services.Select(service => _mapper.Map<ServiceDTO>(service)).ToList();
+        }
+
+        public async Task<ServiceDTO> GetServiceById(string serviceId)
+        {
+            var service = await _repository.GetServiceById(serviceId);
+            return _mapper.Map<ServiceDTO>(service);
         }
 
         public async Task CreateService(CreateUpdateServiceDTO createUpdateServiceDTO)
