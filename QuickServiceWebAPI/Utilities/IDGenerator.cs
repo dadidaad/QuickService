@@ -46,6 +46,12 @@ namespace QuickServiceWebAPI.Utilities
             string formattedId = $"SLA{slaId.ToString("D6")}";
             return formattedId;
         }
+        public static string GenerateSlametricId(int slametricId)
+        {
+            string formattedId = $"SLAM{slametricId.ToString("D6")}";
+            return formattedId;
+        }
+
         public static string GenerateWorkflowId(int workflowId)
         {
             string formattedId = $"WORK{workflowId.ToString("D6")}";

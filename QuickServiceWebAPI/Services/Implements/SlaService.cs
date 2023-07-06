@@ -41,7 +41,7 @@ namespace QuickServiceWebAPI.Services.Implements
             Sla sla = await _repository.GetSLAById(slaId);
             if (sla == null)
             {
-                throw new AppException("Service not found");
+                throw new AppException("Sla not found");
             }
             if (!String.IsNullOrEmpty(createUpdateSlaDTO.Slaname))
             {

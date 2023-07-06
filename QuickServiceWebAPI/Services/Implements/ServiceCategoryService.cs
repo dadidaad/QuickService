@@ -41,7 +41,7 @@ namespace QuickServiceWebAPI.Services.Implements
             ServiceCategory serviceCategory = await _repository.GetServiceCategoryById(serviceCategoryId);
             if (serviceCategory == null)
             {
-                throw new AppException("Service not found");
+                throw new AppException("ServiceCategory not found");
             }
             if (!String.IsNullOrEmpty(createUpdateServiceCategoryDTO.ServiceCategoryName))
             {

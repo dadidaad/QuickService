@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Group;
-using QuickServiceWebAPI.DTOs.ServiceType;
-using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
-using System.Text.RegularExpressions;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -42,7 +39,7 @@ namespace QuickServiceWebAPI.Services.Implements
             Group group = await _repository.GetGroupById(groupId);
             if (group == null)
             {
-                throw new AppException("ServiceType not found");
+                throw new AppException("Group not found");
             }
             if (!String.IsNullOrEmpty(createUpdateGroupDTO.GroupName))
             {

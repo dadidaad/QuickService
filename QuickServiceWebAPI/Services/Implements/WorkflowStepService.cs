@@ -41,7 +41,7 @@ namespace QuickServiceWebAPI.Services.Implements
             WorkflowStep workflowStep = await _repository.GetWorkflowStepById(workflowStepId);
             if (workflowStep == null)
             {
-                throw new AppException("Service not found");
+                throw new AppException("WorkflowStep not found");
             }
             if (!String.IsNullOrEmpty(CreateUpdateWorkflowStepDTO.WorkflowStepName))
             {

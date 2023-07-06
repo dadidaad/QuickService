@@ -42,7 +42,7 @@ namespace QuickServiceWebAPI.Services.Implements
             Workflow workflow = await _repository.GetWorkflowById(workflowId);
             if (workflow == null)
             {
-                throw new AppException("Service not found");
+                throw new AppException("Workflow not found");
             }
             if (!String.IsNullOrEmpty(createUpdateWorkflowDTO.WorkflowName))
             {
