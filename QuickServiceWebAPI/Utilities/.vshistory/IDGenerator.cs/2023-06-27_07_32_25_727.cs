@@ -12,12 +12,6 @@ namespace QuickServiceWebAPI.Utilities
             return formattedId;
         }
 
-        public static string GeneratePermissionId(int permissionId)
-        {
-            string formattedId = $"PERM{permissionId.ToString("D6")}";
-            return formattedId;
-        }
-
         public static string GenerateServiceId(int serviceId)
         {
             string formattedId = $"SERV{serviceId.ToString("D6")}";

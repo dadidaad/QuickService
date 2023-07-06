@@ -9,11 +9,13 @@ namespace QuickServiceWebAPI.Services.Implements
     public class RoleService : IRoleService
     {
         private readonly IRoleRepository _repository;
+        private readonly ILogger<RoleService> _logger;
         private readonly IMapper _mapper;
 
-        public RoleService(IRoleRepository repository, IMapper mapper)
+        public RoleService(IRoleRepository repository, ILogger<RoleService> logger, IMapper mapper)
         {
             _repository = repository;
+            _logger = logger;
             _mapper = mapper;
         }
 

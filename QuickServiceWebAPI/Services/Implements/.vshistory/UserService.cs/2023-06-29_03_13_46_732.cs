@@ -96,7 +96,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task UpdateUser(UpdateDTO updateDTO)
         {
-            User existingUser = await _repository.GetUserDetails(updateDTO.UserId);
+            User existingUser = await _repository.GetUserByEmail(updateDTO.Email);
             if(existingUser == null)
             {
                 throw new AppException("User not found");
@@ -106,7 +106,14 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
             }
-            
+            if (!String.IsNullOrEmpty(updateDTO.Password))
+            {
+                updateDTO.Password = HashPassword(updateDTO.Password);
+            }
+            else
+            {
+                updateDTO.Password = existingUser.Password;
+            }
             
             var updateUser = _mapper.Map<UpdateDTO, User>(updateDTO, existingUser);
             if (!string.IsNullOrEmpty(filePath))
@@ -178,24 +185,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             var updateUser = _mapper.Map<User>(existingUser);
             updateUser.RoleId = assignRoleDTO.RoleId;
-            await _repository.UpdateUser(existingUser, updateUser);
-        }
-
-        public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
-        {
-            var existingUser = await _repository.GetUserDetails(changePasswordDTO.UserId);
-            if (existingUser == null)
-            {
-                throw new AppException("User not found");
-            }
-            if(!BCrypt.Net.BCrypt.Verify(changePasswordDTO.OldPassword, existingUser.Password))
-            {
-                throw new AppException("Old password not correct");
-            }
-            var newHassPassword = HashPassword(changePasswordDTO.NewPassword);
-            var updateUser = _mapper.Map<User>(existingUser);
-            updateUser.Password = newHassPassword;
-            await _repository.UpdateUser(existingUser, updateUser);
+            _repository.UpdateUser(existingUser, updateUser);
         }
     }
 }

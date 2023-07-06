@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using BCrypt.Net;
 using Microsoft.Extensions.Options;
-using QuickServiceWebAPI.DTOs.Role;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
-using UpdateDTO = QuickServiceWebAPI.DTOs.User.UpdateDTO;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -96,7 +94,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task UpdateUser(UpdateDTO updateDTO)
         {
-            User existingUser = await _repository.GetUserDetails(updateDTO.UserId);
+            User existingUser = await _repository.GetUserByEmail(updateDTO.Email);
             if(existingUser == null)
             {
                 throw new AppException("User not found");
@@ -106,8 +104,25 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
             }
-            
-            
+            if (!String.IsNullOrEmpty(updateDTO.Password))
+            {
+                updateDTO.Password = HashPassword(updateDTO.Password);
+            }
+            else
+            {
+                updateDTO.Password = existingUser.Password;
+            }
+            if (!string.IsNullOrEmpty(updateDTO.RoleId))
+            {
+                var existingRole = await _roleRepository.GetRoleById(updateDTO.RoleId);
+                if(existingRole == null)
+                {
+                    throw new AppException("Role not found");
+                }
+                existingUser.RoleId = updateDTO.RoleId;
+                var updateRole = _mapper.Map<Role>(existingRole);
+                await _roleRepository.UpdateRole(existingRole, updateRole);
+            }
             var updateUser = _mapper.Map<UpdateDTO, User>(updateDTO, existingUser);
             if (!string.IsNullOrEmpty(filePath))
             {
@@ -162,40 +177,6 @@ namespace QuickServiceWebAPI.Services.Implements
                 _logger.LogError(ex.Message);
                 throw new AppException("Error when try to upload image!!");
             }
-        }
-
-        public async Task AssignRole(AssignRoleDTO assignRoleDTO)
-        {
-            var existingUser = await _repository.GetUserDetails(assignRoleDTO.UserId);
-            if (existingUser == null)
-            {
-                throw new AppException("User not found");
-            }
-            var existingRole = await _roleRepository.GetRoleById(assignRoleDTO.RoleId);
-            if (existingRole == null)
-            {
-                throw new AppException("Role not found");
-            }
-            var updateUser = _mapper.Map<User>(existingUser);
-            updateUser.RoleId = assignRoleDTO.RoleId;
-            await _repository.UpdateUser(existingUser, updateUser);
-        }
-
-        public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
-        {
-            var existingUser = await _repository.GetUserDetails(changePasswordDTO.UserId);
-            if (existingUser == null)
-            {
-                throw new AppException("User not found");
-            }
-            if(!BCrypt.Net.BCrypt.Verify(changePasswordDTO.OldPassword, existingUser.Password))
-            {
-                throw new AppException("Old password not correct");
-            }
-            var newHassPassword = HashPassword(changePasswordDTO.NewPassword);
-            var updateUser = _mapper.Map<User>(existingUser);
-            updateUser.Password = newHassPassword;
-            await _repository.UpdateUser(existingUser, updateUser);
         }
     }
 }

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<quickservice>
+	<permission module="User">
+		<name>View</name>
+	</permission>
+	<permission module="User">
+		<name>Create</name>
+	</permission>
+	<permission module="User">
+		<name>AssignRole</name>
+	</permission>
+	<permission module="User">
+		<name>Deactive</name>
+	</permission>
+	<permission module="Roles">
+		<name>Create</name>
+	</permission>
+	<permission module="Roles">
+		<name>Edit</name>
+	</permission>
+	<permission module="Roles">
+		<name>Delete</name>
+	</permission>
+</quickservice>

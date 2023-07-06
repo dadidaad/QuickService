@@ -60,7 +60,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.FindAsync(userId);
+                User user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
                 return user;
             }
             catch (Exception ex)

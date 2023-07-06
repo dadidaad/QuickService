@@ -17,16 +17,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
 
         public int CountUserHaveRole(string roleId)
         {
-            try
-            {
-                return _context.Users.GroupBy(u => u.RoleId)
-                    .Where(u => u.Key == roleId).Count();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
+            return _context.Users.GroupBy(u => u.RoleId)
+                .Where(u => u.Key == roleId).Count();
         }
 
         public async Task CreateRole(Role role)

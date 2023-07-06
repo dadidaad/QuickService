@@ -51,21 +51,5 @@ namespace QuickServiceWebAPI.Controllers
             await _userService.UpdateUser(updateDTO);
             return Ok(new { message = "Update successfully" });
         }
-
-        [AllowAnonymous]
-        [HttpPost("assignrole")]
-        public async Task<IActionResult> AssignRole(AssignRoleDTO assignRoleDTO)
-        {
-            await _userService.AssignRole(assignRoleDTO);
-            return Ok(new { message = "Assign successfully" });
-        }
-
-        [AllowAnonymous]
-        [HttpPost("changepassword")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
-        {
-            await _userService.ChangePassword(changePasswordDTO);
-            return Ok(new {message = "Change password successfully"})
-        }
     }
 }
