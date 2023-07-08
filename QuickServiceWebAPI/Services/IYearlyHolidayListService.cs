@@ -1,4 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.YearHolidayListDTO;
+﻿using QuickServiceWebAPI.DTOs.YearHolidayList;
 
 namespace QuickServiceWebAPI.Services
 {

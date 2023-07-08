@@ -1,4 +1,4 @@
-﻿namespace QuickServiceWebAPI.DTOs.YearHolidayListDTO
+﻿namespace QuickServiceWebAPI.DTOs.YearHolidayList
 {
     public class CreateUpdateYearlyHolidayListDTO
     {

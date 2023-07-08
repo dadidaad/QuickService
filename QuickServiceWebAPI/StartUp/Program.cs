@@ -40,6 +40,8 @@ builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IServiceCategoryRepository, ServiceCategoryRepository>();
 builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
+builder.Services.AddScoped<IServiceDeskHourRepository, ServiceDeskHourRepository>();
+builder.Services.AddScoped<IServiceDeskHourService, ServiceDeskHourService>();
 builder.Services.AddScoped<IBusinessHourRepository, BusinessHourRepository>();
 builder.Services.AddScoped<IBusinessHourService, BusinessHourService>();
 builder.Services.AddScoped<ISlaRepository, SlaRepository>();

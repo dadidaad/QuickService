@@ -1,6 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.BusinessHour;
 
-namespace QuickServiceWebAPI.DTOs.YearHolidayListDTO
+namespace QuickServiceWebAPI.DTOs.YearHolidayList
 {
     public class YearlyHolidayListDTO
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.Sla;
-using QuickServiceWebAPI.DTOs.YearHolidayListDTO;
+using QuickServiceWebAPI.DTOs.YearHolidayList;
 using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
@@ -17,14 +17,14 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("getall")]
-        public IActionResult GetAllSLA()
+        public IActionResult GetAllYearHoliday()
         {
             var yearlyHolidayList = _yearlyHolidayListService.GetYearlyHolidayList();
             return Ok(yearlyHolidayList);
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateSLA(CreateUpdateYearlyHolidayListDTO createUpdateYearlyHolidayListDTO)
+        public async Task<IActionResult> CreateYearHoliday(CreateUpdateYearlyHolidayListDTO createUpdateYearlyHolidayListDTO)
         {
             await _yearlyHolidayListService.CreateYearlyHoliday(createUpdateYearlyHolidayListDTO);
             return Ok(new { message = "Create successfully" });

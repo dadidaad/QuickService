@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.YearHolidayListDTO;
+using QuickServiceWebAPI.DTOs.YearHolidayList;
 using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Profiles
