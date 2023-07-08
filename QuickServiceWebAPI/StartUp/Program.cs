@@ -52,6 +52,8 @@ builder.Services.AddScoped<IWorkflowRepository, WorkflowRepository>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddScoped<IWorkflowStepRepository, WorkflowStepRepository>();
 builder.Services.AddScoped<IWorkflowStepService, WorkflowStepService>();
+builder.Services.AddScoped<IYearlyHolidayListRepository, YearlyHolidayListRepository>();
+builder.Services.AddScoped<IYearlyHolidayListService, YearlyHolidayListService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddDbContext<QuickServiceContext>(options =>
     options.UseSqlServer(connection));
