@@ -71,7 +71,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("Email or password is incorrect");
             }
             var response = _mapper.Map<AuthenticateResponseDTO>(user);
-            response.Token = _jWTUtils.GenerateToken(user);
+            response.Token = await _jWTUtils.GenerateToken(user);
             return response;
         }
 
@@ -196,6 +196,20 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("Old password not correct");
             }
             var newHassPassword = HashPassword(changePasswordDTO.NewPassword);
+            var updateUser = _mapper.Map<User>(existingUser);
+            updateUser.Password = newHassPassword;
+            await _repository.UpdateUser(existingUser, updateUser);
+        }
+
+        private const string DEFAULT_PASSWORD = "123";
+        public async Task ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        {
+            var existingUser = await _repository.GetUserDetails(resetPasswordDTO.UserId);
+            if (existingUser == null)
+            {
+                throw new AppException("User not found");
+            }
+            var newHassPassword = HashPassword(DEFAULT_PASSWORD);
             var updateUser = _mapper.Map<User>(existingUser);
             updateUser.Password = newHassPassword;
             await _repository.UpdateUser(existingUser, updateUser);

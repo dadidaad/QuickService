@@ -7,9 +7,5 @@ namespace QuickServiceWebAPI.DTOs.Permission
         [Required]
         [MaxLength(100)]
         public string? PermissionName { get; set; }
-
-        [Required]
-        [MaxLength(100)]
-        public string? PermissionModule { get; set; }
     }
 }

@@ -14,5 +14,6 @@ namespace QuickServiceWebAPI.Services
         Task<string> UpdateAvatar(IFormFile image, string userId);
         public Task AssignRole(AssignRoleDTO assignRoleDTO);
         public Task ChangePassword(ChangePasswordDTO changePasswordDTO);
+        public Task ResetPassword(ResetPasswordDTO resetPasswordDTO);
     }
 }

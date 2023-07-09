@@ -9,7 +9,5 @@ public partial class Permission
 
     public string PermissionName { get; set; } = null!;
 
-    public string? PermissionModule { get; set; }
-
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 }

@@ -23,44 +23,31 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 _context.Permissions.Add(permission);
                 await _context.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving role with ID: {PermissionId}", permission.PermissionId);
                 throw;
             }
         }
 
-        public async Task<Permission> GetLastPermission()
-        {
-            try
-            {
-                return await _context.Permissions.OrderByDescending(u => u.PermissionId).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving permission");
-                throw; // Rethrow the exception to propagate it up the call stack if necessary
-            }
-        }
 
-        public List<Permission> GetPermissions()
-        {
-            try
-            {
-                return _context.Permissions.ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving permissions");
-                throw;
-            }
-        }
 
-        public async Task<List<Permission>> GetPermissionsByModule(string module)
+        public async Task<List<Permission>> GetPermissionsForRoleType(RoleType roleType)
         {
             try
             {
-                return await _context.Permissions.Where(p => p.PermissionModule == module).ToListAsync();
+                IQueryable<Permission> permissionQuery = _context.Permissions;
+                if (roleType == RoleType.Admin)
+                {
+                    permissionQuery = permissionQuery
+                        .Where(p => !p.PermissionName.Contains("tickets"));
+                }
+                else
+                {
+                    permissionQuery = permissionQuery
+                        .Where(p => p.PermissionName.Contains("tickets"));
+                }
+                return await permissionQuery.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -69,12 +56,14 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<Permission> GetPermissionsByRoles(string roleId)
+
+        public async Task<List<Permission>> GetPermissionsByRole(string roleId)
         {
             try
             {
-                return _context.Roles.Include(r => r.Permissions)
-                    .FirstOrDefault(r => r.RoleId == roleId).Permissions.ToList();
+                Role role = await _context.Roles
+                    .Include(r => r.Permissions).FirstOrDefaultAsync(r => r.RoleId == roleId);
+                return role.Permissions.ToList();
             }
             catch (Exception ex)
             {
@@ -89,6 +78,19 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 _context.Entry(existingPermission).CurrentValues.SetValues(updatePermission);
                 await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving permission with ID: {PermissionID}", existingPermission.PermissionId);
+                throw;
+            }
+        }
+
+        public async Task<Permission> GetPermission(string permissionId)
+        {
+            try
+            {
+                return await _context.Permissions.FindAsync(permissionId);
             }
             catch (Exception ex)
             {

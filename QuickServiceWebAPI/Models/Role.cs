@@ -20,6 +20,6 @@ public partial class Role
 
 public enum RoleType
 {
-    Admin,
-    Agent
+    Admin = 0,
+    Agent = 1,
 }
