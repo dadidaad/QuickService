@@ -74,6 +74,8 @@ builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IServiceCategoryRepository, ServiceCategoryRepository>();
 builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
+builder.Services.AddScoped<IServiceDeskHourRepository, ServiceDeskHourRepository>();
+builder.Services.AddScoped<IServiceDeskHourService, ServiceDeskHourService>();
 builder.Services.AddScoped<IBusinessHourRepository, BusinessHourRepository>();
 builder.Services.AddScoped<IBusinessHourService, BusinessHourService>();
 builder.Services.AddScoped<ISlaRepository, SlaRepository>();
@@ -86,6 +88,8 @@ builder.Services.AddScoped<IWorkflowRepository, WorkflowRepository>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddScoped<IWorkflowStepRepository, WorkflowStepRepository>();
 builder.Services.AddScoped<IWorkflowStepService, WorkflowStepService>();
+builder.Services.AddScoped<IYearlyHolidayListRepository, YearlyHolidayListRepository>();
+builder.Services.AddScoped<IYearlyHolidayListService, YearlyHolidayListService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
