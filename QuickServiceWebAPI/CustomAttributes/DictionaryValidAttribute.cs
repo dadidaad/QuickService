@@ -23,6 +23,6 @@ namespace QuickServiceWebAPI.CustomAttributes
             return ValidationResult.Success;
         }
     }
-    {
+    
     }
-}
+

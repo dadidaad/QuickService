@@ -29,6 +29,11 @@ namespace QuickServiceWebAPI.Utilities
             string formattedId = $"SECA{serviceCategoryId.ToString("D6")}";
             return formattedId;
         }
+        public static string GenerateServiceItemId(int serviceItemId)
+        {
+            string formattedId = $"SEIT{serviceItemId.ToString("D6")}";
+            return formattedId;
+        }
         public static string GenerateServiceDeskHourd(int serviceDeskHourId)
         {
             string formattedId = $"SEDE{serviceDeskHourId.ToString("D6")}";
@@ -44,6 +49,11 @@ namespace QuickServiceWebAPI.Utilities
         public static string GenerateBusinessHourId(int businessHourId)
         {
             string formattedId = $"BUSI{businessHourId.ToString("D6")}";
+            return formattedId;
+        }
+        public static string GenerateAttachmentId(int attachmentId)
+        {
+            string formattedId = $"ATTA{attachmentId.ToString("D6")}";
             return formattedId;
         }
 

@@ -94,7 +94,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while retrieving permission with ID: {PermissionID}", existingPermission.PermissionId);
+                _logger.LogError(ex, "An error occurred while retrieving permission with ID: {PermissionID}");
                 throw;
             }
         }

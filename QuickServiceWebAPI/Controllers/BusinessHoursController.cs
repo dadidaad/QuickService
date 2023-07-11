@@ -25,7 +25,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("{businessHourId}")]
-        public async Task<IActionResult> GetWorkflowStepById(string businessHourId)
+        public async Task<IActionResult> GetBusinessHourById(string businessHourId)
         {
             var businessHour = await _businessHourService.GetBusinessHourById(businessHourId);
             return Ok(businessHour);
