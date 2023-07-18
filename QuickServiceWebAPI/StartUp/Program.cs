@@ -147,5 +147,6 @@ void SeedDatabase() //can be placed at the very bottom under app.Run()
     {
         var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
         dbInitializer.SeedPermissions();
+        dbInitializer.SeedServiceCategories();
     }
 }

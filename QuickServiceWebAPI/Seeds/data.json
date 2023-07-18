@@ -1,0 +1,24 @@
+﻿{
+  "serviceCategories": [
+    {
+      "serviceCategoryID": "SECA000001",
+      "serviceCategoryName": "Hardware provisioning",
+      "description": "All about hardware"
+    },
+    {
+      "serviceCategoryID": "SECA000002",
+      "serviceCategoryName": "Software installation",
+      "description": "All about software"
+    },
+    {
+      "serviceCategoryID": "SECA000003",
+      "serviceCategoryName": "Data services",
+      "description": "All about data"
+    },
+    {
+      "serviceCategoryID": "SECA000004",
+      "serviceCategoryName": "Application access",
+      "description": "All about permission access"
+    }
+  ]
+}

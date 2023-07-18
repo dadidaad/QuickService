@@ -43,6 +43,8 @@ public partial class RequestTicket
 
     public string? AttachmentId { get; set; }
 
+    public string Title { get; set; } = null!;
+
     public virtual Group? AssignedToGroupNavigation { get; set; }
 
     public virtual User? AssignedToNavigation { get; set; }
@@ -50,6 +52,8 @@ public partial class RequestTicket
     public virtual Attachment? Attachment { get; set; }
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+    public virtual ICollection<RequestTicketExt> RequestTicketExts { get; set; } = new List<RequestTicketExt>();
 
     public virtual User Requester { get; set; } = null!;
 

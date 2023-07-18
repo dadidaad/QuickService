@@ -3,5 +3,6 @@
     public interface IDbInitializer
     {
         public void SeedPermissions();
+        public void SeedServiceCategories();
     }
 }
