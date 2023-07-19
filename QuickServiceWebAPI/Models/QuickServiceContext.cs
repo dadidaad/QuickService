@@ -638,11 +638,6 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("ServiceItemID");
-            entity.Property(e => e.AttachmentId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("AttachmentID");
             entity.Property(e => e.Description)
                 .HasMaxLength(1000)
                 .IsUnicode(false);
@@ -663,10 +658,6 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.Status)
                 .HasMaxLength(10)
                 .IsUnicode(false);
-
-            entity.HasOne(d => d.Attachment).WithMany(p => p.ServiceItems)
-                .HasForeignKey(d => d.AttachmentId)
-                .HasConstraintName("FK__ServiceIt__Attac__09A971A2");
 
             entity.HasOne(d => d.ServiceCategory).WithMany(p => p.ServiceItems)
                 .HasForeignKey(d => d.ServiceCategoryId)

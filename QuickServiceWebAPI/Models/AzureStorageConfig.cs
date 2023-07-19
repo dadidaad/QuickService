@@ -7,5 +7,6 @@
         public string? ImageContainer { get; set; }
         public string? ThumbnailContainer { get; set; }
         public string? AttachmentContainer { get; set; }
+        public string? IconServiceItemContainer { get; set; }
     }
 }

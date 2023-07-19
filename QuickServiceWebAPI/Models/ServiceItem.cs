@@ -19,11 +19,7 @@ public partial class ServiceItem
 
     public string ServiceCategoryId { get; set; } = null!;
 
-    public string? AttachmentId { get; set; }
-
     public string? IconDisplay { get; set; }
-
-    public virtual Attachment? Attachment { get; set; }
 
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
 

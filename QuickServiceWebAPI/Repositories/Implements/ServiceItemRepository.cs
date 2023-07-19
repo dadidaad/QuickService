@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                ServiceItem serviceItem = await _context.ServiceItems.Include(a => a.Attachment).Include(s => s.ServiceCategory).
+                ServiceItem serviceItem = await _context.ServiceItems.Include(s => s.ServiceCategory).
                                          FirstOrDefaultAsync(x => x.ServiceItemId == serviceItemId);
                 return serviceItem;
             }
@@ -46,7 +46,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.ServiceItems.Include(a => a.Attachment).Include(s => s.ServiceCategory).ToList();
+                return _context.ServiceItems.Include(s => s.ServiceCategory).ToList();
             }
             catch (Exception ex)
             {

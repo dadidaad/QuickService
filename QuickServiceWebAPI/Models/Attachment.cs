@@ -23,5 +23,4 @@ public partial class Attachment
 
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
 
-    public virtual ICollection<ServiceItem> ServiceItems { get; set; } = new List<ServiceItem>();
 }
