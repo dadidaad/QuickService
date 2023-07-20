@@ -133,7 +133,9 @@ app.UseAuthorization();
 app.UseCors(x => x
         .AllowAnyOrigin()
         .AllowAnyMethod()
-        .AllowAnyHeader());
+        .AllowAnyHeader()
+        .AllowCredentials()
+           .SetIsOriginAllowed(origin => true));
 //Seed database
 SeedDatabase();
 
