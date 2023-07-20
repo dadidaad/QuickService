@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.ServiceItem;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
@@ -15,12 +16,12 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IMapper _mapper;
         private readonly IServiceCategoryRepository _serviceCategoryRepository;
         public ServiceItemService(IServiceItemRepository repository, IMapper mapper,
-            AzureStorageConfig storageConfig, ILogger<ServiceItemService> logger,
+            IOptions<AzureStorageConfig> storageConfig, ILogger<ServiceItemService> logger,
             IServiceCategoryRepository serviceCategoryRepository)
         {
             _repository = repository;
             _mapper = mapper;
-            _storageConfig = storageConfig;
+            _storageConfig = storageConfig.Value;
             _logger = logger;
             _serviceCategoryRepository = serviceCategoryRepository;
         }
