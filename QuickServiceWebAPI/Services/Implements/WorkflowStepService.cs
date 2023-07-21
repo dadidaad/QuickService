@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using QuickServiceWebAPI.DTOs.SLAMetric;
 using QuickServiceWebAPI.DTOs.Workflow;
 using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
+using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -10,10 +12,12 @@ namespace QuickServiceWebAPI.Services.Implements
     public class WorkflowStepService : IWorkflowStepService
     {
         private readonly IWorkflowStepRepository _repository;
+        private readonly IWorkflowRepository _workflowRepository;
         private readonly IMapper _mapper;
-        public WorkflowStepService(IWorkflowStepRepository repository, IMapper mapper)
+        public WorkflowStepService(IWorkflowStepRepository repository, IWorkflowRepository workflowRepository, IMapper mapper)
         {
             _repository = repository;
+            _workflowRepository = workflowRepository;
             _mapper = mapper;
         }
 
@@ -43,23 +47,11 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("WorkflowStep not found");
             }
-            if (!String.IsNullOrEmpty(CreateUpdateWorkflowStepDTO.WorkflowStepName))
+            if (_workflowRepository.GetWorkflowById(CreateUpdateWorkflowStepDTO.WorkflowId) == null)
             {
-                workflowStep.WorkflowStepName = CreateUpdateWorkflowStepDTO.WorkflowStepName;
+                throw new AppException("Workflow with id " + CreateUpdateWorkflowStepDTO.WorkflowId + " not found");
             }
-            if (!String.IsNullOrEmpty(CreateUpdateWorkflowStepDTO.ActionType))
-            {
-                workflowStep.ActionType = CreateUpdateWorkflowStepDTO.ActionType;
-            }
-            if (!String.IsNullOrEmpty(CreateUpdateWorkflowStepDTO.ActionDetails))
-            {
-                workflowStep.ActionDetails = CreateUpdateWorkflowStepDTO.ActionDetails;
-            }
-            if (!String.IsNullOrEmpty(CreateUpdateWorkflowStepDTO.WorkflowId))
-            {
-                workflowStep.WorkflowId = CreateUpdateWorkflowStepDTO.WorkflowId;
-            }
-            workflowStep = _mapper.Map<CreateUpdateWorkflowStepDTO, WorkflowStep>(CreateUpdateWorkflowStepDTO, workflowStep);
+            workflowStep = _mapper.Map(CreateUpdateWorkflowStepDTO, workflowStep);
             await _repository.UpdateWorkflowStep(workflowStep);
         }
 

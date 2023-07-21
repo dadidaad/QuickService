@@ -43,15 +43,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("BusinessHour not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateBusinessHourDTO.BusinessHourName))
-            {
-                businessHour.BusinessHourName = createUpdateBusinessHourDTO.BusinessHourName;
-            }
-            if (!String.IsNullOrEmpty(createUpdateBusinessHourDTO.TimeZone))
-            {
-                businessHour.TimeZone = createUpdateBusinessHourDTO.TimeZone;
-            }
-            businessHour = _mapper.Map<CreateUpdateBusinessHourDTO, BusinessHour>(createUpdateBusinessHourDTO, businessHour);
+            businessHour = _mapper.Map(createUpdateBusinessHourDTO, businessHour);
             await _repository.UpdateBusinessHour(businessHour);
         }
 

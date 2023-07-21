@@ -8,8 +8,7 @@ namespace QuickServiceWebAPI.DTOs.ServiceCategory
         [MaxLength(100)]
         public string ServiceCategoryName { get; set; }
 
-        [Required]
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string? Description { get; set; }
     }
 }

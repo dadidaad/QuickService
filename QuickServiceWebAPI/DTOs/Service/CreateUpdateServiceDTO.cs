@@ -7,18 +7,32 @@ namespace QuickServiceWebAPI.DTOs.Service
         [Required]
         [MaxLength(100)]
         public string ServiceName { get; set; }
-        [Required]
-        [MaxLength(100)]
+
+        [MaxLength(255)]
         public string? Description { get; set; }
+
         [Required]
         [MaxLength(10)]
         public string Impact { get; set; }
+
         [Required]
         [MaxLength(10)]
-        public string HealthStatus { get; set; } 
-        public string CreatedBy { get; set; } 
-        public string ServiceTypeId { get; set; } 
-        public string ManagedBy { get; set; } 
+        public string HealthStatus { get; set; }
+
+        [Required]
+        [MaxLength(10)]
+        public string CreatedBy { get; set; }
+
+        [Required]
+        [MaxLength(10)]
+        public string ServiceTypeId { get; set; }
+
+        [Required]
+        [MaxLength(10)]
+        public string ManagedBy { get; set; }
+
+        [Required]
+        [MaxLength(10)]
         public string? ManagedByGroup { get; set; }
     }
 }

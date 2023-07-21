@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Group;
+using QuickServiceWebAPI.DTOs.ServiceDeskHour;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
+using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -9,9 +11,13 @@ namespace QuickServiceWebAPI.Services.Implements
     public class GroupService : IGroupService
     {
         private readonly IGroupRepository _repository;
+        private readonly IUserRepository _userRepository;
+        private readonly IBusinessHourRepository _businessHourRepository;
         private readonly IMapper _mapper;
-        public GroupService(IGroupRepository repository, IMapper mapper)
+        public GroupService(IGroupRepository repository, IMapper mapper, IUserRepository userRepository, IBusinessHourRepository businessHourRepository)
         {
+            _userRepository = userRepository;
+            _businessHourRepository = businessHourRepository;
             _repository = repository;
             _mapper = mapper;
         }
@@ -41,23 +47,15 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Group not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateGroupDTO.GroupName))
+            if (_userRepository.GetUserDetails(createUpdateGroupDTO.GroupLeader) == null)
             {
-                group.GroupName = createUpdateGroupDTO.GroupName;
+                throw new AppException("Group leader with id " + createUpdateGroupDTO.GroupLeader + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateGroupDTO.Description))
+            if (_businessHourRepository.GetBusinessHourById(createUpdateGroupDTO.BusinessHourId) == null)
             {
-                group.Description = createUpdateGroupDTO.Description;
+                throw new AppException("Business hour with id " + createUpdateGroupDTO.BusinessHourId + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateGroupDTO.GroupLeader))
-            {
-                group.GroupLeader = createUpdateGroupDTO.GroupLeader;
-            }
-            if (!String.IsNullOrEmpty(createUpdateGroupDTO.BusinessHourId))
-            {
-                group.BusinessHourId = createUpdateGroupDTO.BusinessHourId;
-            }
-            group = _mapper.Map<CreateUpdateGroupDTO, Group>(createUpdateGroupDTO, group);
+            group = _mapper.Map(createUpdateGroupDTO, group);
             await _repository.UpdateGroup(group);
         }
 

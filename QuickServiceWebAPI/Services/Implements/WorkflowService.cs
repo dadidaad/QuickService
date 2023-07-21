@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.Workflow;
 using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
@@ -10,10 +11,12 @@ namespace QuickServiceWebAPI.Services.Implements
     public class WorkflowService : IWorkflowService
     {
         private readonly IWorkflowRepository _repository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public WorkflowService(IWorkflowRepository repository, IMapper mapper)
+        public WorkflowService(IWorkflowRepository repository, IUserRepository userRepository, IMapper mapper)
         {
             _repository = repository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -44,19 +47,11 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Workflow not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateWorkflowDTO.WorkflowName))
+            if (_userRepository.GetUserDetails(createUpdateWorkflowDTO.CreatedBy) == null)
             {
-                workflow.WorkflowName = createUpdateWorkflowDTO.WorkflowName;
+                throw new AppException("Create by user with id " + createUpdateWorkflowDTO.CreatedBy + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateWorkflowDTO.Description))
-            {
-                workflow.Description = createUpdateWorkflowDTO.Description;
-            }
-            if (!String.IsNullOrEmpty(createUpdateWorkflowDTO.CreatedBy))
-            {
-                workflow.CreatedBy = createUpdateWorkflowDTO.CreatedBy;
-            }
-            workflow = _mapper.Map<CreateUpdateWorkflowDTO, Workflow>(createUpdateWorkflowDTO, workflow);
+            workflow = _mapper.Map(createUpdateWorkflowDTO, workflow);
             await _repository.UpdateWorkflow(workflow);
         }
 

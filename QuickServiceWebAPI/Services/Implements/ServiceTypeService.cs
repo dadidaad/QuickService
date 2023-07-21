@@ -43,15 +43,7 @@ namespace QuickServiceWebAPI.Services.Implements
             if (serviceType == null)
             {
                 throw new AppException("ServiceType not found");
-            }
-            if (!String.IsNullOrEmpty(createUpdateDTO.ServiceTypeName))
-            {
-                serviceType.ServiceTypeName = createUpdateDTO.ServiceTypeName;
-            }
-            if (!String.IsNullOrEmpty(createUpdateDTO.Description))
-            {
-                serviceType.Description = createUpdateDTO.Description;
-            }                        
+            }                      
             serviceType = _mapper.Map<CreateUpdateServiceTypeDTO, ServiceType>(createUpdateDTO, serviceType);
             await _repository.UpdateServiceType(serviceType);
         }

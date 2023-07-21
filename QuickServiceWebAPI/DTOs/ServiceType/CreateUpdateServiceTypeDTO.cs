@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.DTOs.ServiceType
         public string ServiceTypeName { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string Description { get; set; }
     }
 }

@@ -43,15 +43,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("ServiceCategory not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateServiceCategoryDTO.ServiceCategoryName))
-            {
-                serviceCategory.ServiceCategoryName = createUpdateServiceCategoryDTO.ServiceCategoryName;
-            }
-            if (!String.IsNullOrEmpty(createUpdateServiceCategoryDTO.Description))
-            {
-                serviceCategory.Description = createUpdateServiceCategoryDTO.Description;
-            }
-            serviceCategory = _mapper.Map<CreateUpdateServiceCategoryDTO, ServiceCategory>(createUpdateServiceCategoryDTO, serviceCategory);
+            serviceCategory = _mapper.Map(createUpdateServiceCategoryDTO, serviceCategory);
             await _repository.UpdateServiceCategory(serviceCategory);
         }
 

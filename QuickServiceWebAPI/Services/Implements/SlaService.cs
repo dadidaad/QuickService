@@ -43,15 +43,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Sla not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateSlaDTO.Slaname))
-            {
-                sla.Slaname = createUpdateSlaDTO.Slaname;
-            }
-            if (!String.IsNullOrEmpty(createUpdateSlaDTO.Description))
-            {
-                sla.Description = createUpdateSlaDTO.Description;
-            }
-            sla = _mapper.Map<CreateUpdateSlaDTO, Sla>(createUpdateSlaDTO, sla);
+            sla = _mapper.Map(createUpdateSlaDTO, sla);
             await _repository.UpdateSLA(sla);
         }
 

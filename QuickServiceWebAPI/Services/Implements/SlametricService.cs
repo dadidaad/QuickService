@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using QuickServiceWebAPI.DTOs.ServiceDeskHour;
 using QuickServiceWebAPI.DTOs.SLAMetric;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
@@ -9,10 +10,14 @@ namespace QuickServiceWebAPI.Services.Implements
     public class SlametricService : ISlametricService
     {
         private readonly ISlametricRepository _repository;
+        private readonly IBusinessHourRepository _businessHourRepository;
+        private readonly ISlaRepository _slaRepository;
         private readonly IMapper _mapper;
-        public SlametricService(ISlametricRepository repository, IMapper mapper)
+        public SlametricService(ISlametricRepository repository, IBusinessHourRepository businessHourRepository, ISlaRepository slaRepository, IMapper mapper)
         {
             _repository = repository;
+            _businessHourRepository = businessHourRepository;
+            _slaRepository = slaRepository;
             _mapper = mapper;
         }
 
@@ -42,27 +47,15 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Slametric not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateSlametricDTO.Piority))
+            if (_businessHourRepository.GetBusinessHourById(createUpdateSlametricDTO.BusinessHourId) == null)
             {
-                slametric.Piority = createUpdateSlametricDTO.Piority;
+                throw new AppException("Business hour with id " + createUpdateSlametricDTO.BusinessHourId + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateSlametricDTO.EscalationPolicy))
+            if (_slaRepository.GetSLAById(createUpdateSlametricDTO.Slaid) == null)
             {
-                slametric.EscalationPolicy = createUpdateSlametricDTO.EscalationPolicy;
+                throw new AppException("SLA with id " + createUpdateSlametricDTO.Slaid + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateSlametricDTO.NotificationRules))
-            {
-                slametric.NotificationRules = createUpdateSlametricDTO.NotificationRules;
-            }
-            if (!String.IsNullOrEmpty(createUpdateSlametricDTO.BusinessHourId))
-            {
-                slametric.BusinessHourId = createUpdateSlametricDTO.BusinessHourId;
-            }
-            if (!String.IsNullOrEmpty(createUpdateSlametricDTO.Slaid))
-            {
-                slametric.Slaid = createUpdateSlametricDTO.Slaid;
-            }
-            slametric = _mapper.Map<CreateUpdateSlametricDTO, Slametric>(createUpdateSlametricDTO, slametric);
+            slametric = _mapper.Map(createUpdateSlametricDTO, slametric);
             await _repository.UpdateSLAmetric(slametric);
         }
 

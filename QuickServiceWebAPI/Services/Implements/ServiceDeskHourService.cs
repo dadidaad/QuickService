@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.ServiceDeskHour;
+using QuickServiceWebAPI.DTOs.ServiceItem;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
+using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -9,9 +11,11 @@ namespace QuickServiceWebAPI.Services.Implements
     public class ServiceDeskHourService : IServiceDeskHourService
     {
         private readonly IServiceDeskHourRepository _repository;
+        private readonly IBusinessHourRepository _businessHourRepository;
         private readonly IMapper _mapper;
-        public ServiceDeskHourService(IServiceDeskHourRepository repository, IMapper mapper)
-        {
+        public ServiceDeskHourService(IServiceDeskHourRepository repository, IBusinessHourRepository businessHourRepository, IMapper mapper)
+        { 
+            _businessHourRepository = businessHourRepository;
             _repository = repository;
             _mapper = mapper;
         }
@@ -42,15 +46,11 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("ServiceDeskHour not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateServiceDeskHourDTO.DayOfWeek))
+            if (_businessHourRepository.GetBusinessHourById(createUpdateServiceDeskHourDTO.BusinessHourId) == null)
             {
-                serviceDeskHour.DayOfWeek = createUpdateServiceDeskHourDTO.DayOfWeek;
+                throw new AppException("Business hour with id " + createUpdateServiceDeskHourDTO.BusinessHourId + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateServiceDeskHourDTO.BusinessHourId))
-            {
-                serviceDeskHour.BusinessHourId = createUpdateServiceDeskHourDTO.BusinessHourId;
-            }
-            serviceDeskHour = _mapper.Map<CreateUpdateServiceDeskHourDTO, ServiceDeskHour>(createUpdateServiceDeskHourDTO, serviceDeskHour);
+            serviceDeskHour = _mapper.Map(createUpdateServiceDeskHourDTO, serviceDeskHour);
             await _repository.UpdateServiceDeskHour(serviceDeskHour);
         }
 

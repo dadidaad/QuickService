@@ -43,27 +43,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Attachment not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateAttachmentDTO.ReferenceId))
-            {
-                attachment.ReferenceId = createUpdateAttachmentDTO.ReferenceId;
-            }
-            if (!String.IsNullOrEmpty(createUpdateAttachmentDTO.ReferenceType))
-            {
-                attachment.ReferenceType = createUpdateAttachmentDTO.ReferenceType;
-            }
-            if (!String.IsNullOrEmpty(createUpdateAttachmentDTO.Filename))
-            {
-                attachment.Filename = createUpdateAttachmentDTO.Filename;
-            }
-            if (!String.IsNullOrEmpty(createUpdateAttachmentDTO.FilePath))
-            {
-                attachment.FilePath = createUpdateAttachmentDTO.FilePath;
-            }
-            if (createUpdateAttachmentDTO.FileSize > 0)
-            {
-                attachment.FileSize = createUpdateAttachmentDTO.FileSize;
-            }
-            attachment = _mapper.Map<CreateUpdateAttachmentDTO, Attachment>(createUpdateAttachmentDTO, attachment);
+            attachment = _mapper.Map(createUpdateAttachmentDTO, attachment);
             await _repository.UpdateAttachment(attachment);
         }
 
