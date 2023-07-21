@@ -62,6 +62,12 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<AzureStorageConfig>(builder.Configuration.GetSection("AzureStorageConfig"));
 
 //Add service scoped
+builder.Services.AddScoped<IAssetService, AssetService>();
+builder.Services.AddScoped<IAssetRepository, AssetRepository>();
+builder.Services.AddScoped<IAssetAssignmentService, AssetAssignmentService>();
+builder.Services.AddScoped<IAssetAssignmentRepository, AssetAssignmentRepository>();
+builder.Services.AddScoped<IAssetHistoryService, AssetHistoryService>();
+builder.Services.AddScoped<IAssetHistoryRepository, AssetHistoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();

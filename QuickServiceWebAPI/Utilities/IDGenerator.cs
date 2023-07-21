@@ -57,6 +57,24 @@ namespace QuickServiceWebAPI.Utilities
             return formattedId;
         }
 
+        public static string GenerateAssetId(int assetId)
+        {
+            string formattedId = $"ASSE{assetId.ToString("D6")}";
+            return formattedId;
+        }
+
+        public static string GenerateAssetHistoryId(int assetHistoryId)
+        {
+            string formattedId = $"ASHI{assetHistoryId.ToString("D6")}";
+            return formattedId;
+        }
+
+        public static string GenerateAssetAssignmentId(int assetAssignmentId)
+        {
+            string formattedId = $"ASAS{assetAssignmentId.ToString("D6")}";
+            return formattedId;
+        }
+
         public static string GenerateGroupId(int groupId)
         {
             string formattedId = $"GROU{groupId.ToString("D6")}";

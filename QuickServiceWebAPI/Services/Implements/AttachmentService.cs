@@ -63,8 +63,8 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 id = IDGenerator.ExtractNumberFromId(lastAttachment.AttachmentId) + 1;
             }
-            string businessHourId = IDGenerator.GenerateAttachmentId(id);
-            return businessHourId;
+            string attachmentId = IDGenerator.GenerateAttachmentId(id);
+            return attachmentId;
         }
     }
 }
