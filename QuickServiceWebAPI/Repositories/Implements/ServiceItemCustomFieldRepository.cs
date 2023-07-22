@@ -55,7 +55,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while retrieving serviceItem with ID: {ServiceItemId}", serviceItem.ServiceItemId);
+                _logger.LogError(ex, "An error occurred while retrieving serviceItem with ID: {ServiceItemId}", customField.CustomFieldId);
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
