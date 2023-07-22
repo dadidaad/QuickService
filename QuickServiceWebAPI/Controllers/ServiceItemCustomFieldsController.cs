@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
+using QuickServiceWebAPI.DTOs.ServiceItemCustomField;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Services.Authentication;
 
 namespace QuickServiceWebAPI.Controllers
@@ -11,7 +13,31 @@ namespace QuickServiceWebAPI.Controllers
     [ApiController]
     public class ServiceItemCustomFieldsController : ControllerBase
     {
+        private readonly IServiceItemCustomFieldService _serviceItemCustomFieldService;
 
+        public ServiceItemCustomFieldsController(IServiceItemCustomFieldService serviceItemCustomFieldService)
+        {
+            _serviceItemCustomFieldService = serviceItemCustomFieldService;
+        }
 
+        [HttpPost("assign")]
+        public async Task<IActionResult> AssignServiceItemCustomField(CreateUpdateServiceItemCustomFieldDTO createUpdateServiceItemCustomFieldDTO)
+        {
+            await _serviceItemCustomFieldService.AssignServiceItemCustomField(createUpdateServiceItemCustomFieldDTO);
+            return Ok( new {message = "Assign successfully"});
+        }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteServiceItemCustomField(DeleteServiceItemCustomFieldDTO deleteServiceItemCustomFieldDTO)
+        {
+            await _serviceItemCustomFieldService.DeleteServiceItemCustomField(deleteServiceItemCustomFieldDTO);
+            return Ok(new { message = "Delete successfully" });
+        }
+
+        [HttpGet("getbyserviceitem/{serviceItemId}")]
+        public async Task<IActionResult> GetServiceItemCustomFieldByServiceItem(string serviceItemId)
+        {
+            return Ok(await _serviceItemCustomFieldService.GetCustomFieldByServiceItem(serviceItemId));
+        }
     }
 }

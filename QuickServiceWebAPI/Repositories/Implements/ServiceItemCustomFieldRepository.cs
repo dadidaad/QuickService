@@ -28,9 +28,18 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public Task DeleteServiceItemCustomField(ServiceItemCustomField serviceItemCustomField)
+        public async Task DeleteServiceItemCustomField(ServiceItemCustomField serviceItemCustomField)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.ServiceItemCustomFields.Remove(serviceItemCustomField);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving serviceItem with ID: {ServiceItemId}", serviceItemCustomField.ServiceItemId);
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
         }
 
         public async Task DeleteServiceItemCustomFieldsByCustomField(CustomField customField)
@@ -69,11 +78,39 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        public async Task<ServiceItemCustomField> GetServiceItemCustomField(string serviceItemId, string customFieldId)
+        {
+            try
+            {
+                return await _context.ServiceItemCustomFields.FindAsync(serviceItemId, customFieldId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving serviceItemCustomField with ID: {serviceItemId} and {customFieldId}", serviceItemId, customFieldId);
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
         public List<ServiceItemCustomField> GetServiceItemCustomFields()
         {
             try
             {
                 return _context.ServiceItemCustomFields.Include(c => c.CustomField).Include(s => s.ServiceItem).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public Task<List<ServiceItemCustomField>> GetServiceItemCustomFieldsByServiceItem(string serviceItemId)
+        {
+            try
+            {
+                return _context.ServiceItemCustomFields
+                    .Include(sicf => sicf.CustomField)
+                    .Where(sicf => sicf.ServiceItemId == serviceItemId).ToListAsync();
             }
             catch (Exception ex)
             {
