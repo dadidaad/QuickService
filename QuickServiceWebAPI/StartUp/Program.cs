@@ -100,6 +100,9 @@ builder.Services.AddScoped<IYearlyHolidayListRepository, YearlyHolidayListReposi
 builder.Services.AddScoped<IYearlyHolidayListService, YearlyHolidayListService>();
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+builder.Services.AddScoped<ICustomFieldRepository, CustomFieldRepository>();
+builder.Services.AddScoped<IServiceItemCustomFieldRepository, ServiceItemCustomFieldRepository>();
+builder.Services.AddScoped<ICustomFieldService, CustomFieldService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
