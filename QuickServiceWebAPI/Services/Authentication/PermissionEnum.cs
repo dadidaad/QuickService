@@ -11,6 +11,15 @@ namespace QuickServiceWebAPI.Services.Authentication
         ManageRoles,
 
         [Display(Name = "Manage tickets")]
-        ManageTicket,
+        ManageTickets,
+
+        [Display(Name = "Manage service items")]
+        ManageServiceItems,
+
+        [Display(Name = "Manage service categories")]
+        ManageServiceCategories,
+
+        [Display(Name = "Manage custom fields")]
+        ManageCustomFields
     }
 }

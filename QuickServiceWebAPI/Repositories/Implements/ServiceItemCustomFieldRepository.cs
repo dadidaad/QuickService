@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using System.Data;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -27,6 +28,46 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        public Task DeleteServiceItemCustomField(ServiceItemCustomField serviceItemCustomField)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task DeleteServiceItemCustomFieldsByCustomField(CustomField customField)
+        {
+            try
+            {
+                await _context.Entry(customField).Collection("ServiceItemCustomFields").LoadAsync();
+
+                List<ServiceItemCustomField> serviceItemCustomFields = _context.ServiceItemCustomFields
+                    .Where(sicf => sicf.CustomFieldId == customField.CustomFieldId).ToList();
+                _context.ServiceItemCustomFields.RemoveRange(serviceItemCustomFields);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving serviceItem with ID: {ServiceItemId}", serviceItem.ServiceItemId);
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
+        public async Task DeleteServiceItemCustomFieldsByServiceItem(ServiceItem serviceItem)
+        {
+            try
+            {
+                await _context.Entry(serviceItem).Collection("ServiceItemCustomFields").LoadAsync();
+
+                List<ServiceItemCustomField> serviceItemCustomFields = _context.ServiceItemCustomFields
+                    .Where(sicf => sicf.ServiceItemId == serviceItem.ServiceItemId).ToList();
+                _context.ServiceItemCustomFields.RemoveRange(serviceItemCustomFields);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving serviceItem with ID: {ServiceItemId}", serviceItem.ServiceItemId);
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
 
         public List<ServiceItemCustomField> GetServiceItemCustomFields()
         {

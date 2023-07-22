@@ -33,7 +33,7 @@ public partial class RequestTicket
 
     public string RequesterId { get; set; } = null!;
 
-    public string ServiceItemId { get; set; } = null!;
+    public string? ServiceItemId { get; set; }
 
     public string? AssignedTo { get; set; }
 
@@ -57,7 +57,7 @@ public partial class RequestTicket
 
     public virtual User Requester { get; set; } = null!;
 
-    public virtual ServiceItem ServiceItem { get; set; } = null!;
+    public virtual ServiceItem? ServiceItem { get; set; }
 
     public virtual Sla Sla { get; set; } = null!;
 

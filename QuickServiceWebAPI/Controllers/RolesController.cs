@@ -9,7 +9,7 @@ using QuickServiceWebAPI.Services.Authentication;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageRoles, Models.RoleType.Admin)]
+    [HasPermission(PermissionEnum.ManageRoles, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase

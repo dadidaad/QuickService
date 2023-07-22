@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using QuickServiceWebAPI.Models;
+using System.Text.RegularExpressions;
 
 namespace QuickServiceWebAPI.Utilities
 {
@@ -115,5 +116,10 @@ namespace QuickServiceWebAPI.Utilities
             return formattedId;
         }
 
+        public static string GenerateCustomFieldId(int customFieldId)
+        {
+            string formattedId = $"CUFD{customFieldId.ToString("D6")}";
+            return formattedId;
+        }
     }
 }

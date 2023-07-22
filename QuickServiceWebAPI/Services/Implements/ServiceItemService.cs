@@ -15,15 +15,18 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly AzureStorageConfig _storageConfig;
         private readonly IMapper _mapper;
         private readonly IServiceCategoryRepository _serviceCategoryRepository;
+        private readonly IServiceItemCustomFieldRepository _serviceItemCustomFieldRepository;
         public ServiceItemService(IServiceItemRepository repository, IMapper mapper,
             IOptions<AzureStorageConfig> storageConfig, ILogger<ServiceItemService> logger,
-            IServiceCategoryRepository serviceCategoryRepository)
+            IServiceCategoryRepository serviceCategoryRepository,
+            IServiceItemCustomFieldRepository serviceItemCustomFieldRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _storageConfig = storageConfig.Value;
             _logger = logger;
             _serviceCategoryRepository = serviceCategoryRepository;
+            _serviceItemCustomFieldRepository = serviceItemCustomFieldRepository;
         }
 
         public List<ServiceItemDTO> GetServiceItems()
@@ -79,7 +82,13 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task DeleteServiceItem(string serviceItemId)
         {
-
+            ServiceItem serviceItem = await _repository.GetServiceItemById(serviceItemId);
+            if (serviceItem == null)
+            {
+                throw new AppException("Service item with id " + serviceItemId + " not found");
+            }
+            await _serviceItemCustomFieldRepository.DeleteServiceItemCustomFieldsByServiceItem(serviceItem);
+            await _repository.DeleteServiceItem(serviceItem);
         }
         public async Task<string> GetNextId()
         {
