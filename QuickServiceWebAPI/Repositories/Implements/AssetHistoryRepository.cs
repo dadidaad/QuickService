@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                AssetHistory assetHistory = await _context.AssetHistories.Include(a => a.Asset).FirstOrDefaultAsync(x => x.AssetHistoryId == assetHistoryId);
+                AssetHistory assetHistory = await _context.AssetHistories.AsNoTracking().Include(a => a.Asset).FirstOrDefaultAsync(x => x.AssetHistoryId == assetHistoryId);
                 return assetHistory;
             }
             catch (Exception ex)

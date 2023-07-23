@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                RequestTicketExt requestTicketExt = await _context.RequestTicketExts.Include(r => r.Ticket).Include(f => f.Field)
+                RequestTicketExt requestTicketExt = await _context.RequestTicketExts.AsNoTracking().Include(r => r.Ticket).Include(f => f.Field)
                                                     .FirstOrDefaultAsync(x => x.RequestTicketExId == requestTicketExtId);
                 return requestTicketExt;
             }

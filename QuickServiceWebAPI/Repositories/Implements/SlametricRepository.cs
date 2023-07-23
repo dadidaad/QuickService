@@ -32,7 +32,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 Slametric slametric = await _context.Slametrics.Include(b => b.BusinessHour)
-                                     .Include(s => s.Sla).FirstOrDefaultAsync(x => x.SlametricId == slametricId);
+                                     .Include(s => s.Sla).AsNoTracking().FirstOrDefaultAsync(x => x.SlametricId == slametricId);
                 return slametric;
             }
             catch (Exception ex)

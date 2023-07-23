@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Service service = await _context.Services.FirstOrDefaultAsync(x => x.ServiceId == serviceId);
+                Service service = await _context.Services.AsNoTracking().FirstOrDefaultAsync(x => x.ServiceId == serviceId);
                 return service;
             }
             catch (Exception ex)

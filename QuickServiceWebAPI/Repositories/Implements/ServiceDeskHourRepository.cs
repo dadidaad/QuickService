@@ -32,7 +32,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 ServiceDeskHour serviceDeskHour = await _context.ServiceDeskHours.Include(b => b.BusinessHour)
-                                                  .FirstOrDefaultAsync(x => x.ServiceDeskHourId == serviceDeskHourId);
+                                                  .AsNoTracking().FirstOrDefaultAsync(x => x.ServiceDeskHourId == serviceDeskHourId);
                 return serviceDeskHour;
             }
             catch (Exception ex)
