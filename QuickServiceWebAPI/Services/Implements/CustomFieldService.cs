@@ -23,9 +23,9 @@ namespace QuickServiceWebAPI.Services.Implements
             _serviceItemCustomFieldRepository = serviceItemCustomFieldRepository;
         }
 
-        public async Task CreateCustomField(CreateUpdateCustomField createUpdateCustomField)
+        public async Task CreateCustomField(CreateUpdateCustomFieldDTO createUpdateCustomFieldDTO)
         {
-            var customField = _mapper.Map<CustomField>(createUpdateCustomField);
+            var customField = _mapper.Map<CustomField>(createUpdateCustomFieldDTO);
             customField.CustomFieldId = await GetNextId();
             customField.CreatedDate = DateTime.Now;
             await _repository.AddCustomField(customField);
@@ -54,14 +54,14 @@ namespace QuickServiceWebAPI.Services.Implements
             return customfields.Select(customfield=> _mapper.Map<CustomFieldDTO>(customfield)).ToList();
         }
 
-        public async Task UpdateCustomField(string customFieldID, CreateUpdateCustomField createUpdateCustomField)
+        public async Task UpdateCustomField(string customFieldID, CreateUpdateCustomFieldDTO createUpdateCustomFieldDTO)
         {
             var customFieldExisting = _repository.GetCustomFieldById(customFieldID);
             if(customFieldExisting == null)
             {
                 throw new AppException("Can not found custom field with ID: {customFieldID}", customFieldID);
             }
-            var updateCustomField = _mapper.Map<CustomField>(createUpdateCustomField);
+            var updateCustomField = _mapper.Map<CustomField>(createUpdateCustomFieldDTO);
             updateCustomField.CustomFieldId = customFieldID;
             await _repository.UpdateCustomField(updateCustomField);
         }

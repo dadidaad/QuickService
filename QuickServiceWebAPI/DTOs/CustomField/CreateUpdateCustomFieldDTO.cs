@@ -2,7 +2,7 @@
 
 namespace QuickServiceWebAPI.DTOs.CustomField
 {
-    public class CreateUpdateCustomField
+    public class CreateUpdateCustomFieldDTO
     {
         [Required]
         [MaxLength(50)]
