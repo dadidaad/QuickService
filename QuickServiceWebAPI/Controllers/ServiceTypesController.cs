@@ -29,7 +29,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(serviceTypes);
         }
 
-        [HttpGet("{workflowStepId}")]
+        [HttpGet("{serviceTypeId}")]
         public async Task<IActionResult> GetServiceTypeById(string serviceTypeId)
         {
             var serviceType = await _serviceTypeService.GetServiceTypeById(serviceTypeId);
