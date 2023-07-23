@@ -33,7 +33,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 WorkflowAssignment workflowAssignment = await _context.WorkflowAssignments
                                                     .Include(w => w.CurrentStep).Include(r => r.RequestTicket).Include(w => w.Workflow)
-                                                    .FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
+                                                    .AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
                 return workflowAssignment;
             }
             catch (Exception ex)

@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                WorkflowStep workflowStep = await _context.WorkflowSteps.Include(w => w.Workflow).FirstOrDefaultAsync(x => x.WorkflowStepId == workflowStepId);
+                WorkflowStep workflowStep = await _context.WorkflowSteps.Include(w => w.Workflow).AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowStepId == workflowStepId);
                 return workflowStep;
             }
             catch (Exception ex)

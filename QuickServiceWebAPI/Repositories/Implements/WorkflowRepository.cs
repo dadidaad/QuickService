@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Workflow Workflow = await _context.Workflows.Include(u => u.CreatedByNavigation).FirstOrDefaultAsync(x => x.WorkflowId == workflowId);
+                Workflow Workflow = await _context.Workflows.Include(u => u.CreatedByNavigation).AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowId == workflowId);
                 return Workflow;
             }
             catch (Exception ex)

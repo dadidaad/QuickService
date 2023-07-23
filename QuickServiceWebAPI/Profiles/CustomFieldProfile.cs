@@ -8,8 +8,8 @@ namespace QuickServiceWebAPI.Profiles
     {
         public CustomFieldProfile()
         {
-            CreateMap<CreateUpdateCustomField, CustomField>();
             CreateMap<CustomField, CustomFieldDTO>();
+            CreateMap<CreateUpdateCustomFieldDTO, CustomField>();
         }
 
     }

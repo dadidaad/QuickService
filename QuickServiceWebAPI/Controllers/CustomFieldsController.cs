@@ -36,14 +36,14 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateCustomField(CreateUpdateCustomField createUpdateCustomField)
+        public async Task<IActionResult> CreateCustomField(CreateUpdateCustomFieldDTO createUpdateCustomField)
         {
             await _customFieldService.CreateCustomField(createUpdateCustomField);
             return Ok(new { message = "Create successfully" });
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateServiceItem(string customFieldId, CreateUpdateCustomField createUpdateCustomField)
+        public async Task<IActionResult> UpdateServiceItem(string customFieldId, CreateUpdateCustomFieldDTO createUpdateCustomField)
         {
             await _customFieldService.UpdateCustomField(customFieldId, createUpdateCustomField);
             return Ok(new { message = "Update successfully" });

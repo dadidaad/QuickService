@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Comment comment = await _context.Comments.Include(a => a.Attachment).Include(u => u.CommentByNavigation)
+                Comment comment = await _context.Comments.AsNoTracking().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
                                  .Include(r => r.RequestTicket).FirstOrDefaultAsync(x => x.CommentId == commentId);
                 return comment;
             }

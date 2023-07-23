@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Group group = await _context.Groups.Include(b => b.BusinessHour).Include(u => u.GroupLeaderNavigation.Role).FirstOrDefaultAsync(x => x.GroupId == groupId);
+                Group group = await _context.Groups.AsNoTracking().Include(b => b.BusinessHour).Include(u => u.GroupLeaderNavigation.Role).FirstOrDefaultAsync(x => x.GroupId == groupId);
                 return group;
             }
             catch (Exception ex)

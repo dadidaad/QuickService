@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.Service;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Authentication;
 using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
+    [HasPermission(PermissionEnum.ManageServices, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServicesController : ControllerBase
@@ -17,6 +21,7 @@ namespace QuickServiceWebAPI.Controllers
             _serviceService = serviceService;
         }
 
+        [AllowAnonymous]
         [HttpGet("getall")]
         public IActionResult GetAllService()
         {
@@ -24,6 +29,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(services);
         }
 
+        [AllowAnonymous]
         [HttpGet("{serviceId}")]
         public async Task<IActionResult> GetServiceById(string serviceId)
         {

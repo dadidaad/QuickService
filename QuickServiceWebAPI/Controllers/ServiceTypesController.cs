@@ -2,13 +2,16 @@
 using AutoMapper.Execution;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.ServiceType;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Authentication;
 using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
+    [HasPermission(PermissionEnum.ManageServiceTypes, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceTypesController : ControllerBase
@@ -26,7 +29,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(serviceTypes);
         }
 
-        [HttpGet("{workflowStepId}")]
+        [HttpGet("{serviceTypeId}")]
         public async Task<IActionResult> GetServiceTypeById(string serviceTypeId)
         {
             var serviceType = await _serviceTypeService.GetServiceTypeById(serviceTypeId);

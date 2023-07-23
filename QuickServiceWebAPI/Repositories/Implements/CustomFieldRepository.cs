@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                CustomField customField = await _context.CustomFields.FirstOrDefaultAsync(x => x.CustomFieldId == customFieldId);
+                CustomField customField = await _context.CustomFields.AsNoTracking().FirstOrDefaultAsync(x => x.CustomFieldId == customFieldId);
                 return customField;
             }
             catch (Exception ex)

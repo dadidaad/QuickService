@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Attachment attachment = await _context.Attachments.FirstOrDefaultAsync(x => x.AttachmentId == attachmentId);
+                Attachment attachment = await _context.Attachments.AsNoTracking().FirstOrDefaultAsync(x => x.AttachmentId == attachmentId);
                 return attachment;
             }
             catch (Exception ex)

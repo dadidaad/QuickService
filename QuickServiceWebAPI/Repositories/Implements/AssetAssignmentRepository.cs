@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                AssetAssignment assetAssignment = await _context.AssetAssignments.Include(a => a.Asset).Include(u => u.AssignedToNavigation).FirstOrDefaultAsync(x => x.AssetAssignmentId == assetAssignmentId);
+                AssetAssignment assetAssignment = await _context.AssetAssignments.AsNoTracking().Include(a => a.Asset).Include(u => u.AssignedToNavigation).FirstOrDefaultAsync(x => x.AssetAssignmentId == assetAssignmentId);
                 return assetAssignment;
             }
             catch (Exception ex)

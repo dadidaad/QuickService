@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.ServiceCategory;
 using QuickServiceWebAPI.DTOs.ServiceDeskHour;
+using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Authentication;
 
 namespace QuickServiceWebAPI.Controllers
 {
+    [HasPermission(PermissionEnum.ManageServiceDeskHours, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceDeskHoursController : ControllerBase
@@ -16,6 +21,7 @@ namespace QuickServiceWebAPI.Controllers
             _serviceDeskHourService = serviceDeskHourService;
         }
 
+        [AllowAnonymous]
         [HttpGet("getall")]
         public IActionResult GetAllServiceDeskHour()
         {
@@ -23,6 +29,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(serviceDeskHours);
         }
 
+        [AllowAnonymous]
         [HttpGet("{serviceDeskHourId}")]
         public async Task<IActionResult> GetServiceDeskHourById(string serviceDeskHourId)
         {

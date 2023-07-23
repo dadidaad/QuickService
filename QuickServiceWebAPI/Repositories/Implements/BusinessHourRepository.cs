@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                BusinessHour businessHour = await _context.BusinessHours.FirstOrDefaultAsync(x => x.BusinessHourId == businessHourId);
+                BusinessHour businessHour = await _context.BusinessHours.AsNoTracking().FirstOrDefaultAsync(x => x.BusinessHourId == businessHourId);
                 return businessHour;
             }
             catch (Exception ex)
