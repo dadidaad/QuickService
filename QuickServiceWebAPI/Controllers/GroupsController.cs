@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.Group;
-using QuickServiceWebAPI.DTOs.ServiceType;
-using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Services;
-using QuickServiceWebAPI.Services.Authentication;
-using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
