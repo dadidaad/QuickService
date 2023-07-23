@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QuickServiceWebAPI.Services.Authentication
+namespace QuickServiceWebAPI.Models.Enums
 {
     public enum PermissionEnum
     {

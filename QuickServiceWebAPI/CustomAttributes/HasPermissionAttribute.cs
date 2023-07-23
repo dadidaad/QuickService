@@ -1,7 +1,6 @@
-﻿using QuickServiceWebAPI.Models;
-using Microsoft.AspNetCore.Authorization;
-using QuickServiceWebAPI.Services.Authentication;
+﻿using Microsoft.AspNetCore.Authorization;
 using QuickServiceWebAPI.Utilities;
+using QuickServiceWebAPI.Models.Enums;
 
 namespace QuickServiceWebAPI.CustomAttributes
 {

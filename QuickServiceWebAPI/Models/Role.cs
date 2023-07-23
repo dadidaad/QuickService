@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuickServiceWebAPI.Models.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace QuickServiceWebAPI.Models;
@@ -18,8 +19,3 @@ public partial class Role
     public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
 }
 
-public enum RoleType
-{
-    Admin,
-    Agent
-}

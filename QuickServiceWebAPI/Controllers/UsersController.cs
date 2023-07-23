@@ -2,17 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.User;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Services;
-using QuickServiceWebAPI.Services.Authentication;
-using QuickServiceWebAPI.Services.Implements;
-using AllowAnonymousAttribute = Microsoft.AspNetCore.Authorization.AllowAnonymousAttribute;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageUsers, Models.RoleType.Admin)]
+    [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase

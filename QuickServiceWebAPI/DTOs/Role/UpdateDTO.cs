@@ -1,4 +1,5 @@
 ﻿using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.Role

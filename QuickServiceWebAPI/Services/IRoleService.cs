@@ -1,5 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.Role;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 
 namespace QuickServiceWebAPI.Services
 {

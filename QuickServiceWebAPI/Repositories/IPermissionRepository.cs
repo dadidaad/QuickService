@@ -1,4 +1,5 @@
 ﻿using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 
 namespace QuickServiceWebAPI.Repositories
 {

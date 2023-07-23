@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Utilities;
-using PermissionEnum = QuickServiceWebAPI.Services.Authentication.PermissionEnum;
+using PermissionEnum = QuickServiceWebAPI.Models.Enums.PermissionEnum;
 
 namespace QuickServiceWebAPI.Seeds
 {

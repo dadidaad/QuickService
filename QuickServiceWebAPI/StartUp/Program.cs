@@ -145,6 +145,7 @@ app.UseCors(x => x
         .AllowAnyHeader()
         .AllowCredentials()
            .SetIsOriginAllowed(origin => true));
+
 //Seed database
 SeedDatabase();
 
