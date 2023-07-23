@@ -2,7 +2,7 @@
 
 namespace QuickServiceWebAPI.DTOs.RequestTicket
 {
-    public class CreateUpdateRequestTicket
+    public class CreateUpdateRequestTicketDTO
     {
         [Required]
         public bool IsIncident { get; set; }
