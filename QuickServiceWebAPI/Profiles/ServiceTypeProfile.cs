@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.ServiceType;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Profiles
 {
@@ -8,7 +9,7 @@ namespace QuickServiceWebAPI.Profiles
     {
         public ServiceTypeProfile() {
             CreateMap<ServiceType, ServiceTypeDTO>();
-            CreateMap<CreateUpdateServiceTypeDTO, ServiceType>();
+            CreateMap<CreateUpdateServiceTypeDTO, ServiceType>().IgnoreAllNonExisting();
         }
     }
 }

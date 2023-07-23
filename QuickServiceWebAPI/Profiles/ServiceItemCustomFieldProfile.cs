@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.ServiceItemCustomField;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Profiles
 {
@@ -8,7 +9,7 @@ namespace QuickServiceWebAPI.Profiles
     {
         public ServiceItemCustomFieldProfile()
         {
-            CreateMap<CreateUpdateServiceItemCustomFieldDTO, ServiceItemCustomField>();
+            CreateMap<CreateUpdateServiceItemCustomFieldDTO, ServiceItemCustomField>().IgnoreAllNonExisting();
             CreateMap<ServiceItemCustomField, ServiceItemCustomFieldDTO>();
         }
     }

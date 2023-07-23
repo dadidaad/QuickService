@@ -56,13 +56,12 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task UpdateCustomField(string customFieldID, CreateUpdateCustomFieldDTO createUpdateCustomFieldDTO)
         {
-            var customFieldExisting = _repository.GetCustomFieldById(customFieldID);
+            var customFieldExisting = await _repository.GetCustomFieldById(customFieldID);
             if(customFieldExisting == null)
             {
                 throw new AppException("Can not found custom field with ID: {customFieldID}", customFieldID);
             }
-            var updateCustomField = _mapper.Map<CustomField>(createUpdateCustomFieldDTO);
-            updateCustomField.CustomFieldId = customFieldID;
+            var updateCustomField = _mapper.Map(createUpdateCustomFieldDTO, customFieldExisting);
             await _repository.UpdateCustomField(updateCustomField);
         }
 
