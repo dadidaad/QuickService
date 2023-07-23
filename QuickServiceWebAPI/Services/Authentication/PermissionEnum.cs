@@ -18,8 +18,38 @@ namespace QuickServiceWebAPI.Services.Authentication
 
         [Display(Name = "Manage service categories")]
         ManageServiceCategories,
-
+        
         [Display(Name = "Manage custom fields")]
-        ManageCustomFields
+        ManageCustomFields,
+
+        [Display(Name = "Manage attachments")]
+        ManageAttachments,
+
+        [Display(Name = "Manage groups")]
+        ManageGroups,
+
+        [Display(Name = "Manage service desk hours")]
+        ManageServiceDeskHours,
+
+        [Display(Name = "Manage services")]
+        ManageServices,
+
+        [Display(Name = "Manage service types")]
+        ManageServiceTypes,
+
+        [Display(Name = "Manage slametrics")]
+        ManageSlametrics,
+
+        [Display(Name = "Manage slas")]
+        ManageSlas,
+
+        [Display(Name = "Manage workflows")]
+        ManageWorkflows,
+
+        [Display(Name = "Manage workflow steps")]
+        ManageWorkflowSteps,
+
+        [Display(Name = "Manage yearly holiday list")]
+        ManageYearlyHolidayList,
     }
 }

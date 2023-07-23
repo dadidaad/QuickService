@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.BusinessHour;
+using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Authentication;
 
 namespace QuickServiceWebAPI.Controllers
 {
+    [HasPermission(PermissionEnum.ManageAttachments, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class AttachmentsController : ControllerBase
