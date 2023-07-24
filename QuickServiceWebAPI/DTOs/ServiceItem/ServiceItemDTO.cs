@@ -22,6 +22,8 @@ namespace QuickServiceWebAPI.DTOs.ServiceItem
 
         public string? AttachmentId { get; set; }
 
+        public string? IconDisplay { get; set; }
+
         public virtual AttachmentDTO? AttachmentEntity { get; set; }
 
         public virtual ServiceCategoryDTO ServiceCategoryEntity { get; set; } = null!;
