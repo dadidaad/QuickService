@@ -18,7 +18,7 @@ namespace QuickServiceWebAPI.Models.Enums
 
         [Display(Name = "Manage service categories")]
         ManageServiceCategories,
-        
+
         [Display(Name = "Manage custom fields")]
         ManageCustomFields,
 
@@ -51,5 +51,14 @@ namespace QuickServiceWebAPI.Models.Enums
 
         [Display(Name = "Manage yearly holiday list")]
         ManageYearlyHolidayList,
+
+        [Display(Name = "Manage business hours")]
+        ManageBusinessHours,
+
+        [Display(Name = "Manage comments")]
+        ManageComments,
+
+        [Display(Name = "Only need login")]
+        OnlyNeedLogin
     }
 }

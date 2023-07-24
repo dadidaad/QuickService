@@ -14,6 +14,15 @@ namespace QuickServiceWebAPI.Services.Authentication
             AuthorizationHandlerContext context,
             PermissionRequirement requirement)
         {
+            //if (requirement.Permission.Equals(PermissionEnum.OnlyNeedLogin.GetDisplayName())
+            //    && requirement.RoleType == RoleType.Anonymous.ToString())
+            //{
+            //    if(context.User != null)
+            //    {
+            //        context.Succeed(requirement);
+            //    }
+            //    return Task.CompletedTask;
+            //}
             var permissions = context
                 .User
                 .Claims

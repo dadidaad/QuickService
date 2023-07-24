@@ -32,7 +32,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Role already has permissions!!");
             }
-            ICollection<Permission> permissions = Array.Empty<Permission>();
+            ICollection<Permission> permissions = new List<Permission>();
             var updateRole = _mapper.Map<Role>(existingRole);
             foreach (var permissionId in assignPermissionsDTO.PermissionIdList)
             {

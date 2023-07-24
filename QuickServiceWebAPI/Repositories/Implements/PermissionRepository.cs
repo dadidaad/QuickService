@@ -63,7 +63,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 Role role = await _context.Roles
-                    .AsNoTracking().Include(r => r.Permissions).FirstOrDefaultAsync(r => r.RoleId == roleId);
+                    .Include(r => r.Permissions).FirstOrDefaultAsync(r => r.RoleId == roleId);
                 return role.Permissions.ToList();
             }
             catch (Exception ex)

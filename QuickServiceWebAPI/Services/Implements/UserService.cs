@@ -111,7 +111,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             
             
-            var updateUser = _mapper.Map<UpdateDTO, User>(updateDTO, existingUser);
+            var updateUser = _mapper.Map(updateDTO, existingUser);
             if (!string.IsNullOrEmpty(filePath))
             {
                 updateUser.Avatar = filePath;

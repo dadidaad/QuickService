@@ -60,7 +60,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.Include(u => u.Role).ThenInclude(r => r.Permissions).AsNoTracking().FirstOrDefaultAsync(u => u.UserId == userId);
+                User user = await _context.Users.Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
                 return user;
             }
             catch (Exception ex)

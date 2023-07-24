@@ -9,7 +9,6 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -28,6 +27,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(response);
         }
 
+        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser(RegisterDTO registerDTO)
         {
@@ -35,6 +35,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Create successfully" });
         }
 
+        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
         [HttpGet("getall")]
         public IActionResult GetAllUser()
         {
@@ -52,6 +53,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
         }
 
+        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
         [HttpPost("assignrole")]
         public async Task<IActionResult> AssignRole(AssignRoleDTO assignRoleDTO)
         {
@@ -67,6 +69,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Change password successfully" });
         }
 
+        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
         [HttpPost("resetpassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO)
         {
