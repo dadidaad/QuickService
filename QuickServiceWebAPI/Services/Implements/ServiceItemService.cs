@@ -50,12 +50,6 @@ namespace QuickServiceWebAPI.Services.Implements
 
             var serviceItem = _mapper.Map<ServiceItem>(createUpdateServiceItemDTO);
             serviceItem.ServiceItemId = await GetNextId();
-            string filePath = "";
-            if (createUpdateServiceItemDTO.IconImage != null && CloudHelper.IsImage(createUpdateServiceItemDTO.IconImage))
-            {
-                filePath = await UpdateIcon(createUpdateServiceItemDTO.IconImage, serviceItem.ServiceItemId);
-            }
-            serviceItem.IconDisplay = filePath;
             await _repository.AddServiceItem(serviceItem);
         }
 
@@ -71,12 +65,6 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("Service category with id " + createUpdateServiceItemDTO.ServiceCategoryId + " not found");
             }
             serviceItem = _mapper.Map(createUpdateServiceItemDTO, serviceItem);
-            string filePath = "";
-            if (createUpdateServiceItemDTO.IconImage != null && CloudHelper.IsImage(createUpdateServiceItemDTO.IconImage))
-            {
-                filePath = await UpdateIcon(createUpdateServiceItemDTO.IconImage, serviceItem.ServiceItemId);
-            }
-            serviceItem.IconDisplay = filePath;
             await _repository.UpdateServiceItem(serviceItem);
         }
 
@@ -104,54 +92,6 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             string seriveId = IDGenerator.GenerateServiceItemId(id);
             return seriveId;
-        }
-
-        public async Task<string> UpdateIcon(IFormFile image, string serviceItemId)
-        {
-            string filePath = null;
-
-            try
-            {
-                if (_storageConfig.AccountKey == string.Empty || _storageConfig.AccountName == string.Empty)
-                    throw new AppException("sorry, can't retrieve your azure storage details from appsettings.js, make sure that you add azure storage details there");
-
-                if (_storageConfig.IconServiceItemContainer == string.Empty)
-                    throw new AppException("Please provide a name for your service item container in the azure blob storage");
-
-                if (CloudHelper.IsImage(image))
-                {
-                    if (image.Length > 0 && image.Length <= 2097152)
-                    {
-                        using (Stream stream = image.OpenReadStream())
-                        {
-                            string fileName = serviceItemId + Path.GetExtension(image.FileName);
-                            filePath = await CloudHelper.UploadFileToStorage(stream, fileName, _storageConfig, _storageConfig.IconServiceItemContainer);
-                        }
-                    }
-                    else
-                    {
-                        throw new AppException("File size is not valid");
-                    }
-                }
-                else
-                {
-                    throw new AppException("Unsupported media format");
-                }
-
-                if (filePath != null)
-                {
-                    return filePath;
-                }
-                else
-                {
-                    throw new AppException("Error when try to upload image!!");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw new AppException("Error when try to upload image!!");
-            }
         }
     }
 }

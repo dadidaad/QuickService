@@ -46,16 +46,22 @@ namespace QuickServiceWebAPI.Utilities
             {
             new(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email.ToString()),
-            new(ClaimTypes.Role, user.Role.RoleName),
-            new(CustomClaims.RoleType, user.Role.RoleType.ToString())
             };
 
-            HashSet<string> permissions = await GetPermissionsName(user.RoleId);
-            if (permissions.Any())
+            if(user.Role != null)
             {
-                foreach (string permission in permissions)
+                claims.AddRange(new List<Claim>
                 {
-                    claims.Add(new(CustomClaims.Permissions, permission));
+                    new(CustomClaims.Role, user.Role.RoleName.ToString()),
+                    new(CustomClaims.RoleType, user.Role.RoleType.ToString())
+                });
+                HashSet<string> permissions = await GetPermissionsName(user.RoleId);
+                if (permissions.Any())
+                {
+                    foreach (string permission in permissions)
+                    {
+                        claims.Add(new(CustomClaims.Permissions, permission));
+                    }
                 }
             }
             // generate token that is valid for 1 days

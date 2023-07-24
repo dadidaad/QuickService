@@ -22,8 +22,7 @@ namespace QuickServiceWebAPI.DTOs.ServiceItem
         [Required]
         public string ServiceCategoryId { get; set; } = null!;
 
-        [Display(Name = "Icon")]
-        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
-        public IFormFile? IconImage { get; set; }
+        [MaxLength(100)]
+        public string? IconDisplay { get; set; }
     }
 }

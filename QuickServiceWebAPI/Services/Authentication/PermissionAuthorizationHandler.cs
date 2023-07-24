@@ -28,7 +28,7 @@ namespace QuickServiceWebAPI.Services.Authentication
             var role = context
                 .User
                 .Claims
-                .Where(x => x.Type == ClaimTypes.Role)
+                .Where(x => x.Type == CustomClaims.Role)
                 .SingleOrDefault()?.Value;
 
             bool checkPermission = (permissions.Contains(requirement.Permission)

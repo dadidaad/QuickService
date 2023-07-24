@@ -20,8 +20,8 @@ namespace QuickServiceWebAPI.Controllers
             _userService = userService;
         }
 
-        [AllowAnonymous]
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(AuthenticateRequestDTO authenticateRequestDTO)
         {
             var response = await _userService.Authenticate(authenticateRequestDTO);
@@ -44,8 +44,8 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(users);
         }
 
-        [Authorize]
         [HttpPost("update")]
+        [Authorize]
         public async Task<IActionResult> UpdateUser([FromForm]UpdateDTO updateDTO)
         {
             await _userService.UpdateUser(updateDTO);
@@ -59,8 +59,8 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Assign successfully" });
         }
 
-        [Authorize]
         [HttpPost("changepassword")]
+        [Authorize]
         public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
         {
             await _userService.ChangePassword(changePasswordDTO);
