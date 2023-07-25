@@ -42,12 +42,40 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<Comment> GetComments()
+        public List<Comment> GetCommentByUser(string userId)
         {
             try
             {
                 return _context.Comments.Include(a => a.Attachment).Include(u => u.CommentByNavigation)
-                                        .Include(r => r.RequestTicket).ToList();
+                                 .Include(r => r.RequestTicket).Where(x => x.CommentBy == userId).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public List<Comment> GetCommentsByRequestTicket(string requestTicketId)
+        {
+            try
+            {
+                return  _context.Comments.AsQueryable().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
+                                 .Include(r => r.RequestTicket).Where(x => x.RequestTicketId == requestTicketId).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public List<Comment> GetCustomerCommentsByRequestTicket(string requestTicketId)
+        {
+            try
+            {
+                return _context.Comments.AsQueryable().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
+                                 .Include(r => r.RequestTicket).Where(x => x.RequestTicketId == requestTicketId && x.IsInternal == false).ToList();
             }
             catch (Exception ex)
             {

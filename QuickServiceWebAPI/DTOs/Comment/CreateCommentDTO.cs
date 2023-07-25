@@ -2,7 +2,7 @@
 
 namespace QuickServiceWebAPI.DTOs.Comment
 {
-    public class CreateUpdateCommentDTO
+    public class CreateCommentDTO
     {
         [Required]
         [MaxLength(255)]
@@ -10,9 +10,6 @@ namespace QuickServiceWebAPI.DTOs.Comment
 
         [Required]
         public DateTime CommentTime { get; set; }
-
-        [Required]
-        public bool IsInternal { get; set; }
 
         [Required]
         [MaxLength(10)]

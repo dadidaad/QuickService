@@ -15,7 +15,8 @@ namespace QuickServiceWebAPI.Profiles
                 opt => opt.MapFrom(src => src.CommentByNavigation))
                 .ForMember(dest => dest.RequestTicketEntity,
                 opt => opt.MapFrom(src => src.RequestTicket));
-            CreateMap<CreateUpdateCommentDTO, Comment>();
+            CreateMap<CreateCommentDTO, Comment>();
+            CreateMap<UpdateCommentDTO, Comment>();
         }
     }
 }
