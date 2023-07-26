@@ -10,5 +10,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateRequestTicket(RequestTicket requestTicket);
         public Task DeleteRequestTicket(RequestTicket requestTicket);
         public Task<RequestTicket> GetLastRequestTicket();
+        public List<RequestTicket> GetRequestTicketsForRequester(string requester);
     }
 }

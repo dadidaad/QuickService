@@ -5,10 +5,11 @@ namespace QuickServiceWebAPI.DTOs.User
 {
     public class UserDTO
     {
-        public string? UserId { get; set; } = null!;
-
         public string? Email { get; set; } = null!;
 
-        public virtual RoleDTO? Role { get; set; } = null!;
+        public string? Avatar { get; set; }
+
+        public string? FullName { get; set; }
     }
 }
+    

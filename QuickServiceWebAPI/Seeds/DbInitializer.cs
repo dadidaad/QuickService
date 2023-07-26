@@ -34,7 +34,7 @@ namespace QuickServiceWebAPI.Seeds
                 .Cast<PermissionEnum>().ToList();
             foreach (var permission in permissions)
             {
-                if(!_context.Permissions.Any(p => p.PermissionName == permission.GetDisplayName()))
+                if (!_context.Permissions.Any(p => p.PermissionName == permission.GetDisplayName()))
                 {
                     var newPermission = new Permission();
                     newPermission.PermissionId = IDGenerator.GeneratePermissionId(permissions.IndexOf(permission));
@@ -49,16 +49,34 @@ namespace QuickServiceWebAPI.Seeds
         {
             var serviceCategories = jsonData.Value<JArray>("serviceCategories")
                 .ToObject<List<ServiceCategory>>();
-            if(serviceCategories == null)
+            if (serviceCategories == null)
             {
                 return;
             }
-            foreach(var serviceCategory in serviceCategories)
+            foreach (var serviceCategory in serviceCategories)
             {
-                if(!_context.ServiceCategories.Any(p => p.ServiceCategoryId == serviceCategory.ServiceCategoryId))
+                if (!_context.ServiceCategories.Any(p => p.ServiceCategoryId == serviceCategory.ServiceCategoryId))
                 {
                     _context.ServiceCategories.Add(serviceCategory);
                 }
+            }
+            _context.SaveChanges();
+        }
+
+        public void SeedSla()
+        {
+            var settings = new JsonSerializer()
+            {
+                ContractResolver = new CustomResolver()
+            };
+            var sla = jsonData.Value<JObject>("Sla").ToObject<Sla>(settings);
+            if (sla == null)
+            {
+                return;
+            }
+            if(!_context.Slas.Any(s => s.Slaid == sla.Slaid))
+            {
+                _context.Slas.Add(sla);
             }
             _context.SaveChanges();
         }

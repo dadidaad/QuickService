@@ -94,5 +94,18 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
+
+        public async Task<Sla> GetDefaultSla()
+        {
+            try
+            {
+                return await _context.Slas.Include(s => s.Slametrics).Where(s => s.Slaname.Contains("Default")).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
     }
 }

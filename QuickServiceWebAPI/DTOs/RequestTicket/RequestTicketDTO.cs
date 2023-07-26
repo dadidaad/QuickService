@@ -23,7 +23,9 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
 
         public DateTime? LastUpdateAt { get; set; }
 
-        public DateTime? DueDate { get; set; }
+        public DateTime? FirstResponseDue { get; set; }
+
+        public DateTime? FirstResolutionDue { get; set; }
 
         public string State { get; set; } = null!;
 
@@ -35,21 +37,13 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
 
         public string Urgency { get; set; } = null!;
 
-        public string RequesterId { get; set; } = null!;
+        public string Requester { get; set; } = null!;
 
         public string ServiceItemId { get; set; } = null!;
 
         public string? AssignedTo { get; set; }
 
-        public string? AssignedToGroup { get; set; }
-
-        public string Slaid { get; set; } = null!;
-
-        public string? AttachmentId { get; set; }
-
         public string Title { get; set; } = null!;
-
-        public virtual GroupDTO? GroupEntity { get; set; }
 
         public virtual UserDTO? AssignedToUserEntity { get; set; }
 
@@ -59,7 +53,6 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
 
         public virtual ServiceItemDTO ServiceItemEntity { get; set; } = null!;
 
-        public virtual SlaDTO SlaEntity { get; set; } = null!;
 
     }
 }

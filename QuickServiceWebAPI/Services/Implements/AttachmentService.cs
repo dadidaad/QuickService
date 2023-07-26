@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.Attachment;
+using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -10,10 +13,16 @@ namespace QuickServiceWebAPI.Services.Implements
     {
         private readonly IAttachmentRepository _repository;
         private readonly IMapper _mapper;
-        public AttachmentService(IAttachmentRepository repository, IMapper mapper)
+        private readonly AzureStorageConfig _storageConfig;
+        private readonly ILogger<AttachmentService> _logger;
+
+        public AttachmentService(IAttachmentRepository repository, IMapper mapper,
+            IOptions<AzureStorageConfig> storageConfig, ILogger<AttachmentService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _storageConfig = storageConfig.Value;
+            _logger = logger;
         }
 
         public List<AttachmentDTO> GetAttachments()
@@ -28,11 +37,10 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<AttachmentDTO>(attachment);
         }
 
-        public async Task CreateAttachment(CreateUpdateAttachmentDTO createUpdateAttachmentDTO)
+        public async Task CreateAttachment(CreateAttachmentDTO createAttachmentDTO)
         {
-            var attachment = _mapper.Map<Attachment>(createUpdateAttachmentDTO);
-            attachment.AttachmentId = await GetNextId();
-            attachment.CreatedAt = DateTime.Now;
+            var attachment = await UploadAttachment(createAttachmentDTO.AttachmentFile);
+            attachment = _mapper.Map<CreateAttachmentDTO, Attachment>(createAttachmentDTO);
             await _repository.AddAttachment(attachment);
         }
 
@@ -65,6 +73,50 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             string attachmentId = IDGenerator.GenerateAttachmentId(id);
             return attachmentId;
+        }
+
+        public async Task<Attachment> UploadAttachment(IFormFile attachmentFile)
+        {
+            var attachment = new Attachment();
+            try
+            {
+                if (_storageConfig.AccountKey == string.Empty || _storageConfig.AccountName == string.Empty)
+                    throw new AppException("sorry, can't retrieve your azure storage details from appsettings.js, make sure that you add azure storage details there");
+
+                if (_storageConfig.ImageContainer == string.Empty)
+                    throw new AppException("Please provide a name for your attachment container in the azure blob storage");
+
+
+                if (attachmentFile.Length > 0 && attachmentFile.Length <= 4194304)
+                {
+                    using (Stream stream = attachmentFile.OpenReadStream())
+                    {
+                        attachment.Filename = attachmentFile.FileName;
+                        attachment.FilePath = await CloudHelper.UploadFileToStorage(stream, attachment.Filename, _storageConfig, _storageConfig.AttachmentContainer);
+                        attachment.FileSize = Convert.ToInt32(attachmentFile.Length);
+                        attachment.CreatedAt = DateTime.Now;
+                    }
+                }
+                else
+                {
+                    throw new AppException("File size is not valid");
+                }
+
+
+                if (attachment.FilePath != null)
+                {
+                    return attachment;
+                }
+                else
+                {
+                    throw new AppException("Error when try to upload attachment!!");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw new AppException("Error when try to upload image!!");
+            }
         }
     }
 }

@@ -88,7 +88,7 @@ namespace QuickServiceWebAPI.Utilities
         }
         public static string GenerateSlaId(int slaId)
         {
-            string formattedId = $"SLA{slaId.ToString("D6")}";
+            string formattedId = $"SELA{slaId.ToString("D6")}";
             return formattedId;
         }
         public static string GenerateSlametricId(int slametricId)
@@ -124,6 +124,12 @@ namespace QuickServiceWebAPI.Utilities
         public static string GenerateCustomFieldId(int customFieldId)
         {
             string formattedId = $"CUFD{customFieldId.ToString("D6")}";
+            return formattedId;
+        }
+
+        public static string GenerateRequestTicketId(int requestTicketId)
+        {
+            string formattedId = $"RETK{requestTicketId.ToString("D6")}";
             return formattedId;
         }
     }

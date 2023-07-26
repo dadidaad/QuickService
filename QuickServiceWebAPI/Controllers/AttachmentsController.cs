@@ -33,9 +33,9 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateAttachment(CreateUpdateAttachmentDTO createUpdateAttachmentDTO)
+        public async Task<IActionResult> CreateAttachment(CreateAttachmentDTO createAttachmentDTO)
         {
-            await _attachmentService.CreateAttachment(createUpdateAttachmentDTO);
+            await _attachmentService.CreateAttachment(createAttachmentDTO);
             return Ok(new { message = "Create successfully" });
         }
 

@@ -3,6 +3,8 @@
     public enum StatusEnum
     {
         Open,
+        Reject,
+        InProgress,
         Pending,
         Resolved,
         Closed

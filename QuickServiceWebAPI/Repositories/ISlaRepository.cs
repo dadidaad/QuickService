@@ -10,5 +10,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateSLA(Sla sla);
         public Task DeleteSLA(Sla sla);
         public Task<Sla> GetLastSLA();
+        public Task<Sla> GetDefaultSla();
     }
 }

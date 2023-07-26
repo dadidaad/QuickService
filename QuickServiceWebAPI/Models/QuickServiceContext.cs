@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuickServiceWebAPI.Models.Enums;
 
 namespace QuickServiceWebAPI.Models;
@@ -761,8 +762,12 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.Piority)
                 .HasMaxLength(10)
                 .IsUnicode(false);
-            entity.Property(e => e.ResolutionTime).HasColumnType("datetime");
-            entity.Property(e => e.ResponseTime).HasColumnType("datetime");
+            entity.Property(e => e.ResolutionTime)
+            .HasColumnType("bigint")
+            .HasConversion(new TimeSpanToTicksConverter());
+            entity.Property(e => e.ResponseTime)
+            .HasColumnType("bigint")
+            .HasConversion(new TimeSpanToTicksConverter()); 
             entity.Property(e => e.Slaid)
                 .HasMaxLength(10)
                 .IsUnicode(false)

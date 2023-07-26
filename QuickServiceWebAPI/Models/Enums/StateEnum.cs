@@ -3,6 +3,6 @@
     public enum StateEnum
     {
         New,
-
+        Normal
     }
 }

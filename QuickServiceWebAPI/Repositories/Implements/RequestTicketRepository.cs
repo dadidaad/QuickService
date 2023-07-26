@@ -48,9 +48,9 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.RequestTickets.Include(g => g.AssignedToGroupNavigation).Include(u => u.AssignedToNavigation)
+                return _context.RequestTickets.Include(u => u.AssignedToNavigation).Include(s => s.ServiceItem)
                                               .Include(a => a.Attachment).Include(u => u.Requester)
-                                              .Include(s => s.ServiceItem).Include(s => s.Sla).ToList();
+                                              .Include(s => s.Sla).ThenInclude(s => s.Slametrics).ToList();
             }
             catch (Exception ex)
             {
@@ -97,6 +97,22 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 _logger.LogError(ex, "An error occurred");
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
+        public List<RequestTicket> GetRequestTicketsForRequester(string requester)
+        {
+            try
+            {
+                return _context.RequestTickets.Include(u => u.AssignedToNavigation).Include(s => s.ServiceItem)
+                                              .Include(a => a.Attachment).Include(u => u.Requester)
+                                              .Include(s => s.Sla).ThenInclude(s => s.Slametrics)
+                                              .Where(r => r.Requester.Email == requester).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
             }
         }
     }

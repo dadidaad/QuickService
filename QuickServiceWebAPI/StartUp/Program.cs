@@ -106,6 +106,8 @@ builder.Services.AddScoped<ICustomFieldRepository, CustomFieldRepository>();
 builder.Services.AddScoped<ICustomFieldService, CustomFieldService>();
 builder.Services.AddScoped<IServiceItemCustomFieldRepository, ServiceItemCustomFieldRepository>();
 builder.Services.AddScoped<IServiceItemCustomFieldService, ServiceItemCustomFieldService>();
+builder.Services.AddScoped<IRequestTicketRepository, RequestTicketRepository>();
+builder.Services.AddScoped<IRequestTicketService, RequestTicketService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
@@ -162,5 +164,6 @@ void SeedDatabase() //can be placed at the very bottom under app.Run()
         var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
         dbInitializer.SeedPermissions();
         dbInitializer.SeedServiceCategories();
+        dbInitializer.SeedSla();
     }
 }
