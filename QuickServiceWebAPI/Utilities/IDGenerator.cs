@@ -86,6 +86,13 @@ namespace QuickServiceWebAPI.Utilities
             string formattedId = $"GROU{groupId.ToString("D6")}";
             return formattedId;
         }
+
+        public static string GenerateRequestTicketExtId(int requestTicketExtId)
+        {
+            string formattedId = $"RETE{requestTicketExtId.ToString("D6")}";
+            return formattedId;
+        }
+
         public static string GenerateSlaId(int slaId)
         {
             string formattedId = $"SELA{slaId.ToString("D6")}";

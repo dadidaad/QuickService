@@ -26,7 +26,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("{groupId}")]
-        public async Task<IActionResult> GetWorkflowStepById(string groupId)
+        public async Task<IActionResult> GetGroupById(string groupId)
         {
             var group = await _groupService.GetGroupById(groupId);
             return Ok(group);

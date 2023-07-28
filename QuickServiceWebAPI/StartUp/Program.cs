@@ -108,6 +108,8 @@ builder.Services.AddScoped<IServiceItemCustomFieldRepository, ServiceItemCustomF
 builder.Services.AddScoped<IServiceItemCustomFieldService, ServiceItemCustomFieldService>();
 builder.Services.AddScoped<IRequestTicketRepository, RequestTicketRepository>();
 builder.Services.AddScoped<IRequestTicketService, RequestTicketService>();
+builder.Services.AddScoped<IRequestTicketExtRepository, RequestTicketExtRepository>();
+builder.Services.AddScoped<IRequestTicketExtService, RequestTicketExtService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
