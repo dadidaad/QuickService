@@ -32,9 +32,9 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateAttachment(CreateAttachmentDTO createAttachmentDTO)
+        public async Task<IActionResult> CreateAttachment(IFormFile file)
         {
-            await _attachmentService.CreateAttachment(createAttachmentDTO);
+            await _attachmentService.CreateAttachment(file);
             return Ok(new { message = "Create successfully" });
         }
 
