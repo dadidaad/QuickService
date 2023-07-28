@@ -60,7 +60,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return  _context.Comments.AsQueryable().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
+                return _context.Comments.AsQueryable().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
                                  .Include(r => r.RequestTicket).Where(x => x.RequestTicketId == requestTicketId).ToList();
             }
             catch (Exception ex)

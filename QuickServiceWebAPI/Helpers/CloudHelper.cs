@@ -40,7 +40,7 @@ namespace QuickServiceWebAPI.Helpers
             // Upload the file
             await blobClient.UploadAsync(fileStream, overwrite: true);
 
-            if(await Task.FromResult(true))
+            if (await Task.FromResult(true))
             {
                 return blobUri.AbsoluteUri;
             }

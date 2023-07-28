@@ -15,7 +15,7 @@ namespace QuickServiceWebAPI.Profiles
                 opt => opt.MapFrom(src => src.RequestTicket))
                 .ForMember(dest => dest.WorkflowEntity,
                 opt => opt.MapFrom(src => src.Workflow));
-            CreateMap<CreateUpdateWorkflowAssignmentDTO, WorkflowAssignment >();
+            CreateMap<CreateUpdateWorkflowAssignmentDTO, WorkflowAssignment>();
         }
     }
 }

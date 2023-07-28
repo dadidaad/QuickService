@@ -1,5 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.ServiceCategory;
-using QuickServiceWebAPI.DTOs.ServiceItem;
+﻿using QuickServiceWebAPI.DTOs.ServiceItem;
 
 namespace QuickServiceWebAPI.Services
 {

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Profiles
 {

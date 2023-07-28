@@ -6,7 +6,7 @@ namespace QuickServiceWebAPI.Profiles
 {
     public class WorkflowStepProfile : Profile
     {
-        public WorkflowStepProfile() 
+        public WorkflowStepProfile()
         {
             CreateMap<WorkflowStep, WorkflowStepDTO>()
                 .ForMember(dest => dest.WorkflowEntity,

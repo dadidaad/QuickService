@@ -10,6 +10,6 @@ namespace QuickServiceWebAPI.DTOs.User
         [Required]
         [MaxLength(10)]
         public string? RoleId { get; set; }
-        
+
     }
 }

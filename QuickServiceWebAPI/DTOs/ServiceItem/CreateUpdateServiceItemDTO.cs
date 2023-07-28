@@ -1,5 +1,4 @@
-﻿using QuickServiceWebAPI.CustomAttributes;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.ServiceItem
 {

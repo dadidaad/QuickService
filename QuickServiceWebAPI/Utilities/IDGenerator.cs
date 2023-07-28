@@ -6,7 +6,7 @@ namespace QuickServiceWebAPI.Utilities
     public static class IDGenerator
     {
         private static string REGEXNUMBER = @"\d+";
-        
+
         public static string GenerateUserId(int userId)
         {
             string formattedId = $"USER{userId.ToString("D6")}";
@@ -130,6 +130,18 @@ namespace QuickServiceWebAPI.Utilities
         public static string GenerateRequestTicketId(int requestTicketId)
         {
             string formattedId = $"RETK{requestTicketId.ToString("D6")}";
+            return formattedId;
+        }
+
+        public static string GenerateChangeId(int changeId)
+        {
+            string formattedId = $"CHNG{changeId.ToString("D6")}";
+            return formattedId;
+        }
+
+        public static string GenerateProblemId(int problemId)
+        {
+            string formattedId = $"PRBL{problemId.ToString("D6")}";
             return formattedId;
         }
     }

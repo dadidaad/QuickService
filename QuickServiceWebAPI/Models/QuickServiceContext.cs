@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using QuickServiceWebAPI.Models.Enums;
 
 namespace QuickServiceWebAPI.Models;
 
@@ -27,6 +25,8 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<BusinessHour> BusinessHours { get; set; }
 
+    public virtual DbSet<Change> Changes { get; set; }
+
     public virtual DbSet<Comment> Comments { get; set; }
 
     public virtual DbSet<CustomField> CustomFields { get; set; }
@@ -34,6 +34,8 @@ public partial class QuickServiceContext : DbContext
     public virtual DbSet<Group> Groups { get; set; }
 
     public virtual DbSet<Permission> Permissions { get; set; }
+
+    public virtual DbSet<Problem> Problems { get; set; }
 
     public virtual DbSet<RequestTicket> RequestTickets { get; set; }
 
@@ -67,6 +69,9 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<YearlyHolidayList> YearlyHolidayLists { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("server=tcp:quick-service.database.windows.net,1433; database=Quick Service;uid=quickservice;pwd=admin123!;TrustServerCertificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -183,14 +188,6 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.Filename)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            entity.Property(e => e.ReferenceId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("ReferenceID");
-            entity.Property(e => e.ReferenceType)
-                .HasMaxLength(10)
-                .IsUnicode(false);
         });
 
         modelBuilder.Entity<BusinessHour>(entity =>
@@ -211,6 +208,79 @@ public partial class QuickServiceContext : DbContext
                 .HasMaxLength(2)
                 .IsUnicode(false)
                 .IsFixedLength();
+        });
+
+        modelBuilder.Entity<Change>(entity =>
+        {
+            entity.ToTable("Changes", "QuickServices");
+
+            entity.Property(e => e.ChangeId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("ChangeID");
+            entity.Property(e => e.AssignerId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("AssignerID");
+            entity.Property(e => e.AttachmentId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("AttachmentID");
+            entity.Property(e => e.BackoutPlan).IsUnicode(false);
+            entity.Property(e => e.ChangeType)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.GroupId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("GroupID");
+            entity.Property(e => e.Impact).HasMaxLength(20);
+            entity.Property(e => e.PlannedEndDate).HasColumnType("datetime");
+            entity.Property(e => e.PlannedStartDate).HasColumnType("datetime");
+            entity.Property(e => e.Priority).HasMaxLength(20);
+            entity.Property(e => e.ProblemId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("ProblemID");
+            entity.Property(e => e.RequesterId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("RequesterID");
+            entity.Property(e => e.Risk).HasMaxLength(20);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Title).HasMaxLength(250);
+
+            entity.HasOne(d => d.Assigner).WithMany(p => p.ChangeAssigners)
+                .HasForeignKey(d => d.AssignerId)
+                .HasConstraintName("FK_Changes_Users");
+
+            entity.HasOne(d => d.Attachment).WithMany(p => p.Changes)
+                .HasForeignKey(d => d.AttachmentId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Changes_Attachments");
+
+            entity.HasOne(d => d.Group).WithMany(p => p.Changes)
+                .HasForeignKey(d => d.GroupId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Changes_Group");
+
+            entity.HasOne(d => d.Problem).WithMany(p => p.Changes)
+                .HasForeignKey(d => d.ProblemId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Changes_Problems");
+
+            entity.HasOne(d => d.Requester).WithMany(p => p.ChangeRequesters)
+                .HasForeignKey(d => d.RequesterId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Changes_User");
         });
 
         modelBuilder.Entity<Comment>(entity =>
@@ -341,6 +411,66 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<Problem>(entity =>
+        {
+            entity.ToTable("Problems", "QuickServices");
+
+            entity.Property(e => e.ProblemId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("ProblemID");
+            entity.Property(e => e.AssignerId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("AssignerID");
+            entity.Property(e => e.AttachmentId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("AttachmentID");
+            entity.Property(e => e.DueTime).HasColumnType("datetime");
+            entity.Property(e => e.GroupId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("GroupID");
+            entity.Property(e => e.Impact)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Priority)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.RequesterId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("RequesterID");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Title).HasMaxLength(250);
+
+            entity.HasOne(d => d.Assigner).WithMany(p => p.ProblemAssigners)
+                .HasForeignKey(d => d.AssignerId)
+                .HasConstraintName("FK_Problems_User");
+
+            entity.HasOne(d => d.Attachment).WithMany(p => p.Problems)
+                .HasForeignKey(d => d.AttachmentId)
+                .HasConstraintName("FK_Problems_Attachments");
+
+            entity.HasOne(d => d.Group).WithMany(p => p.Problems)
+                .HasForeignKey(d => d.GroupId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Problems_Group");
+
+            entity.HasOne(d => d.Requester).WithMany(p => p.ProblemRequesters)
+                .HasForeignKey(d => d.RequesterId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Problems_User2");
+        });
+
         modelBuilder.Entity<RequestTicket>(entity =>
         {
             entity.HasKey(e => e.RequestTicketId).HasName("PK__RequestT__99AAD2D7A5B8B93C");
@@ -365,6 +495,11 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("AttachmentID");
+            entity.Property(e => e.ChangeId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("ChangeID");
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.Description)
                 .HasMaxLength(1000)
@@ -377,6 +512,11 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.Priority)
                 .HasMaxLength(10)
                 .IsUnicode(false);
+            entity.Property(e => e.ProblemId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("ProblemID");
             entity.Property(e => e.RequesterId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -419,6 +559,16 @@ public partial class QuickServiceContext : DbContext
                 .HasForeignKey(d => d.AttachmentId)
                 .HasConstraintName("FK__RequestTi__Attac__114A936A");
 
+            entity.HasOne(d => d.Change).WithMany(p => p.RequestTickets)
+                .HasForeignKey(d => d.ChangeId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_RequestTickets_Changes");
+
+            entity.HasOne(d => d.Problem).WithMany(p => p.RequestTickets)
+                .HasForeignKey(d => d.ProblemId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_RequestTickets_Problems");
+
             entity.HasOne(d => d.Requester).WithMany(p => p.RequestTicketRequesters)
                 .HasForeignKey(d => d.RequesterId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -426,8 +576,7 @@ public partial class QuickServiceContext : DbContext
 
             entity.HasOne(d => d.ServiceItem).WithMany(p => p.RequestTickets)
                 .HasForeignKey(d => d.ServiceItemId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__RequestTi__Servi__0D7A0286");
+                .HasConstraintName("FK__RequestTi__Servi__65370702");
 
             entity.HasOne(d => d.Sla).WithMany(p => p.RequestTickets)
                 .HasForeignKey(d => d.Slaid)
@@ -489,8 +638,7 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.RoleType)
                 .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasConversion(r => r.ToString(), r=> (RoleType)Enum.Parse(typeof(RoleType), r));
+                .IsUnicode(false);
 
             entity.HasMany(d => d.Permissions).WithMany(p => p.Roles)
                 .UsingEntity<Dictionary<string, object>>(
@@ -739,7 +887,7 @@ public partial class QuickServiceContext : DbContext
 
         modelBuilder.Entity<Slametric>(entity =>
         {
-            entity.HasKey(e => e.SlametricId).HasName("PK__SLAMetri__D08D303D3DA11085");
+            entity.HasKey(e => e.SlametricId).HasName("PK__tmp_ms_x__D08D303D95EFD6C7");
 
             entity.ToTable("SLAMetrics", "QuickServices");
 
@@ -762,12 +910,6 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.Piority)
                 .HasMaxLength(10)
                 .IsUnicode(false);
-            entity.Property(e => e.ResolutionTime)
-            .HasColumnType("bigint")
-            .HasConversion(new TimeSpanToTicksConverter());
-            entity.Property(e => e.ResponseTime)
-            .HasColumnType("bigint")
-            .HasConversion(new TimeSpanToTicksConverter()); 
             entity.Property(e => e.Slaid)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -776,13 +918,12 @@ public partial class QuickServiceContext : DbContext
 
             entity.HasOne(d => d.BusinessHour).WithMany(p => p.Slametrics)
                 .HasForeignKey(d => d.BusinessHourId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__SLAMetric__Busin__14270015");
+                .HasConstraintName("FK__SLAMetric__Busin__6DCC4D03");
 
             entity.HasOne(d => d.Sla).WithMany(p => p.Slametrics)
                 .HasForeignKey(d => d.Slaid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__SLAMetric__SLAID__151B244E");
+                .HasConstraintName("FK__SLAMetric__SLAID__6CD828CA");
         });
 
         modelBuilder.Entity<User>(entity =>

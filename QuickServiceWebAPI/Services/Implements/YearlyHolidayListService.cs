@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.YearHolidayList;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
-using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
 {

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.ServiceItem;
@@ -27,7 +26,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(serviceItems);
         }
 
-        [AllowAnonymous]        
+        [AllowAnonymous]
         [HttpGet("{serviceItemId}")]
         public async Task<IActionResult> GetServiceItemById(string serviceItemId)
         {

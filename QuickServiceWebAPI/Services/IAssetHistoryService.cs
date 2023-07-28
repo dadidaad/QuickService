@@ -1,5 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.Asset;
-using QuickServiceWebAPI.DTOs.AssetHistory;
+﻿using QuickServiceWebAPI.DTOs.AssetHistory;
 
 namespace QuickServiceWebAPI.Services
 {

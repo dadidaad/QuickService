@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.ServiceType;
-using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
-using System.Collections.Generic;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -43,7 +40,7 @@ namespace QuickServiceWebAPI.Services.Implements
             if (serviceType == null)
             {
                 throw new AppException("ServiceType not found");
-            }                      
+            }
             serviceType = _mapper.Map<CreateUpdateServiceTypeDTO, ServiceType>(createUpdateDTO, serviceType);
             await _repository.UpdateServiceType(serviceType);
         }

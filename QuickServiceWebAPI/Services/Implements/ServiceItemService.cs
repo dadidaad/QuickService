@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.ServiceItem;
-using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
@@ -43,7 +42,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task CreateServiceItem(CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
         {
-            if(_serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId) == null)
+            if (_serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId) == null)
             {
                 throw new AppException("Service category with id " + createUpdateServiceItemDTO.ServiceCategoryId + " not found");
             }
@@ -56,7 +55,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task UpdateServiceItem(string serviceItemId, CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
         {
             ServiceItem serviceItem = await _repository.GetServiceItemById(serviceItemId);
-            if(serviceItem == null)
+            if (serviceItem == null)
             {
                 throw new AppException("Service item with id " + serviceItemId + " not found");
             }

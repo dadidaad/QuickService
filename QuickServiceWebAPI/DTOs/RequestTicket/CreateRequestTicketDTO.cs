@@ -24,6 +24,7 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
         public string Requester { get; set; } = null!;
 
         [CustomValidatorForIncident("IsIncident")]
+        [FileSize(10 * 1024 * 1024)]
         public IFormFile? Attachment { get; set; }
     }
 }

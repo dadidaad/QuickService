@@ -22,7 +22,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving user with ID: {UserId}", user.UserId);
                 throw; // Rethrow the exception to propagate it up the call stack if necessary

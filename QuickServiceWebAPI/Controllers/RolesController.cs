@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.Role;
 using QuickServiceWebAPI.Models.Enums;
@@ -47,7 +45,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
         }
 
-        [HttpDelete("delete/{roleId}")] 
+        [HttpDelete("delete/{roleId}")]
         public async Task<IActionResult> DeleteRole(string roleId)
         {
             await _roleService.DeleteRole(roleId);

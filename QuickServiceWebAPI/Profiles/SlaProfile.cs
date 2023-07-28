@@ -6,7 +6,7 @@ namespace QuickServiceWebAPI.Profiles
 {
     public class SlaProfile : Profile
     {
-        public SlaProfile() 
+        public SlaProfile()
         {
             CreateMap<Sla, SlaDTO>();
             CreateMap<CreateUpdateSlaDTO, Sla>();

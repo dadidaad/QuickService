@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.ServiceDeskHour;
 using QuickServiceWebAPI.DTOs.SLAMetric;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;

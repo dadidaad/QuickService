@@ -29,9 +29,17 @@ public partial class User
 
     public virtual ICollection<AssetAssignment> AssetAssignments { get; set; } = new List<AssetAssignment>();
 
+    public virtual ICollection<Change> ChangeAssigners { get; set; } = new List<Change>();
+
+    public virtual ICollection<Change> ChangeRequesters { get; set; } = new List<Change>();
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+
+    public virtual ICollection<Problem> ProblemAssigners { get; set; } = new List<Problem>();
+
+    public virtual ICollection<Problem> ProblemRequesters { get; set; } = new List<Problem>();
 
     public virtual ICollection<RequestTicket> RequestTicketAssignedToNavigations { get; set; } = new List<RequestTicket>();
 

@@ -1,7 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.ServiceType;
 using QuickServiceWebAPI.DTOs.User;
-using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.DTOs.Service
 {

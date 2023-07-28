@@ -19,7 +19,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 _context.ServiceTypes.Add(serviceType);
                 await _context.SaveChangesAsync();
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
                 throw;

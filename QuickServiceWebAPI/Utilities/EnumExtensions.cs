@@ -13,5 +13,16 @@ namespace QuickServiceWebAPI.Utilities
               .GetCustomAttribute<DisplayAttribute>()
               ?.GetName();
         }
+
+        public static T ToEnum<T>(this string value, T defaultValue) where T : struct, Enum
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return defaultValue;
+            }
+
+            T result;
+            return Enum.TryParse<T>(value, true, out result) ? result : defaultValue;
+        }
     }
 }

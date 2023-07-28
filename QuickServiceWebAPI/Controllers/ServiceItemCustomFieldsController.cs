@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.ServiceItemCustomField;
 using QuickServiceWebAPI.Models.Enums;
@@ -23,7 +22,7 @@ namespace QuickServiceWebAPI.Controllers
         public async Task<IActionResult> AssignServiceItemCustomField(CreateUpdateServiceItemCustomFieldDTO createUpdateServiceItemCustomFieldDTO)
         {
             await _serviceItemCustomFieldService.AssignServiceItemCustomField(createUpdateServiceItemCustomFieldDTO);
-            return Ok( new {message = "Assign successfully"});
+            return Ok(new { message = "Assign successfully" });
         }
 
         [HttpDelete("delete")]

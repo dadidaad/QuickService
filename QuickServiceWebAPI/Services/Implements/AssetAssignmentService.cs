@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.AssetAssignment;
-using QuickServiceWebAPI.DTOs.AssetHistory;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;

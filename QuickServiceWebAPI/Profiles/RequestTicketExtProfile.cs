@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.Comment;
-using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.RequestTicketExt;
 using QuickServiceWebAPI.Models;
 

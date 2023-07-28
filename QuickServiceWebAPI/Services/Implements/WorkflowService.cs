@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.Workflow;
-using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;

@@ -23,7 +23,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 return _context.Users.GroupBy(u => u.RoleId)
                     .Where(u => u.Key == roleId).Count();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;
@@ -123,7 +123,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Roles.Where(r => r.RoleType == roleType).ToList();
+                return _context.Roles.Where(r => r.RoleType == roleType.ToString()).ToList();
             }
             catch (Exception ex)
             {

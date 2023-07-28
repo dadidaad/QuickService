@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Comment;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
 
@@ -38,10 +39,10 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task CreateComment(CreateCommentDTO createCommentDTO)
         {
-            
+
             var comment = _mapper.Map<Comment>(createCommentDTO);
             User user = await _userRepository.GetUserDetails(comment.CommentBy);
-            if ((int)user.Role.RoleType == 2)
+            if (user.Role.RoleType.ToEnum(RoleType.Agent) == RoleType.Agent)
             {
                 comment.IsInternal = false;
             }

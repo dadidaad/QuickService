@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using QuickServiceWebAPI.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace QuickServiceWebAPI.Models;
@@ -11,11 +9,9 @@ public partial class Slametric
 
     public string Piority { get; set; } = null!;
 
-    //[JsonConverter(typeof(IntToTimeSpanConverter))]
-    public TimeSpan ResponseTime { get; set; }
-    
-    //[JsonConverter(typeof(IntToTimeSpanConverter))]
-    public TimeSpan ResolutionTime { get; set; }
+    public long ResponseTime { get; set; }
+
+    public long ResolutionTime { get; set; }
 
     public string? EscalationPolicy { get; set; }
 

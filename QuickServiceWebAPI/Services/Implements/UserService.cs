@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
-using BCrypt.Net;
 using Microsoft.Extensions.Options;
-using QuickServiceWebAPI.DTOs.Role;
-using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
@@ -19,7 +16,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IMapper _mapper;
         private IJWTUtils _jWTUtils;
         private readonly AzureStorageConfig _storageConfig;
-        private readonly IRoleRepository _roleRepository;   
+        private readonly IRoleRepository _roleRepository;
         public UserService(IUserRepository repository, ILogger<UserService> logger, IJWTUtils jWTUtils, IMapper mapper, IOptions<AzureStorageConfig> storageConfig, IRoleRepository roleRepository)
         {
             _repository = repository;
@@ -39,7 +36,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var user = _mapper.Map<User>(registerDTO);
             user.Password = HashPassword(registerDTO.Password);
             user.CreatedTime = DateTime.Now;
-            user.UserId =  await GetNextId();
+            user.UserId = await GetNextId();
             await _repository.AddUser(user);
         }
 
@@ -52,7 +49,8 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             User lastUser = await _repository.GetLastUser();
             int id = 0;
-            if(lastUser == null){
+            if (lastUser == null)
+            {
                 id = 1;
             }
             else
@@ -66,7 +64,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<AuthenticateResponseDTO> Authenticate(AuthenticateRequestDTO authenticateRequestDTO)
         {
             var user = await _repository.GetUserByEmail(authenticateRequestDTO.Email);
-            if(user == null  || !BCrypt.Net.BCrypt.Verify(authenticateRequestDTO.Password, user.Password))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(authenticateRequestDTO.Password, user.Password))
             {
                 throw new AppException("Email or password is incorrect");
             }
@@ -78,7 +76,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<UserDTO> GetUserById(string userId)
         {
             User user = await _repository.GetUserDetails(userId);
-            if(user == null)
+            if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
             }
@@ -100,17 +98,17 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task UpdateUser(UpdateDTO updateDTO)
         {
             User existingUser = await _repository.GetUserDetails(updateDTO.UserId);
-            if(existingUser == null)
+            if (existingUser == null)
             {
                 throw new AppException("User not found");
             }
             string filePath = "";
-            if(updateDTO.AvatarUpload != null && CloudHelper.IsImage(updateDTO.AvatarUpload))
+            if (updateDTO.AvatarUpload != null && CloudHelper.IsImage(updateDTO.AvatarUpload))
             {
                 filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
             }
-            
-            
+
+
             var updateUser = _mapper.Map(updateDTO, existingUser);
             if (!string.IsNullOrEmpty(filePath))
             {
@@ -191,7 +189,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("User not found");
             }
-            if(!BCrypt.Net.BCrypt.Verify(changePasswordDTO.OldPassword, existingUser.Password))
+            if (!BCrypt.Net.BCrypt.Verify(changePasswordDTO.OldPassword, existingUser.Password))
             {
                 throw new AppException("Old password not correct");
             }

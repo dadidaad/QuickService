@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Utilities;
@@ -65,16 +64,13 @@ namespace QuickServiceWebAPI.Seeds
 
         public void SeedSla()
         {
-            var settings = new JsonSerializer()
-            {
-                ContractResolver = new CustomResolver()
-            };
-            var sla = jsonData.Value<JObject>("Sla").ToObject<Sla>(settings);
+           
+            var sla = jsonData.Value<JObject>("Sla").ToObject<Sla>();
             if (sla == null)
             {
                 return;
             }
-            if(!_context.Slas.Any(s => s.Slaid == sla.Slaid))
+            if (!_context.Slas.Any(s => s.Slaid == sla.Slaid))
             {
                 _context.Slas.Add(sla);
             }

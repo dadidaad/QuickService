@@ -20,7 +20,7 @@ namespace QuickServiceWebAPI.CustomAttributes
 
             if (otherPropertyValue)
             {
-                if(value is string)
+                if (value is string)
                 {
                     var stringVal = value as string;
                     if (string.IsNullOrEmpty(stringVal))
@@ -28,21 +28,18 @@ namespace QuickServiceWebAPI.CustomAttributes
                         return new ValidationResult("Field is required for incident");
                     }
                 }
-                if(value is IFormFile)
+                if (value is IFormFile)
                 {
                     var file = value as IFormFile;
-                    if(file != null)
+                    if (file == null)
                     {
-                        if (file.Length >= 4194304)
-                        {
-                            return new ValidationResult($"Not allowed larger than 4MB");
-                        }
+                        return new ValidationResult("Field is required for incident");
                     }
                 }
             }
             else
             {
-                if(value != null)
+                if (value != null)
                 {
                     return new ValidationResult($"Only accept when it is incident");
                 }

@@ -45,13 +45,21 @@ public partial class RequestTicket
 
     public string Title { get; set; } = null!;
 
+    public string? ChangeId { get; set; }
+
+    public string? ProblemId { get; set; }
+
     public virtual Group? AssignedToGroupNavigation { get; set; }
 
     public virtual User? AssignedToNavigation { get; set; }
 
     public virtual Attachment? Attachment { get; set; }
 
+    public virtual Change? Change { get; set; }
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+    public virtual Problem? Problem { get; set; }
 
     public virtual ICollection<RequestTicketExt> RequestTicketExts { get; set; } = new List<RequestTicketExt>();
 

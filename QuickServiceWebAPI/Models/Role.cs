@@ -1,5 +1,4 @@
-﻿using QuickServiceWebAPI.Models.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace QuickServiceWebAPI.Models;
@@ -10,7 +9,7 @@ public partial class Role
 
     public string RoleName { get; set; } = null!;
 
-    public RoleType RoleType { get; set; }
+    public string RoleType { get; set; } = null!;
 
     public string? Description { get; set; }
 
@@ -18,4 +17,3 @@ public partial class Role
 
     public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
 }
-

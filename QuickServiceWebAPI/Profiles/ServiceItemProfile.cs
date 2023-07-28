@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.Service;
 using QuickServiceWebAPI.DTOs.ServiceItem;
-using QuickServiceWebAPI.DTOs.SLAMetric;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Utilities;
-using System.Security.Cryptography;
 
 namespace QuickServiceWebAPI.Profiles
 {

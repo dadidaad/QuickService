@@ -1,6 +1,5 @@
 ﻿using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.ServiceCategory;
-using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.DTOs.ServiceItem
 {

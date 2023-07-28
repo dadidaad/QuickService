@@ -4,9 +4,9 @@ namespace QuickServiceWebAPI.DTOs.Workflow
 {
     public class WorkflowDTO
     {
-        public string WorkflowId { get; set; } 
+        public string WorkflowId { get; set; }
 
-        public string WorkflowName { get; set; } 
+        public string WorkflowName { get; set; }
 
         public bool IsActive { get; set; }
 

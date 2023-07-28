@@ -18,6 +18,6 @@ namespace QuickServiceWebAPI.DTOs.WorkflowStep
 
         [Required]
         [MaxLength(10)]
-        public string WorkflowId { get; set; } 
+        public string WorkflowId { get; set; }
     }
 }

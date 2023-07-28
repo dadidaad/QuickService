@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.DTOs.Permission
         [MaxLength(10)]
         public string? RoleId { get; set; }
 
-        [ListHasElements (ErrorMessage = "Must select at least one permission")]
+        [ListHasElements(ErrorMessage = "Must select at least one permission")]
         public List<string>? PermissionIdList { get; set; }
 
     }

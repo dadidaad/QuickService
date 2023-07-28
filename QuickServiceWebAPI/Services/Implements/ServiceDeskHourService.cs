@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.ServiceDeskHour;
-using QuickServiceWebAPI.DTOs.ServiceItem;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
-using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -14,7 +12,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IBusinessHourRepository _businessHourRepository;
         private readonly IMapper _mapper;
         public ServiceDeskHourService(IServiceDeskHourRepository repository, IBusinessHourRepository businessHourRepository, IMapper mapper)
-        { 
+        {
             _businessHourRepository = businessHourRepository;
             _repository = repository;
             _mapper = mapper;
@@ -33,14 +31,14 @@ namespace QuickServiceWebAPI.Services.Implements
         }
 
         public async Task CreateServiceDeskHour(CreateUpdateServiceDeskHourDTO createUpdateServiceDeskHourDTO)
-    {
+        {
             var serviceDeskHour = _mapper.Map<ServiceDeskHour>(createUpdateServiceDeskHourDTO);
             serviceDeskHour.ServiceDeskHourId = await GetNextId();
             await _repository.AddServiceDeskHour(serviceDeskHour);
         }
 
         public async Task UpdateServiceDeskHour(string serviceDeskHourId, CreateUpdateServiceDeskHourDTO createUpdateServiceDeskHourDTO)
-    {
+        {
             ServiceDeskHour serviceDeskHour = await _repository.GetServiceDeskHourById(serviceDeskHourId);
             if (serviceDeskHour == null)
             {
@@ -55,8 +53,8 @@ namespace QuickServiceWebAPI.Services.Implements
         }
 
         public async Task DeleteServiceDeskHour(string serviceDeskHourId)
-    {
-            
+        {
+
         }
         public async Task<string> GetNextId()
         {

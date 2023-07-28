@@ -1,6 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.BusinessHour;
-using QuickServiceWebAPI.DTOs.Sla;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.SLAMetric
 {

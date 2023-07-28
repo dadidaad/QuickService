@@ -1,7 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.Role;
-using System.Text.Json.Serialization;
-
-namespace QuickServiceWebAPI.DTOs.User
+﻿namespace QuickServiceWebAPI.DTOs.User
 {
     public class UserDTO
     {
@@ -12,4 +9,3 @@ namespace QuickServiceWebAPI.DTOs.User
         public string? FullName { get; set; }
     }
 }
-    

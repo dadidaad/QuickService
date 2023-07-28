@@ -20,7 +20,7 @@ namespace QuickServiceWebAPI.Services.Authentication
             ISystemClock clock, IJWTUtils jWTUtils)
             : base(options, logger, encoder, clock)
         {
-            _jWTUtils =  jWTUtils;
+            _jWTUtils = jWTUtils;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()

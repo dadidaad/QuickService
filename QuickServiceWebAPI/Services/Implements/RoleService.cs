@@ -28,13 +28,13 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task DeleteRole(string roleId)
         {
             var role = await _repository.GetRoleById(roleId);
-            if(role == null)
+            if (role == null)
             {
                 throw new AppException("Role not found");
             }
-            if(_repository.CountUserHaveRole(roleId) > 0) // Check if existing user have this role so update it to null
+            if (_repository.CountUserHaveRole(roleId) > 0) // Check if existing user have this role so update it to null
             {
-                foreach(var user in role.Users)
+                foreach (var user in role.Users)
                 {
                     user.RoleId = null;
                     //user.Role = null;
@@ -67,7 +67,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task UpdateRole(UpdateDTO updateDTO)
         {
             var existingRole = await _repository.GetRoleById(updateDTO.RoleId);
-            if(existingRole == null)
+            if (existingRole == null)
             {
                 throw new AppException("Role not found");
             }

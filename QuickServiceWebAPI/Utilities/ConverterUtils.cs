@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System.Reflection;
-using System;
 using QuickServiceWebAPI.Models;
+using System.Reflection;
 
 namespace QuickServiceWebAPI.Utilities
 {
@@ -13,7 +11,7 @@ namespace QuickServiceWebAPI.Utilities
         {
             return timeSpan.Ticks;
         }
-        
+
     }
     public class IntToTimeSpanConverter : JsonConverter<TimeSpan>
     {
@@ -21,7 +19,7 @@ namespace QuickServiceWebAPI.Utilities
         {
             Int64 value = (Int64)reader.Value;
             return TimeSpan.FromSeconds(value);
-            
+
         }
 
         public override void WriteJson(JsonWriter writer, TimeSpan value, JsonSerializer serializer)

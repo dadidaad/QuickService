@@ -1,10 +1,8 @@
-﻿using AutoMapper.Execution;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
-using System.Diagnostics.Metrics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -38,7 +36,7 @@ namespace QuickServiceWebAPI.Utilities
 
         public async Task<string> GenerateToken(User user)
         {
-            if(user == null)
+            if (user == null)
             {
                 return null;
             }
@@ -48,7 +46,7 @@ namespace QuickServiceWebAPI.Utilities
             new(JwtRegisteredClaimNames.Email, user.Email.ToString()),
             };
 
-            if(user.Role != null)
+            if (user.Role != null)
             {
                 claims.AddRange(new List<Claim>
                 {

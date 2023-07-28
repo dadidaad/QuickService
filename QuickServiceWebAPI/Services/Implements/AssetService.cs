@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Asset;
-using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
-using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements

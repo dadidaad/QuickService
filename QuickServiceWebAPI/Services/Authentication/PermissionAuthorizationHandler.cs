@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using QuickServiceWebAPI.Helpers;
-using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Utilities;
-using System.Security.Claims;
 
 namespace QuickServiceWebAPI.Services.Authentication
 {

@@ -3,7 +3,6 @@ using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.ServiceItem;
 using QuickServiceWebAPI.DTOs.User;
-using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
@@ -65,7 +64,6 @@ namespace QuickServiceWebAPI.Services.Implements
 
         private const ImpactEnum DefaultImpactForIncident = ImpactEnum.Low;
         private const UrgencyEnum DefaultUrgencyForIncident = UrgencyEnum.Low;
-        private const string ReferenceType = "RequestTicket";
         private async Task HandleIncidentTicket(RequestTicket requestTicket, CreateRequestTicketDTO createRequestTicketDTO)
         {
             requestTicket.Impact = DefaultImpactForIncident.ToString();
@@ -73,13 +71,7 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.Priority = CalculatePriority(DefaultImpactForIncident, DefaultUrgencyForIncident).ToString();
             if (createRequestTicketDTO.Attachment != null)
             {
-                CreateAttachmentDTO createAttachmentDTO = new CreateAttachmentDTO
-                {
-                    AttachmentFile = createRequestTicketDTO.Attachment,
-                    ReferenceId = requestTicket.RequestTicketId,
-                    ReferenceType = ReferenceType
-                };
-                await _attachmentService.CreateAttachment(createAttachmentDTO);
+                requestTicket.Attachment = await _attachmentService.CreateAttachment(createRequestTicketDTO.Attachment);
             }
         }
 
@@ -119,7 +111,7 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             if (impact == ImpactEnum.High && urgency == UrgencyEnum.High)
             {
-                return PriorityEnum.Urgency;
+                return PriorityEnum.Urgent;
             }
             else
             {
@@ -153,7 +145,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<List<RequestTicketForRequesterDTO>> GetAllListRequestTicketForRequester(RequesterResquestDTO requesterResquestDTO)
         {
             var user = await _userRepository.GetUserByEmail(requesterResquestDTO.Requester);
-            if(user == null)
+            if (user == null)
             {
                 throw new AppException($"Can not found user with email {requesterResquestDTO.Requester}");
             }
@@ -172,7 +164,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<RequestTicketDTO> GetDetailsRequestTicket(string requestTicketId)
         {
             var requestTicket = await _requestTicketRepository.GetRequestTicketById(requestTicketId);
-            if(requestTicket == null)
+            if (requestTicket == null)
             {
                 throw new AppException($"Request ticket with id {requestTicketId} not found");
             }
@@ -191,7 +183,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Request ticket with id {requesterResquestDTO.RequestTicketId} not found");
             }
-            if(requestTicket.Requester.Email != requesterResquestDTO.Requester)
+            if (requestTicket.Requester.Email != requesterResquestDTO.Requester)
             {
                 throw new AppException($"Request ticket with id {requesterResquestDTO.RequestTicketId} not belong to {requesterResquestDTO.Requester}");
             }
@@ -201,9 +193,16 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task UpdateRequestTicket(UpdateRequestTicketDTO updateRequestTicketDTO)
         {
             var existingRequestTicket = await _requestTicketRepository.GetRequestTicketById(updateRequestTicketDTO.RequestTicketId);
-            if(existingRequestTicket == null)
+            if (existingRequestTicket == null)
             {
                 throw new AppException($"Request ticket item with id {updateRequestTicketDTO.RequestTicketId} not found");
+            }
+            if((existingRequestTicket.Impact != updateRequestTicketDTO.Impact
+                || existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency)
+                && existingRequestTicket.Priority == updateRequestTicketDTO.Priority)
+            {
+                updateRequestTicketDTO.Priority = CalculatePriority(updateRequestTicketDTO.Impact.ToEnum(ImpactEnum.Low)
+                    , updateRequestTicketDTO.Urgency.ToEnum(UrgencyEnum.Low)).ToString();
             }
             var updateTicket = _mapper.Map(updateRequestTicketDTO, existingRequestTicket);
             updateTicket.LastUpdateAt = DateTime.Now;

@@ -2,7 +2,6 @@
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using System.Data;
-using System.Security;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {

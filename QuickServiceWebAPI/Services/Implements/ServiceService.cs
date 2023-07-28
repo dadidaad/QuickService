@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.Service;
-using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
-using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -91,6 +88,6 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             string seriveId = IDGenerator.GenerateServiceId(id);
             return seriveId;
-        }      
+        }
     }
 }

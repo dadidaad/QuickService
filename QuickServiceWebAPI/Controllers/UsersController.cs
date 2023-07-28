@@ -1,6 +1,5 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.User;
@@ -47,7 +46,7 @@ namespace QuickServiceWebAPI.Controllers
 
         [HttpPost("update")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser([FromForm]UpdateDTO updateDTO)
+        public async Task<IActionResult> UpdateUser([FromForm] UpdateDTO updateDTO)
         {
             await _userService.UpdateUser(updateDTO);
             return Ok(new { message = "Update successfully" });

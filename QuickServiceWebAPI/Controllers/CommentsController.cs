@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using QuickServiceWebAPI.DTOs.BusinessHour;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.Comment;
-using QuickServiceWebAPI.DTOs.CustomField;
 using QuickServiceWebAPI.Services;
-using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {

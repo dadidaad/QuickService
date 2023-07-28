@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Group;
-using QuickServiceWebAPI.DTOs.ServiceDeskHour;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
-using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -61,7 +59,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task DeleteGroup(string groupId)
         {
-            
+
         }
 
         public async Task<string> GetNextId()

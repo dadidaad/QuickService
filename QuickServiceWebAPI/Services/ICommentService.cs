@@ -1,5 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.BusinessHour;
-using QuickServiceWebAPI.DTOs.Comment;
+﻿using QuickServiceWebAPI.DTOs.Comment;
 
 namespace QuickServiceWebAPI.Services
 {

@@ -14,7 +14,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IServiceItemCustomFieldRepository _serviceItemCustomFieldRepository;
 
         public CustomFieldService(ICustomFieldRepository repository,
-            ILogger<CustomFieldService> logger, IMapper mapper, 
+            ILogger<CustomFieldService> logger, IMapper mapper,
             IServiceItemCustomFieldRepository serviceItemCustomFieldRepository)
         {
             _repository = repository;
@@ -51,13 +51,13 @@ namespace QuickServiceWebAPI.Services.Implements
         public List<CustomFieldDTO> GetCustomFields()
         {
             var customfields = _repository.GetCustomFields();
-            return customfields.Select(customfield=> _mapper.Map<CustomFieldDTO>(customfield)).ToList();
+            return customfields.Select(customfield => _mapper.Map<CustomFieldDTO>(customfield)).ToList();
         }
 
         public async Task UpdateCustomField(string customFieldID, CreateUpdateCustomFieldDTO createUpdateCustomFieldDTO)
         {
             var customFieldExisting = await _repository.GetCustomFieldById(customFieldID);
-            if(customFieldExisting == null)
+            if (customFieldExisting == null)
             {
                 throw new AppException("Can not found custom field with ID: {customFieldID}", customFieldID);
             }

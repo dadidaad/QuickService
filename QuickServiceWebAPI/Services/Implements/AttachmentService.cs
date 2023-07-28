@@ -5,7 +5,6 @@ using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -37,11 +36,11 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<AttachmentDTO>(attachment);
         }
 
-        public async Task CreateAttachment(CreateAttachmentDTO createAttachmentDTO)
+        public async Task<Attachment> CreateAttachment(IFormFile file)
         {
-            var attachment = await UploadAttachment(createAttachmentDTO.AttachmentFile);
-            attachment = _mapper.Map<CreateAttachmentDTO, Attachment>(createAttachmentDTO);
+            var attachment = await UploadAttachment(file);
             await _repository.AddAttachment(attachment);
+            return attachment;
         }
 
         public async Task UpdateAttachment(string attachmentId, CreateUpdateAttachmentDTO createUpdateAttachmentDTO)

@@ -6,7 +6,7 @@ namespace QuickServiceWebAPI.Profiles
 {
     public class AssetAssignmentProfile : Profile
     {
-        public AssetAssignmentProfile() 
+        public AssetAssignmentProfile()
         {
             CreateMap<AssetAssignment, AssetAssignmentDTO>()
                 .ForMember(dest => dest.AssetEntity,
