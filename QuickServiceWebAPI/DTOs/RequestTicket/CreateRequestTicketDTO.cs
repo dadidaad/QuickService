@@ -17,13 +17,13 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
         public string? Description { get; set; }
 
         [MaxLength(10)]
-        [CustomValidatorForIncident("IsIncident")]
         public string? ServiceItemId { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string RequesterEmail { get; set; } = null!;
+        public string Requester { get; set; } = null!;
 
+        [CustomValidatorForIncident("IsIncident")]
         [FileSize(10 * 1024 * 1024)]
         public IFormFile? Attachment { get; set; }
     }

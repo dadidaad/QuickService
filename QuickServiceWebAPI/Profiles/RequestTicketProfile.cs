@@ -35,8 +35,8 @@ namespace QuickServiceWebAPI.Profiles
         private DateTime CalculateDatetime(RequestTicket requestTicket, bool isResponseDue)
         {
             Slametric slametric = requestTicket.Sla.Slametrics.Where(s => requestTicket.Priority == s.Piority).FirstOrDefault();
-            return isResponseDue ? requestTicket.CreatedAt + TimeSpan.FromTicks(slametric.ResponseTime)
-                : requestTicket.CreatedAt + TimeSpan.FromTicks(slametric.ResolutionTime);
+            return isResponseDue ? requestTicket.CreatedAt + TimeSpan.FromSeconds(slametric.ResponseTime)
+                : requestTicket.CreatedAt + TimeSpan.FromSeconds(slametric.ResolutionTime);
         }
     }
 }

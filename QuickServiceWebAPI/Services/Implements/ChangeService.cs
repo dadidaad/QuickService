@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.Change;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
 
@@ -16,7 +15,6 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IGroupRepository _groupRepository;
         private readonly ILogger<ServiceItemService> _logger;
         private readonly IAttachmentService _attachmentService;
-
         public ChangeService(IChangeRepository repository, IMapper mapper,
             IUserRepository userRepository, IGroupRepository groupRepository,
             ILogger<ServiceItemService> logger, IAttachmentService attachmentService)
@@ -78,17 +76,8 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 id = IDGenerator.ExtractNumberFromId(lastChange.ChangeId) + 1;
             }
-            string changeId = IDGenerator.GenerateServiceId(id);
-            return changeId;
-        }
-
-        private void ActivitiesEachStatus(StatusChangeEnum currentStatusChange, UpdateChangePropertiesDTO updateChangePropertiesDTO)
-        {
-            var updateStatusChange = updateChangePropertiesDTO.Status.ToEnum(StatusChangeEnum.Open);
-            if(currentStatusChange == updateStatusChange)
-            {
-                return;
-            }
+            string seriveId = IDGenerator.GenerateServiceId(id);
+            return seriveId;
         }
     }
 }

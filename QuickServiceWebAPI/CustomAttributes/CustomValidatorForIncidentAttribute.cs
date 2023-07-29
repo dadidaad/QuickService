@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.CustomAttributes
 {
@@ -29,19 +28,20 @@ namespace QuickServiceWebAPI.CustomAttributes
                         return new ValidationResult("Field is required for incident");
                     }
                 }
+                if (value is IFormFile)
+                {
+                    var file = value as IFormFile;
+                    if (file == null)
+                    {
+                        return new ValidationResult("Field is required for incident");
+                    }
+                }
             }
             else
             {
-                if(validationContext.MemberName == "ServiceItemId")
+                if (value != null)
                 {
-                    if (value is string)
-                    {
-                        var stringVal = value as string;
-                        if (string.IsNullOrEmpty(stringVal))
-                        {
-                            return new ValidationResult("Field is required for service request");
-                        }
-                    }
+                    return new ValidationResult($"Only accept when it is incident");
                 }
             }
             return ValidationResult.Success;

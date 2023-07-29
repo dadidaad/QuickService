@@ -1,6 +1,5 @@
 ﻿using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.Change
@@ -16,23 +15,18 @@ namespace QuickServiceWebAPI.DTOs.Change
         public string Description { get; set; } = null!;
 
         [Required]
-        [EnumDataType(typeof(StatusChangeEnum))]
         public string Status { get; set; } = null!;
 
         [Required]
-        [EnumDataType(typeof(ChangeTypeEnum))]
         public string ChangeType { get; set; } = null!;
 
         [Required]
-        [EnumDataType(typeof(PriorityEnum))]
         public string Priority { get; set; } = null!;
 
         [Required]
-        [EnumDataType(typeof(ImpactEnum))]
         public string Impact { get; set; } = null!;
 
         [Required]
-        [EnumDataType(typeof(RiskEnum))]
         public string Risk { get; set; } = null!;
 
         [MaxLength(10)]

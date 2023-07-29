@@ -879,7 +879,6 @@ public partial class QuickServiceContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.IsActive).HasColumnName("isActive");
-            entity.Property(e => e.IsDefault).HasColumnName("isDefault");
             entity.Property(e => e.Slaname)
                 .HasMaxLength(100)
                 .IsUnicode(false)
