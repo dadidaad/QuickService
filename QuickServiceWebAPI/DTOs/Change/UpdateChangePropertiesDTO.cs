@@ -1,20 +1,14 @@
 ﻿using QuickServiceWebAPI.CustomAttributes;
-using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.Change
 {
-    public class CreateChangeDTO
+    public class UpdateChangePropertiesDTO
     {
         [Required]
-        [MaxLength(250)]
-        public string Title { get; set; } = null!;
-
-        [Required]
-        [MaxLength]
-        public string Description { get; set; } = null!;
-
+        [MaxLength(10)]
+        public string ChangeId { get; set; } = null!;
         [Required]
         [EnumDataType(typeof(StatusChangeEnum))]
         public string Status { get; set; } = null!;
@@ -38,11 +32,8 @@ namespace QuickServiceWebAPI.DTOs.Change
         [MaxLength(10)]
         public string? GroupId { get; set; }
 
-        [Required]
-        [MaxLength (10)]
-        public string RequesterId { get; set; } = null!;
 
-        [MaxLength (10)] 
+        [MaxLength(10)]
         public string? AssignerId { get; set; }
 
         [Required]
@@ -51,8 +42,5 @@ namespace QuickServiceWebAPI.DTOs.Change
 
         [Required]
         public DateTime PlannedEndDate { get; set; }
-
-        [FileSize(10 * 1024 * 1024)] // Maximum 10mB
-        public IFormFile? AttachmentFile { get; set; }
     }
 }

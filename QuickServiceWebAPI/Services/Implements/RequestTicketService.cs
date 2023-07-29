@@ -23,7 +23,8 @@ namespace QuickServiceWebAPI.Services.Implements
         public RequestTicketService(IRequestTicketRepository requestTicketRepository,
             ILogger<RequestTicketService> logger, IMapper mapper,
             IUserRepository userRepository,
-            IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService)
+            IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService, 
+            ISlaRepository slaRepository)
         {
             _requestTicketRepository = requestTicketRepository;
             _logger = logger;
@@ -31,16 +32,17 @@ namespace QuickServiceWebAPI.Services.Implements
             _userRepository = userRepository;
             _serviceItemRepository = serviceItemRepository;
             _attachmentService = attachmentService;
+            _slaRepository = slaRepository;
         }
 
         public async Task SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
-            var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.Requester);
+            var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.RequesterEmail);
             if (requester == null)
             {
-                throw new AppException($"User with email {createRequestTicketDTO.Requester} not found");
+                throw new AppException($"User with email {createRequestTicketDTO.RequesterEmail} not found");
             }
-            var requestTicket = _mapper.Map<CreateRequestTicketDTO, RequestTicket>(createRequestTicketDTO);
+            var requestTicket = _mapper.Map<RequestTicket>(createRequestTicketDTO);
             requestTicket.RequesterId = requester.UserId;
             requestTicket.Status = StatusEnum.Open.ToString();
             requestTicket.State = StateEnum.New.ToString();
