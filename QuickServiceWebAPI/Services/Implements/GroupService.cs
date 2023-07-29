@@ -23,6 +23,8 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var group = _mapper.Map<Group>(createUpdateGroupDTO);
             group.GroupId = await GetNextId();
+            group.NeedApprovalByLeader = false;
+            group.IsRestricted = false;
             await _repository.AddGroup(group);
         }
 
