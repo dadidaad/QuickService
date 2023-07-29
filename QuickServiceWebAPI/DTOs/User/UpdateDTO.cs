@@ -6,12 +6,8 @@ namespace QuickServiceWebAPI.DTOs.User
     public class UpdateDTO
     {
         [Required]
-        [MaxLength(100)]
-        [DataType(DataType.EmailAddress)]
-        public string? Email { get; set; }
-
-        [MaxLength(100)]
-        public string? Password { get; set; }
+        [MaxLength(10)]
+        public string? UserId { get; set; }
 
         [MaxLength(20)]
         public string? FirstName { get; set; }
@@ -19,8 +15,6 @@ namespace QuickServiceWebAPI.DTOs.User
         [MaxLength(20)]
         public string? MiddleName { get; set; }
 
-        [MaxLength(10)]
-        public string? RoleId { get; set;}
         [MaxLength(20)]
         public string? LastName { get; set; }
 

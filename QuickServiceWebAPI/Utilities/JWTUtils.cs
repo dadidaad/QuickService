@@ -1,53 +1,98 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace QuickServiceWebAPI.Utilities
 {
-    public class AppSettings
+    public class JwtOptions
     {
-        public string Secret { get; set; }
+        public string Issuer { get; set; }
+
+        public string Audience { get; set; }
+
+        public string SecretKey { get; set; }
     }
 
     public interface IJWTUtils
     {
-        public string GenerateToken(User user);
-        public string? ValidateToken(string token);
+        public Task<string> GenerateToken(User user);
+        public List<Claim>? ValidateToken(string token);
     }
     public class JWTUtils : IJWTUtils
     {
-        private readonly AppSettings _appSettings;
+        private readonly JwtOptions _jwtOptions;
+        private readonly IPermissionService _permissionService;
 
-        public JWTUtils(IOptions<AppSettings> appSettings)
+        public JWTUtils(IOptions<JwtOptions> jwtOptions, IPermissionService permissionService)
         {
-            _appSettings = appSettings.Value;
+            _jwtOptions = jwtOptions.Value;
+            _permissionService = permissionService;
         }
 
-        public string GenerateToken(User user)
+        public async Task<string> GenerateToken(User user)
         {
+            if (user == null)
+            {
+                return null;
+            }
+            var claims = new List<Claim>
+            {
+            new(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+            new(JwtRegisteredClaimNames.Email, user.Email.ToString()),
+            };
+
+            if (user.Role != null)
+            {
+                claims.AddRange(new List<Claim>
+                {
+                    new(CustomClaims.Role, user.Role.RoleName.ToString()),
+                    new(CustomClaims.RoleType, user.Role.RoleType.ToString())
+                });
+                HashSet<string> permissions = await GetPermissionsName(user.RoleId);
+                if (permissions.Any())
+                {
+                    foreach (string permission in permissions)
+                    {
+                        claims.Add(new(CustomClaims.Permissions, permission));
+                    }
+                }
+            }
             // generate token that is valid for 1 days
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[] { new Claim("userId", user.UserId.ToString()) }),
-                Expires = DateTime.UtcNow.AddDays(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var key = Encoding.ASCII.GetBytes(_jwtOptions.SecretKey);
+            var signingCredentials = new SigningCredentials
+                (new SymmetricSecurityKey(key)
+                , SecurityAlgorithms.HmacSha256Signature);
+
+            var token = new JwtSecurityToken(
+            _jwtOptions.Issuer,
+            _jwtOptions.Audience,
+            claims,
+            null,
+            DateTime.UtcNow.AddDays(1),
+            signingCredentials);
+            var tokenValue = tokenHandler.WriteToken(token);
+            return tokenValue;
         }
 
-        public string? ValidateToken(string token)
+        private async Task<HashSet<string>> GetPermissionsName(string roleId)
+        {
+            List<Permission> permissions = await _permissionService.GetPermissionsByRole(roleId);
+            return permissions.Select(p => p.PermissionName).ToHashSet();
+        }
+
+        public List<Claim> ValidateToken(string token)
         {
             if (token == null)
                 return null;
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_jwtOptions.SecretKey);
             try
             {
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
@@ -61,10 +106,10 @@ namespace QuickServiceWebAPI.Utilities
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var userId = jwtToken.Claims.First(x => x.Type == "userId").Value;
+                var claims = jwtToken.Claims.ToList();
 
-                // return user id from JWT token if validation successful
-                return userId;
+                // return user claims from JWT token if validation successful
+                return claims;
             }
             catch
             {

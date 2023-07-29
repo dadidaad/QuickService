@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.ServiceCategory;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
+    [HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceCategoriesController : ControllerBase
@@ -15,11 +18,20 @@ namespace QuickServiceWebAPI.Controllers
             _serviceCategoryService = serviceCategoryService;
         }
 
+        [AllowAnonymous]
         [HttpGet("getall")]
         public IActionResult GetAllServiceCategory()
         {
-            var services = _serviceCategoryService.GetServiceCategories();
-            return Ok(services);
+            var serviceCategories = _serviceCategoryService.GetServiceCategories();
+            return Ok(serviceCategories);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{serviceCategoryId}")]
+        public async Task<IActionResult> GetServiceCategoryById(string serviceCategoryId)
+        {
+            var serviceCategory = await _serviceCategoryService.GetServiceCategoryById(serviceCategoryId);
+            return Ok(serviceCategory);
         }
 
         [HttpPost("create")]

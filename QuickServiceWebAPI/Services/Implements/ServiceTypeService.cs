@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.ServiceType;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
-using System.Collections.Generic;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -30,6 +28,12 @@ namespace QuickServiceWebAPI.Services.Implements
             return serviceTypes.Select(serviceType => _mapper.Map<ServiceTypeDTO>(serviceType)).ToList();
         }
 
+        public async Task<ServiceTypeDTO> GetServiceTypeById(string serviceTypeId)
+        {
+            var serviceType = await _repository.GetServiceTypeById(serviceTypeId);
+            return _mapper.Map<ServiceTypeDTO>(serviceType);
+        }
+
         public async Task UpdateServiceType(string serviceTypeId, CreateUpdateServiceTypeDTO createUpdateDTO)
         {
             ServiceType serviceType = await _repository.GetServiceTypeById(serviceTypeId);
@@ -37,14 +41,6 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("ServiceType not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateDTO.ServiceTypeName))
-            {
-                serviceType.ServiceTypeName = createUpdateDTO.ServiceTypeName;
-            }
-            if (!String.IsNullOrEmpty(createUpdateDTO.Description))
-            {
-                serviceType.Description = createUpdateDTO.Description;
-            }                        
             serviceType = _mapper.Map<CreateUpdateServiceTypeDTO, ServiceType>(createUpdateDTO, serviceType);
             await _repository.UpdateServiceType(serviceType);
         }

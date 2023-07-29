@@ -22,7 +22,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving user with ID: {UserId}", user.UserId);
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
@@ -46,7 +46,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                User user = await _context.Users.Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.Email == email);
                 return user;
             }
             catch (Exception ex)
@@ -60,7 +60,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+                User user = await _context.Users.Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
                 return user;
             }
             catch (Exception ex)
@@ -74,7 +74,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Users.ToList();
+                return _context.Users.Include(r => r.Role).ToList();
             }
             catch (Exception ex)
             {

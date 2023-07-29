@@ -19,14 +19,14 @@ namespace QuickServiceWebAPI.Helpers
             return formats.Any(item => file.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static async Task<string?> UploadImageToStorage(Stream fileStream, string fileName,
-                                                            AzureStorageConfig _storageConfig)
+        public static async Task<string?> UploadFileToStorage(Stream fileStream, string fileName,
+                                                            AzureStorageConfig _storageConfig, string container)
         {
             // Create a URI to the blob
             Uri blobUri = new Uri("https://" +
                                   _storageConfig.AccountName +
                                   ".blob.core.windows.net/" +
-                                  _storageConfig.ImageContainer +
+                                  container +
                                   "/" + fileName);
 
             // Create StorageSharedKeyCredentials object by reading
@@ -40,7 +40,7 @@ namespace QuickServiceWebAPI.Helpers
             // Upload the file
             await blobClient.UploadAsync(fileStream, overwrite: true);
 
-            if(await Task.FromResult(true))
+            if (await Task.FromResult(true))
             {
                 return blobUri.AbsoluteUri;
             }

@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace QuickServiceWebAPI.Models;
 
 public partial class User
 {
-    public string? UserId { get; set; } = null!;
+    public string UserId { get; set; } = null!;
 
-    public string? Email { get; set; } = null!;
+    public string Email { get; set; } = null!;
 
-    [JsonIgnore]
-    public string? Password { get; set; } = null!;
+    public string Password { get; set; } = null!;
 
     public string? FirstName { get; set; }
 
@@ -19,11 +17,11 @@ public partial class User
 
     public string? LastName { get; set; }
 
-    public string? PhoneNumber { get; set; } = null!;
+    public string? PhoneNumber { get; set; }
 
-    public DateTime? CreatedTime { get; set; }
+    public DateTime CreatedTime { get; set; }
 
-    public string? RoleId { get; set; } = null!;
+    public string? RoleId { get; set; }
 
     public string? Avatar { get; set; }
 
@@ -31,15 +29,23 @@ public partial class User
 
     public virtual ICollection<AssetAssignment> AssetAssignments { get; set; } = new List<AssetAssignment>();
 
+    public virtual ICollection<Change> ChangeAssigners { get; set; } = new List<Change>();
+
+    public virtual ICollection<Change> ChangeRequesters { get; set; } = new List<Change>();
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+
+    public virtual ICollection<Problem> ProblemAssigners { get; set; } = new List<Problem>();
+
+    public virtual ICollection<Problem> ProblemRequesters { get; set; } = new List<Problem>();
 
     public virtual ICollection<RequestTicket> RequestTicketAssignedToNavigations { get; set; } = new List<RequestTicket>();
 
     public virtual ICollection<RequestTicket> RequestTicketRequesters { get; set; } = new List<RequestTicket>();
 
-    public virtual Role? Role { get; set; } = null!;
+    public virtual Role? Role { get; set; }
 
     public virtual ICollection<Service> ServiceCreatedByNavigations { get; set; } = new List<Service>();
 

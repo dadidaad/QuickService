@@ -1,4 +1,6 @@
-﻿using QuickServiceWebAPI.Models;
+﻿using QuickServiceWebAPI.DTOs.Group;
+using QuickServiceWebAPI.DTOs.ServiceType;
+using QuickServiceWebAPI.DTOs.User;
 
 namespace QuickServiceWebAPI.DTOs.Service
 {
@@ -24,5 +26,12 @@ namespace QuickServiceWebAPI.DTOs.Service
 
         public string? ManagedByGroup { get; set; }
 
+        public virtual UserDTO CreatedByUserEntity { get; set; } = null!;
+
+        public virtual GroupDTO? ManagedByGroupEntity { get; set; }
+
+        public virtual UserDTO ManagedByUserEntity { get; set; } = null!;
+
+        public virtual ServiceTypeDTO ServiceTypeEntity { get; set; } = null!;
     }
 }

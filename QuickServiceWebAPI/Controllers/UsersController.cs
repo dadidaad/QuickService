@@ -1,15 +1,13 @@
 ﻿
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.User;
-using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -20,15 +18,15 @@ namespace QuickServiceWebAPI.Controllers
             _userService = userService;
         }
 
-        [AllowAnonymous]
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(AuthenticateRequestDTO authenticateRequestDTO)
         {
             var response = await _userService.Authenticate(authenticateRequestDTO);
             return Ok(response);
         }
 
-        [AllowAnonymous]
+        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser(RegisterDTO registerDTO)
         {
@@ -36,20 +34,47 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Create successfully" });
         }
 
-        [AllowAnonymous]
+        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
         [HttpGet("getall")]
         public IActionResult GetAllUser()
         {
-            IEnumerable<User> users = _userService.GetUsers();
+            //IEnumerable<User> users = _userService.GetUsers();
+            //return Ok(users);
+            var users = _userService.GetUsers();
             return Ok(users);
         }
 
-        [AllowAnonymous]
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateUser([FromForm]UpdateDTO updateDTO)
+        [Authorize]
+        public async Task<IActionResult> UpdateUser([FromForm] UpdateDTO updateDTO)
         {
             await _userService.UpdateUser(updateDTO);
             return Ok(new { message = "Update successfully" });
         }
+
+        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
+        [HttpPost("assignrole")]
+        public async Task<IActionResult> AssignRole(AssignRoleDTO assignRoleDTO)
+        {
+            await _userService.AssignRole(assignRoleDTO);
+            return Ok(new { message = "Assign successfully" });
+        }
+
+        [HttpPost("changepassword")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            await _userService.ChangePassword(changePasswordDTO);
+            return Ok(new { message = "Change password successfully" });
+        }
+
+        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
+        [HttpPost("resetpassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        {
+            await _userService.ResetPassword(resetPasswordDTO);
+            return Ok(new { message = "Reset password successfully" });
+        }
+
     }
 }

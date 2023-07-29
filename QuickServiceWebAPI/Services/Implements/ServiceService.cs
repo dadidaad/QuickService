@@ -9,10 +9,16 @@ namespace QuickServiceWebAPI.Services.Implements
     public class ServiceService : IServiceService
     {
         private readonly IServiceRepository _repository;
+        private readonly IUserRepository _userRepository;
+        private readonly IGroupRepository _groupRepository;
+        private readonly IServiceTypeRepository _serviceTypeRepository;
         private readonly IMapper _mapper;
-        public ServiceService(IServiceRepository repository, IMapper mapper)
+        public ServiceService(IServiceRepository repository, IUserRepository userRepository, IGroupRepository groupRepository, IServiceTypeRepository serviceTypeRepository, IMapper mapper)
         {
             _repository = repository;
+            _userRepository = userRepository;
+            _groupRepository = groupRepository;
+            _serviceTypeRepository = serviceTypeRepository;
             _mapper = mapper;
         }
 
@@ -20,6 +26,12 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var services = _repository.GetServices();
             return services.Select(service => _mapper.Map<ServiceDTO>(service)).ToList();
+        }
+
+        public async Task<ServiceDTO> GetServiceById(string serviceId)
+        {
+            var service = await _repository.GetServiceById(serviceId);
+            return _mapper.Map<ServiceDTO>(service);
         }
 
         public async Task CreateService(CreateUpdateServiceDTO createUpdateServiceDTO)
@@ -37,39 +49,23 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Service not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateServiceDTO.ServiceName))
+            if (_userRepository.GetUserDetails(createUpdateServiceDTO.CreatedBy) == null)
             {
-                service.ServiceName = createUpdateServiceDTO.ServiceName;
+                throw new AppException("Create by user with id  " + createUpdateServiceDTO.CreatedBy + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateServiceDTO.Description))
+            if (_groupRepository.GetGroupById(createUpdateServiceDTO.ManagedByGroup) == null)
             {
-                service.Description = createUpdateServiceDTO.Description;
+                throw new AppException("Manage by group with id " + createUpdateServiceDTO.ManagedByGroup + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateServiceDTO.Impact))
+            if (_userRepository.GetUserDetails(createUpdateServiceDTO.ManagedBy) == null)
             {
-                service.Impact = createUpdateServiceDTO.Impact;
+                throw new AppException("Manage by user with id  " + createUpdateServiceDTO.ManagedBy + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateServiceDTO.HealthStatus))
+            if (_serviceTypeRepository.GetServiceTypeById(createUpdateServiceDTO.ServiceTypeId) == null)
             {
-                service.HealthStatus = createUpdateServiceDTO.HealthStatus;
+                throw new AppException("Service type with id  " + createUpdateServiceDTO.ServiceTypeId + " not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateServiceDTO.CreatedBy))
-            {
-                service.CreatedBy = createUpdateServiceDTO.CreatedBy;
-            }
-            if (!String.IsNullOrEmpty(createUpdateServiceDTO.ServiceTypeId))
-            {
-                service.ServiceTypeId = createUpdateServiceDTO.ServiceTypeId;
-            }
-            if (!String.IsNullOrEmpty(createUpdateServiceDTO.ManagedBy))
-            {
-                service.ManagedBy = createUpdateServiceDTO.ManagedBy;
-            }
-            if (!String.IsNullOrEmpty(createUpdateServiceDTO.ManagedByGroup))
-            {
-                service.ManagedByGroup = createUpdateServiceDTO.ManagedByGroup;
-            }
-            service = _mapper.Map<CreateUpdateServiceDTO, Service>(createUpdateServiceDTO, service);
+            service = _mapper.Map(createUpdateServiceDTO, service);
             await _repository.UpdateService(service);
         }
 
@@ -92,6 +88,6 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             string seriveId = IDGenerator.GenerateServiceId(id);
             return seriveId;
-        }      
+        }
     }
 }

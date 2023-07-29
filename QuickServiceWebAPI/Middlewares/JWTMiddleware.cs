@@ -15,11 +15,11 @@ namespace QuickServiceWebAPI.Middlewares
         public async Task Invoke(HttpContext context, IUserService userService, IJWTUtils jwtUtils)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            var userId = jwtUtils.ValidateToken(token);
-            if (userId != null)
+            var userClaims = jwtUtils.ValidateToken(token);
+            if (userClaims != null)
             {
                 // attach user to context on successful jwt validation
-                context.Items["User"] = await userService.GetUserById(userId);
+                context.Items["User"] = userClaims;
             }
 
             await _next(context);

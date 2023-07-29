@@ -21,7 +21,11 @@ public partial class Group
 
     public virtual BusinessHour BusinessHour { get; set; } = null!;
 
+    public virtual ICollection<Change> Changes { get; set; } = new List<Change>();
+
     public virtual User GroupLeaderNavigation { get; set; } = null!;
+
+    public virtual ICollection<Problem> Problems { get; set; } = new List<Problem>();
 
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
 

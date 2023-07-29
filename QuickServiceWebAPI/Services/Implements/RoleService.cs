@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Role;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
 
@@ -9,13 +10,11 @@ namespace QuickServiceWebAPI.Services.Implements
     public class RoleService : IRoleService
     {
         private readonly IRoleRepository _repository;
-        private readonly ILogger<RoleService> _logger;
         private readonly IMapper _mapper;
 
-        public RoleService(IRoleRepository repository, ILogger<RoleService> logger, IMapper mapper)
+        public RoleService(IRoleRepository repository, IMapper mapper)
         {
             _repository = repository;
-            _logger = logger;
             _mapper = mapper;
         }
 
@@ -29,13 +28,13 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task DeleteRole(string roleId)
         {
             var role = await _repository.GetRoleById(roleId);
-            if(role == null)
+            if (role == null)
             {
                 throw new AppException("Role not found");
             }
-            if(_repository.CountUserHaveRole(roleId) > 0) // Check if existing user have this role so update it to null
+            if (_repository.CountUserHaveRole(roleId) > 0) // Check if existing user have this role so update it to null
             {
-                foreach(var user in role.Users)
+                foreach (var user in role.Users)
                 {
                     user.RoleId = null;
                     //user.Role = null;
@@ -46,14 +45,18 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.DeleteRole(role);
         }
 
-        public async Task<Role> GetRoleById(string roleId)
+        public async Task<RoleDTO> GetRoleById(string roleId)
         {
-            return await _repository.GetRoleById(roleId);
+            //return await _repository.GetRoleById(roleId);
+            var role = await _repository.GetRoleById(roleId);
+            return _mapper.Map<RoleDTO>(role);
         }
 
-        public List<Role> GetRoles()
+        public List<RoleDTO> GetRoles()
         {
-            return _repository.GetRoles();
+            //return _repository.GetRoles();
+            var roles = _repository.GetRoles();
+            return roles.Select(role => _mapper.Map<RoleDTO>(role)).ToList();
         }
 
         public List<Role> GetRolesByType(RoleType roleType)
@@ -64,7 +67,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task UpdateRole(UpdateDTO updateDTO)
         {
             var existingRole = await _repository.GetRoleById(updateDTO.RoleId);
-            if(existingRole == null)
+            if (existingRole == null)
             {
                 throw new AppException("Role not found");
             }
