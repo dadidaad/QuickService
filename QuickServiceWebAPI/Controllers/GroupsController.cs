@@ -6,7 +6,7 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageGroups, RoleType.Admin)]
+    //[HasPermission(PermissionEnum.ManageGroups, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class GroupsController : ControllerBase
@@ -36,6 +36,13 @@ namespace QuickServiceWebAPI.Controllers
         {
             await _groupService.CreateGroup(createUpdateGroupDTO);
             return Ok(new { message = "Create successfully" });
+        }
+
+        [HttpPost("add/{userId}/{groupId}")]
+        public async Task<IActionResult> AddUserToGroup(string userId, string groupId)
+        {
+            await _groupService.AddUserToGroup(userId, groupId);
+            return Ok(new { message = "Add successfully" });
         }
 
         [HttpPut("update")]

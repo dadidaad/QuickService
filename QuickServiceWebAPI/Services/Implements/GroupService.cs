@@ -57,6 +57,20 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.UpdateGroup(group);
         }
 
+        public async Task AddUserToGroup(string userId, string groupId)
+        {
+            Group group = await _repository.GetGroupById(groupId);
+            if (group == null)
+            {
+                throw new AppException("Group not found");
+            }
+            if (await _userRepository.GetUserDetails(userId) == null)
+            {
+                throw new AppException("User with id " + userId + " not found");
+            }
+            await _repository.AddUserToGroup(userId, groupId);
+        }
+
         public async Task DeleteGroup(string groupId)
         {
 
