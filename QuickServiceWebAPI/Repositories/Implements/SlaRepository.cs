@@ -99,7 +99,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.Slas.Include(s => s.Slametrics).Where(s => s.Slaname.Contains("Default")).FirstOrDefaultAsync();
+                return await _context.Slas.Include(s => s.Slametrics).Where(s => s.IsDefault).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

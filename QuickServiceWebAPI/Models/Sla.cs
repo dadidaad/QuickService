@@ -13,6 +13,8 @@ public partial class Sla
 
     public bool IsActive { get; set; }
 
+    public bool IsDefault { get; set; }
+
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
 
     public virtual ICollection<Slametric> Slametrics { get; set; } = new List<Slametric>();

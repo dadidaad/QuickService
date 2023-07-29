@@ -28,20 +28,19 @@ namespace QuickServiceWebAPI.CustomAttributes
                         return new ValidationResult("Field is required for incident");
                     }
                 }
-                if (value is IFormFile)
-                {
-                    var file = value as IFormFile;
-                    if (file == null)
-                    {
-                        return new ValidationResult("Field is required for incident");
-                    }
-                }
             }
             else
             {
-                if (value != null)
+                if (validationContext.MemberName == "ServiceItemId")
                 {
-                    return new ValidationResult($"Only accept when it is incident");
+                    if (value is string)
+                    {
+                        var stringVal = value as string;
+                        if (string.IsNullOrEmpty(stringVal))
+                        {
+                            return new ValidationResult("Field is required for service request");
+                        }
+                    }
                 }
             }
             return ValidationResult.Success;
