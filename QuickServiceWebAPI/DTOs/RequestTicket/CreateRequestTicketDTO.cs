@@ -10,7 +10,7 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
 
         [MaxLength(500)]
         [CustomValidatorForIncident("IsIncident")]
-        public string? Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [MaxLength(1000)]
         [CustomValidatorForIncident("IsIncident")]

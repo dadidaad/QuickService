@@ -22,7 +22,7 @@ namespace QuickServiceWebAPI.Profiles
                 opt => opt.MapFrom(src => CalculateDatetime(src, true)))
                 .ForMember(dest => dest.FirstResolutionDue,
                 opt => opt.MapFrom(src => CalculateDatetime(src, false)));
-            CreateMap<CreateRequestTicketDTO, RequestTicket>().IgnoreAllNonExisting();
+            CreateMap<CreateRequestTicketDTO, RequestTicket>().ForMember(dest => dest.Requester, opt => opt.Ignore()).IgnoreAllNonExisting();
             CreateMap<RequestTicket, RequestTicketForRequesterDTO>()
                 .ForMember(dest => dest.AssignedToUserEntity,
                 opt => opt.MapFrom(src => src.AssignedToNavigation))

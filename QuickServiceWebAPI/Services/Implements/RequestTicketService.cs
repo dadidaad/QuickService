@@ -64,6 +64,11 @@ namespace QuickServiceWebAPI.Services.Implements
             }
         }
 
+                throw new AppException(e.Message);
+            }
+
+        }
+
         private const ImpactEnum DefaultImpactForIncident = ImpactEnum.Low;
         private const UrgencyEnum DefaultUrgencyForIncident = UrgencyEnum.Low;
         private async Task HandleIncidentTicket(RequestTicket requestTicket, CreateRequestTicketDTO createRequestTicketDTO)
@@ -199,7 +204,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Request ticket item with id {updateRequestTicketDTO.RequestTicketId} not found");
             }
-            if((existingRequestTicket.Impact != updateRequestTicketDTO.Impact
+            if ((existingRequestTicket.Impact != updateRequestTicketDTO.Impact
                 || existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency)
                 && existingRequestTicket.Priority == updateRequestTicketDTO.Priority)
             {
