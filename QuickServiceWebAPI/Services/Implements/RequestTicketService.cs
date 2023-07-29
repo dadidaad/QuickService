@@ -35,31 +35,40 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
-            var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.Requester);
-            if (requester == null)
+            try
             {
-                throw new AppException($"User with email {createRequestTicketDTO.Requester} not found");
+                var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.Requester);
+                if (requester == null)
+                {
+                    throw new AppException($"User with email {createRequestTicketDTO.Requester} not found");
+                }
+                var requestTicket = _mapper.Map<RequestTicket>(createRequestTicketDTO);
+                requestTicket.RequesterId = requester.UserId;
+                requestTicket.Status = StatusEnum.Open.ToString();
+                requestTicket.State = StateEnum.New.ToString();
+                requestTicket.RequestTicketId = await GetNextId();
+                requestTicket.CreatedAt = DateTime.Now;
+                requestTicket.Sla = await _slaRepository.GetDefaultSla();
+                using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    if (createRequestTicketDTO.IsIncident)
+                    {
+                        await HandleIncidentTicket(requestTicket, createRequestTicketDTO);
+                    }
+                    else
+                    {
+                        await HandleServiceRequestTicket(requestTicket, createRequestTicketDTO);
+                    }
+                    await _requestTicketRepository.AddRequestTicket(requestTicket);
+                    transactionScope.Complete();
+                }
             }
-            var requestTicket = _mapper.Map<CreateRequestTicketDTO, RequestTicket>(createRequestTicketDTO);
-            requestTicket.RequesterId = requester.UserId;
-            requestTicket.Status = StatusEnum.Open.ToString();
-            requestTicket.State = StateEnum.New.ToString();
-            requestTicket.RequestTicketId = await GetNextId();
-            requestTicket.CreatedAt = DateTime.Now;
-            requestTicket.Sla = await _slaRepository.GetDefaultSla();
-            using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            catch (Exception e)
             {
-                if (createRequestTicketDTO.IsIncident)
-                {
-                    await HandleIncidentTicket(requestTicket, createRequestTicketDTO);
-                }
-                else
-                {
-                    await HandleServiceRequestTicket(requestTicket, createRequestTicketDTO);
-                }
-                await _requestTicketRepository.AddRequestTicket(requestTicket);
-                transactionScope.Complete();
+
+                throw new AppException(e.Message);
             }
+
         }
 
         private const ImpactEnum DefaultImpactForIncident = ImpactEnum.Low;
@@ -197,7 +206,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Request ticket item with id {updateRequestTicketDTO.RequestTicketId} not found");
             }
-            if((existingRequestTicket.Impact != updateRequestTicketDTO.Impact
+            if ((existingRequestTicket.Impact != updateRequestTicketDTO.Impact
                 || existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency)
                 && existingRequestTicket.Priority == updateRequestTicketDTO.Priority)
             {
