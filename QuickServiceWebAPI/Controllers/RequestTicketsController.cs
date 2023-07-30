@@ -17,11 +17,16 @@ namespace QuickServiceWebAPI.Controllers
         {
             _requestTicketService = requestTicketService;
         }
-
-        [HttpGet("getalltickets")]
+        [Route("getalltickets/{requester}/{requestTicketId?}")]
+        [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAllTicketsForRequester(RequesterResquestDTO requesterResquestDTO)
+        public async Task<IActionResult> GetAllTicketsForRequester(string requester, string? requestTicketId)
         {
+            var requesterResquestDTO = new RequesterResquestDTO
+            {
+                Requester = requester,
+                RequestTicketId = requestTicketId
+            };
             return Ok(await _requestTicketService.GetAllListRequestTicketForRequester(requesterResquestDTO));
         }
 
@@ -39,10 +44,17 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(await _requestTicketService.GetDetailsRequestTicket(requestTicketId));
         }
 
-        [HttpGet("gettickets")]
+        [Route("gettickets/{requester}/{requestTicketId?}")]
+        [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetRequestTicketForRequester(RequesterResquestDTO requesterResquestDTO)
+        public async Task<IActionResult> GetRequestTicketForRequester(string requester, string? requestTicketId)
         {
+            //Requester RequestTicketId
+            var requesterResquestDTO = new RequesterResquestDTO
+            {
+                Requester = requester,
+                RequestTicketId = requestTicketId
+            };
             return Ok(await _requestTicketService.GetDetailsRequestTicketForRequester(requesterResquestDTO));
         }
 
