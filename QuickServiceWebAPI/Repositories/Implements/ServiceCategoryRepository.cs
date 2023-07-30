@@ -41,11 +41,38 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        public async Task<ServiceCategory> GetServiceCategoryByIdWithServiceItems(string serviceCategoryId)
+        {
+            try
+            {
+                ServiceCategory serviceCategory = await _context.ServiceCategories.AsNoTracking().Include(x => x.ServiceItems).FirstOrDefaultAsync(x => x.ServiceCategoryId == serviceCategoryId);
+                return serviceCategory;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
         public List<ServiceCategory> GetServiceCategories()
         {
             try
             {
                 return _context.ServiceCategories.ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public List<ServiceCategory> GetServiceCategoriesWithServiceItems()
+        {
+            try
+            {
+                return _context.ServiceCategories.Include(x => x.ServiceItems).ToList();
             }
             catch (Exception ex)
             {

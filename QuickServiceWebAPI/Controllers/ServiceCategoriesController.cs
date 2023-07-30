@@ -27,10 +27,18 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{serviceCategoryId}")]
-        public async Task<IActionResult> GetServiceCategoryById(string serviceCategoryId)
+        [HttpGet("getallwithserviceitems")]
+        public IActionResult GetAllServiceCategoryWithServiceItems()
         {
-            var serviceCategory = await _serviceCategoryService.GetServiceCategoryById(serviceCategoryId);
+            var serviceCategories = _serviceCategoryService.GetServiceCategoriesWithServiceItems();
+            return Ok(serviceCategories);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("getwithserviceitems/{serviceCategoryId}")]
+        public async Task<IActionResult> GetServiceCategoryByIdWithServiceItems(string serviceCategoryId)
+        {
+            var serviceCategory = await _serviceCategoryService.GetServiceCategoryByIdWithServiceItems(serviceCategoryId);
             return Ok(serviceCategory);
         }
 
