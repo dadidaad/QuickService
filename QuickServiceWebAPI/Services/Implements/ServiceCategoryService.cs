@@ -22,22 +22,16 @@ namespace QuickServiceWebAPI.Services.Implements
             return serviceCategories.Select(serviceCategory => _mapper.Map<ServiceCategoryDTO>(serviceCategory)).ToList();
         }
 
-        public List<ServiceCategoryWithServiceItemDTO> GetServiceCategoriesWithServiceItems()
-        {
-            var serviceCategories = _repository.GetServiceCategoriesWithServiceItems();
-            return serviceCategories.Select(serviceCategory => _mapper.Map<ServiceCategoryWithServiceItemDTO>(serviceCategory)).ToList();
-        }
-
         public async Task<ServiceCategoryDTO> GetServiceCategoryById(string serviceCategoryId)
         {
             var serviceCategory = await _repository.GetServiceCategoryById(serviceCategoryId);
             return _mapper.Map<ServiceCategoryDTO>(serviceCategory);
         }
 
-        public async Task<ServiceCategoryWithServiceItemDTO> GetServiceCategoryByIdWithServiceItems(string serviceCategoryId)
+        public async Task<ServiceCategoryDTO> GetLastServiceCategoryWithServiceItems()
         {
-            var serviceCategory = await _repository.GetServiceCategoryByIdWithServiceItems(serviceCategoryId);
-            return _mapper.Map<ServiceCategoryWithServiceItemDTO>(serviceCategory);
+            var serviceCategory = await _repository.GetLastServiceCategoryWithServiceItems();
+            return _mapper.Map<ServiceCategoryDTO>(serviceCategory);
         }
 
         public async Task CreateServiceCategory(CreateUpdateServiceCategoryDTO createUpdateServiceCategoryDTO)

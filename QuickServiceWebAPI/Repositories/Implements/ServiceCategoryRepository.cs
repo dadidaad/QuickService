@@ -31,20 +31,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                ServiceCategory serviceCategory = await _context.ServiceCategories.AsNoTracking().FirstOrDefaultAsync(x => x.ServiceCategoryId == serviceCategoryId);
-                return serviceCategory;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw;
-            }
-        }
-
-        public async Task<ServiceCategory> GetServiceCategoryByIdWithServiceItems(string serviceCategoryId)
-        {
-            try
-            {
                 ServiceCategory serviceCategory = await _context.ServiceCategories.AsNoTracking().Include(x => x.ServiceItems).FirstOrDefaultAsync(x => x.ServiceCategoryId == serviceCategoryId);
                 return serviceCategory;
             }
@@ -59,19 +45,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.ServiceCategories.ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw;
-            }
-        }
-
-        public List<ServiceCategory> GetServiceCategoriesWithServiceItems()
-        {
-            try
-            {
                 return _context.ServiceCategories.Include(x => x.ServiceItems).ToList();
             }
             catch (Exception ex)
@@ -80,6 +53,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw;
             }
         }
+     
 
         public async Task UpdateServiceCategory(ServiceCategory serviceCategory)
         {
@@ -114,6 +88,19 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 return await _context.ServiceCategories.OrderByDescending(u => u.ServiceCategoryId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
+        public async Task<ServiceCategory> GetLastServiceCategoryWithServiceItems()
+        {
+            try
+            {
+                return await _context.ServiceCategories.Include(s => s.ServiceItems).OrderByDescending(u => u.ServiceCategoryId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
