@@ -155,6 +155,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return requestTickets.Select(requestTicket => new RequestTicketForRequesterDTO
             {
                 RequestTicketId = requestTicket.RequestTicketId,
+                IsIncident = requestTicket.IsIncident,
                 Title = requestTicket.Title,
                 Status = requestTicket.Status,
                 CreatedAt = requestTicket.CreatedAt,
