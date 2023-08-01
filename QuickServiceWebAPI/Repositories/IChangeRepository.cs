@@ -4,7 +4,7 @@ namespace QuickServiceWebAPI.Repositories
 {
     public interface IChangeRepository
     {
-        public List<Change> GetChanges();
+        public Task<List<Change>> GetChanges();
         public Task<Change> GetChangeById(string changeId);
         public Task AddChange(Change change);
         public Task UpdateChange(Change change);

@@ -134,6 +134,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var requestTickets = _requestTicketRepository.GetRequestTickets();
             return requestTickets.Select(requestTicket => new RequestTicketDTO
             {
+                IsIncident = requestTicket.IsIncident,
                 RequestTicketId = requestTicket.RequestTicketId,
                 Title = requestTicket.Title,
                 RequesterUserEntity = _mapper.Map<UserDTO>(requestTicket.Requester),
@@ -154,6 +155,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var requestTickets = _requestTicketRepository.GetRequestTicketsForRequester(requesterResquestDTO.Requester);
             return requestTickets.Select(requestTicket => new RequestTicketForRequesterDTO
             {
+                IsIncident = requestTicket.IsIncident,
                 RequestTicketId = requestTicket.RequestTicketId,
                 Title = requestTicket.Title,
                 Status = requestTicket.Status,

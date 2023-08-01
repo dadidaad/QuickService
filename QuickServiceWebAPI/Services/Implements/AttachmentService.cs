@@ -90,8 +90,9 @@ namespace QuickServiceWebAPI.Services.Implements
                 {
                     using (Stream stream = attachmentFile.OpenReadStream())
                     {
+                        attachment.AttachmentId = await GetNextId();
                         attachment.Filename = attachmentFile.FileName;
-                        attachment.FilePath = await CloudHelper.UploadFileToStorage(stream, attachment.Filename, _storageConfig, _storageConfig.AttachmentContainer);
+                        attachment.FilePath = await CloudHelper.UploadFileToStorage(stream, attachment.AttachmentId, _storageConfig, _storageConfig.AttachmentContainer);
                         attachment.FileSize = Convert.ToInt32(attachmentFile.Length);
                         attachment.CreatedAt = DateTime.Now;
                     }

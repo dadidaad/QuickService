@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using QuickServiceWebAPI.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.RequestTicket
 {
@@ -9,22 +10,22 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
         public string RequestTicketId { get; set; } = null!;
 
         [Required]
-        [MaxLength(10)]
+        [EnumDataType(typeof(StatusEnum))]
         public string Status { get; set; } = null!;
 
         [Required]
-        [MaxLength(10)]
+        [EnumDataType(typeof(PriorityEnum))]
         public string Priority { get; set; } = null!;
 
         [MaxLength(255)]
         public string? Tags { get; set; }
 
         [Required]
-        [MaxLength(10)]
+        [EnumDataType(typeof(ImpactEnum))]
         public string Impact { get; set; } = null!;
 
         [Required]
-        [MaxLength(10)]
+        [EnumDataType(typeof(UrgencyEnum))]
         public string Urgency { get; set; } = null!;
 
         [MaxLength(10)]
