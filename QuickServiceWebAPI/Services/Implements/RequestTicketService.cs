@@ -157,6 +157,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 IsIncident = requestTicket.IsIncident,
                 RequestTicketId = requestTicket.RequestTicketId,
+                IsIncident = requestTicket.IsIncident,
                 Title = requestTicket.Title,
                 Status = requestTicket.Status,
                 CreatedAt = requestTicket.CreatedAt,
