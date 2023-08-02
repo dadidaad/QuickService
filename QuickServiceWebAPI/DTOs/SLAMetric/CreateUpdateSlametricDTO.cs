@@ -9,10 +9,10 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
         public string Piority { get; set; } = null!;
 
         [Required]
-        public DateTime ResponseTime { get; set; }
+        public long ResponseTime { get; set; }
 
         [Required]
-        public DateTime ResolutionTime { get; set; }
+        public long ResolutionTime { get; set; }
 
         [MaxLength(255)]
         public string? EscalationPolicy { get; set; }
@@ -20,8 +20,7 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
         [MaxLength(255)]
         public string? NotificationRules { get; set; }
 
-        [Required]
-        public string BusinessHourId { get; set; } = null!;
+        public string? BusinessHourId { get; set; }
 
         [Required]
         public string Slaid { get; set; } = null!;

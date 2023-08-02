@@ -43,6 +43,10 @@ public partial class Change
 
     public string? AttachmentId { get; set; }
 
+    public bool IsApprovedByCab { get; set; }
+
+    public DateTime CreatedTime { get; set; }
+
     public virtual User? Assigner { get; set; }
 
     public virtual Attachment? Attachment { get; set; }

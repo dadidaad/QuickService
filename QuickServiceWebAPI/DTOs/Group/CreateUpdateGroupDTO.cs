@@ -12,12 +12,6 @@ namespace QuickServiceWebAPI.DTOs.Group
         public string? Description { get; set; }
 
         [Required]
-        public bool IsRestricted { get; set; }
-
-        [Required]
-        public bool NeedApprovalByLeader { get; set; }
-
-        [Required]
         [MaxLength(10)]
         public string GroupLeader { get; set; } = null!;
 

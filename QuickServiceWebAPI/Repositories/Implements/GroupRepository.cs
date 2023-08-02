@@ -94,5 +94,23 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
+
+        public async Task AddUserToGroup(string userId, string groupId)
+        {
+            try
+            {
+                Group group = await _context.Groups.AsNoTracking().FirstOrDefaultAsync(x => x.GroupId == groupId);
+                User user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+                group.Users.Add(user);
+                _context.Groups.Update(group);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
     }
 }

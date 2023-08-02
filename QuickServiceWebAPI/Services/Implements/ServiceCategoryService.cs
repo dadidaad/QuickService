@@ -28,6 +28,12 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<ServiceCategoryDTO>(serviceCategory);
         }
 
+        public async Task<ServiceCategoryDTO> GetLastServiceCategoryWithServiceItems()
+        {
+            var serviceCategory = await _repository.GetLastServiceCategoryWithServiceItems();
+            return _mapper.Map<ServiceCategoryDTO>(serviceCategory);
+        }
+
         public async Task CreateServiceCategory(CreateUpdateServiceCategoryDTO createUpdateServiceCategoryDTO)
         {
             var serviceCategory = _mapper.Map<ServiceCategory>(createUpdateServiceCategoryDTO);

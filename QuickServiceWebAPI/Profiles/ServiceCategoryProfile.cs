@@ -8,7 +8,9 @@ namespace QuickServiceWebAPI.Profiles
     {
         public ServiceCategoryProfile()
         {
-            CreateMap<ServiceCategory, ServiceCategoryDTO>();
+            CreateMap<ServiceCategory, ServiceCategoryDTO>()
+                .ForMember(dest => dest.ServiceItemEntities,
+                opt => opt.MapFrom(src => src.ServiceItems));
             CreateMap<CreateUpdateServiceCategoryDTO, ServiceCategory>();
         }
     }

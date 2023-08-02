@@ -9,9 +9,9 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
 
         public string Piority { get; set; } = null!;
 
-        public DateTime ResponseTime { get; set; }
+        public long ResponseTime { get; set; }
 
-        public DateTime ResolutionTime { get; set; }
+        public long ResolutionTime { get; set; }
 
         public string? EscalationPolicy { get; set; }
 

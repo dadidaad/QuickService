@@ -23,7 +23,8 @@ namespace QuickServiceWebAPI.Services.Implements
         public RequestTicketService(IRequestTicketRepository requestTicketRepository,
             ILogger<RequestTicketService> logger, IMapper mapper,
             IUserRepository userRepository,
-            IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService)
+            IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService,
+            ISlaRepository slaRepository)
         {
             _requestTicketRepository = requestTicketRepository;
             _logger = logger;
@@ -31,44 +32,25 @@ namespace QuickServiceWebAPI.Services.Implements
             _userRepository = userRepository;
             _serviceItemRepository = serviceItemRepository;
             _attachmentService = attachmentService;
+            _slaRepository = slaRepository;
         }
 
         public async Task<string> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
-            try
+            var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.RequesterEmail);
+            if (requester == null)
             {
-                var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.Requester);
-                if (requester == null)
-                {
-                    throw new AppException($"User with email {createRequestTicketDTO.Requester} not found");
-                }
-                var requestTicket = _mapper.Map<RequestTicket>(createRequestTicketDTO);
-                requestTicket.RequesterId = requester.UserId;
-                requestTicket.Status = StatusEnum.Open.ToString();
-                requestTicket.State = StateEnum.New.ToString();
-                requestTicket.RequestTicketId = await GetNextId();
-                requestTicket.CreatedAt = DateTime.Now;
-                requestTicket.Sla = await _slaRepository.GetDefaultSla();
-                using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-                {
-                    if (createRequestTicketDTO.IsIncident)
-                    {
-                        await HandleIncidentTicket(requestTicket, createRequestTicketDTO);
-                    }
-                    else
-                    {
-                        await HandleServiceRequestTicket(requestTicket, createRequestTicketDTO);
-                    }
-                    await _requestTicketRepository.AddRequestTicket(requestTicket);
-                    transactionScope.Complete();
-                }
+                throw new AppException($"User with email {createRequestTicketDTO.RequesterEmail} not found");
             }
-            catch (Exception e)
+            var requestTicket = _mapper.Map<RequestTicket>(createRequestTicketDTO);
+            requestTicket.RequesterId = requester.UserId;
+            requestTicket.Status = StatusEnum.Open.ToString();
+            requestTicket.State = StateEnum.New.ToString();
+            requestTicket.RequestTicketId = await GetNextId();
+            requestTicket.CreatedAt = DateTime.Now;
+            requestTicket.Sla = await _slaRepository.GetDefaultSla();
+            using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-<<<<<<< Updated upstream
-
-                throw new AppException(e.Message);
-=======
                 if (createRequestTicketDTO.IsIncident)
                 {
                     await HandleIncidentTicket(requestTicket, createRequestTicketDTO);
@@ -80,9 +62,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 await _requestTicketRepository.AddRequestTicket(requestTicket);
                 transactionScope.Complete();
                 return requestTicket.RequestTicketId; 
->>>>>>> Stashed changes
             }
-
         }
 
         private const ImpactEnum DefaultImpactForIncident = ImpactEnum.Low;
@@ -155,6 +135,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var requestTickets = _requestTicketRepository.GetRequestTickets();
             return requestTickets.Select(requestTicket => new RequestTicketDTO
             {
+                IsIncident = requestTicket.IsIncident,
                 RequestTicketId = requestTicket.RequestTicketId,
                 Title = requestTicket.Title,
                 RequesterUserEntity = _mapper.Map<UserDTO>(requestTicket.Requester),
@@ -175,7 +156,9 @@ namespace QuickServiceWebAPI.Services.Implements
             var requestTickets = _requestTicketRepository.GetRequestTicketsForRequester(requesterResquestDTO.Requester);
             return requestTickets.Select(requestTicket => new RequestTicketForRequesterDTO
             {
+                IsIncident = requestTicket.IsIncident,
                 RequestTicketId = requestTicket.RequestTicketId,
+                IsIncident = requestTicket.IsIncident,
                 Title = requestTicket.Title,
                 Status = requestTicket.Status,
                 CreatedAt = requestTicket.CreatedAt,

@@ -32,7 +32,9 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.Changes.FindAsync(changeId);
+                return await _context.Changes.Include(c => c.Requester).Include(c => c.Assigner)
+                    .Include(c => c.Group).Include(c => c.Attachment)
+                    .AsNoTracking().FirstOrDefaultAsync(c => c.ChangeId == changeId);
             }
             catch (Exception ex)
             {
@@ -41,11 +43,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<Change> GetChanges()
+        public  async Task<List<Change>> GetChanges()
         {
             try
             {
-                return _context.Changes.ToList();
+                return  await _context.Changes.Include(c => c.Requester).Include(c => c.Assigner)
+                    .Include(c => c.Group).Include(c => c.Attachment)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {

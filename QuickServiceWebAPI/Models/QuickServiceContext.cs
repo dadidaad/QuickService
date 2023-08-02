@@ -233,12 +233,14 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.ChangeType)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.CreatedTime).HasColumnType("datetime");
             entity.Property(e => e.GroupId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("GroupID");
             entity.Property(e => e.Impact).HasMaxLength(20);
+            entity.Property(e => e.IsApprovedByCab).HasColumnName("IsApprovedByCAB");
             entity.Property(e => e.PlannedEndDate).HasColumnType("datetime");
             entity.Property(e => e.PlannedStartDate).HasColumnType("datetime");
             entity.Property(e => e.Priority).HasMaxLength(20);
@@ -879,6 +881,7 @@ public partial class QuickServiceContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.IsActive).HasColumnName("isActive");
+            entity.Property(e => e.IsDefault).HasColumnName("isDefault");
             entity.Property(e => e.Slaname)
                 .HasMaxLength(100)
                 .IsUnicode(false)
