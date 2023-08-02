@@ -35,7 +35,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _slaRepository = slaRepository;
         }
 
-        public async Task SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
+        public async Task<string> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
             var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.RequesterEmail);
             if (requester == null)
@@ -61,6 +61,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 }
                 await _requestTicketRepository.AddRequestTicket(requestTicket);
                 transactionScope.Complete();
+                return requestTicket.RequestTicketId; 
             }
         }
 

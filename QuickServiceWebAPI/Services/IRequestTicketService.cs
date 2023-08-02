@@ -4,7 +4,7 @@ namespace QuickServiceWebAPI.Services
 {
     public interface IRequestTicketService
     {
-        public Task SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO);
+        public Task<string> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO);
         public Task<List<RequestTicketDTO>> GetAllListRequestTicket();
         public Task<List<RequestTicketForRequesterDTO>> GetAllListRequestTicketForRequester(RequesterResquestDTO requesterResquestDTO);
         public Task<RequestTicketDTO> GetDetailsRequestTicket(string requestTicketId);

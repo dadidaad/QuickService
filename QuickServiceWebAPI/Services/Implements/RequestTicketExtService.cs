@@ -19,12 +19,25 @@ namespace QuickServiceWebAPI.Services.Implements
             _repository = repository;
             _mapper = mapper;
         }
-        public async Task CreateRequestTicketExt(CreateUpdateRequestTicketExtDTO createUpdateRequestTicketExtDTO)
+        public async Task CreateRequestTicketExt(List<CreateUpdateRequestTicketExtDTO> createUpdateRequestTicketExtDTOs)
         {
-            var requestTicketExt = _mapper.Map<RequestTicketExt>(createUpdateRequestTicketExtDTO);
-            requestTicketExt.RequestTicketExId = await GetNextId();
-            requestTicketExt.CreatedDate = DateTime.Now;
-            await _repository.AddRequestTicketExt(requestTicketExt);
+            var ticketId = createUpdateRequestTicketExtDTOs.FirstOrDefault()?.TicketId;
+            if (ticketId == null) return;
+            else
+            {
+                var existingRequestTicket = await _requestTicketRepository.GetRequestTicketById(ticketId);
+                if (existingRequestTicket == null)
+                {
+                    throw new AppException($"Request ticket item with id {ticketId} not found");
+                }
+            }
+            foreach( var requestTicketExtDto in createUpdateRequestTicketExtDTOs)
+            {
+                var requestTicketExt = _mapper.Map<RequestTicketExt>(requestTicketExtDto);
+                requestTicketExt.RequestTicketExId = await GetNextId();
+                requestTicketExt.CreatedDate = DateTime.Now;
+                await _repository.AddRequestTicketExt(requestTicketExt);
+            }
         }
 
         public List<RequestTicketExtDTO> GetRequestTicketExts()

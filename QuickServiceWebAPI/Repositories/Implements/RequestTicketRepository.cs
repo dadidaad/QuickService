@@ -31,10 +31,15 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                RequestTicket requestTicket = await _context.RequestTickets.Include(g => g.AssignedToGroupNavigation).Include(u => u.AssignedToNavigation)
-                                             .Include(a => a.Attachment).Include(u => u.Requester)
-                                             .Include(s => s.ServiceItem).Include(s => s.Sla)
-                                             .AsNoTracking().FirstOrDefaultAsync(x => x.RequestTicketId == requestTicketId);
+                RequestTicket requestTicket = await _context.RequestTickets.Include(g => g.AssignedToGroupNavigation)
+                    .Include(u => u.AssignedToNavigation)
+                    .Include(a => a.Attachment)
+                    .Include(r => r.Requester)
+                    .Include(s => s.ServiceItem)
+                    .Include(sl => sl.Sla)
+                    .ThenInclude(slm => slm.Slametrics)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.RequestTicketId == requestTicketId);
                 return requestTicket;
             }
             catch (Exception ex)
