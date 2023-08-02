@@ -33,6 +33,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _attachmentService = attachmentService;
         }
 
+        public async Task<string> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
             try
             {
@@ -68,6 +69,17 @@ namespace QuickServiceWebAPI.Services.Implements
 
                 throw new AppException(e.Message);
 =======
+                if (createRequestTicketDTO.IsIncident)
+                {
+                    await HandleIncidentTicket(requestTicket, createRequestTicketDTO);
+                }
+                else
+                {
+                    await HandleServiceRequestTicket(requestTicket, createRequestTicketDTO);
+                }
+                await _requestTicketRepository.AddRequestTicket(requestTicket);
+                transactionScope.Complete();
+                return requestTicket.RequestTicketId; 
 >>>>>>> Stashed changes
             }
 
