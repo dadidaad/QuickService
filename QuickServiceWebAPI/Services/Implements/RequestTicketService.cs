@@ -33,7 +33,6 @@ namespace QuickServiceWebAPI.Services.Implements
             _attachmentService = attachmentService;
         }
 
-        public async Task SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
             try
             {
@@ -65,8 +64,11 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             catch (Exception e)
             {
+<<<<<<< Updated upstream
 
                 throw new AppException(e.Message);
+=======
+>>>>>>> Stashed changes
             }
 
         }
