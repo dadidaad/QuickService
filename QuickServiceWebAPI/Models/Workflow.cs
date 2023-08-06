@@ -9,15 +9,25 @@ public partial class Workflow
 
     public string WorkflowName { get; set; } = null!;
 
-    public bool IsActive { get; set; }
+    public string Status { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }
 
-    public string? Description { get; set; }
+    public DateTime? LastUpdate { get; set; }
 
     public string CreatedBy { get; set; } = null!;
 
+    public string? ReferenceId { get; set; }
+
+    public bool ForIncident { get; set; }
+
+    public string? Slaid { get; set; }
+
     public virtual User CreatedByNavigation { get; set; } = null!;
+
+    public virtual ServiceItem? Reference { get; set; }
+
+    public virtual Sla? Sla { get; set; }
 
     public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();
 

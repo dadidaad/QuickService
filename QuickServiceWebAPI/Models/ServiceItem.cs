@@ -26,4 +26,8 @@ public partial class ServiceItem
     public virtual ServiceCategory ServiceCategory { get; set; } = null!;
 
     public virtual ICollection<ServiceItemCustomField> ServiceItemCustomFields { get; set; } = new List<ServiceItemCustomField>();
+
+    public virtual ICollection<Sla> Slas { get; set; } = new List<Sla>();
+
+    public virtual ICollection<Workflow> Workflows { get; set; } = new List<Workflow>();
 }

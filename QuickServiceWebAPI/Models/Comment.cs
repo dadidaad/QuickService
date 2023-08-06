@@ -7,7 +7,7 @@ public partial class Comment
 {
     public string CommentId { get; set; } = null!;
 
-    public string CommentText { get; set; } = null!;
+    public string? CommentText { get; set; }
 
     public DateTime CommentTime { get; set; }
 

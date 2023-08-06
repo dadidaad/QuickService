@@ -27,27 +27,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<WorkflowAssignment> GetWorkflowAssignmentById(string workflowAssignmentId)
-        {
-            try
-            {
-                WorkflowAssignment workflowAssignment = await _context.WorkflowAssignments
-                                                    .Include(w => w.CurrentStep).Include(r => r.RequestTicket).Include(w => w.Workflow)
-                                                    .AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
-                return workflowAssignment;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw;
-            }
-        }
-
         public List<WorkflowAssignment> GetWorkflowAssignments()
         {
             try
             {
-                return _context.WorkflowAssignments.Include(w => w.CurrentStep).Include(r => r.RequestTicket).Include(w => w.Workflow).ToList();
+                return _context.WorkflowAssignments.Include(w => w.CurrentStep).Include(r => r.Reference1).Include(w => w.Workflow).ToList();
             }
             catch (Exception ex)
             {
@@ -84,17 +68,5 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<WorkflowAssignment> GetLastWorkflowAssignment()
-        {
-            try
-            {
-                return await _context.WorkflowAssignments.OrderByDescending(u => u.WorkflowAssignmentId).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw; // Rethrow the exception to propagate it up the call stack if necessary
-            }
-        }
     }
 }

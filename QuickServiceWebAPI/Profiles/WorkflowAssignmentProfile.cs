@@ -12,7 +12,7 @@ namespace QuickServiceWebAPI.Profiles
                 .ForMember(dest => dest.WorkflowStepEntity,
                 opt => opt.MapFrom(src => src.CurrentStep))
                 .ForMember(dest => dest.RequestTicketEntity,
-                opt => opt.MapFrom(src => src.RequestTicket))
+                opt => opt.MapFrom(src => src.Reference1))
                 .ForMember(dest => dest.WorkflowEntity,
                 opt => opt.MapFrom(src => src.Workflow));
             CreateMap<CreateUpdateWorkflowAssignmentDTO, WorkflowAssignment>();
