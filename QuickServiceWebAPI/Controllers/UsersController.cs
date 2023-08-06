@@ -44,6 +44,13 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(users);
         }
 
+        [Authorize]
+        [HttpPost("get/{userId}")]
+        public async Task<IActionResult> GetById(string userId)
+        {
+            return Ok(await _userService.GetUserById(userId));
+        }
+
         [HttpPost("update")]
         [Authorize]
         public async Task<IActionResult> UpdateUser([FromForm] UpdateDTO updateDTO)
