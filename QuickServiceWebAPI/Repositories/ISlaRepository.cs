@@ -11,5 +11,7 @@ namespace QuickServiceWebAPI.Repositories
         public Task DeleteSLA(Sla sla);
         public Task<Sla> GetLastSLA();
         public Task<Sla> GetDefaultSla();
+        public Task<Sla> GetSlaForRequestTicket(RequestTicket requestTicket);
+        public Task<Sla> GetSlaForWorflow(Workflow workflow);
     }
 }

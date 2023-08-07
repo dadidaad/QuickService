@@ -11,11 +11,17 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IWorkflowStepRepository _repository;
         private readonly IWorkflowRepository _workflowRepository;
         private readonly IMapper _mapper;
-        public WorkflowStepService(IWorkflowStepRepository repository, IWorkflowRepository workflowRepository, IMapper mapper)
+        private readonly IUserRepository _userRepository;
+        private readonly IGroupRepository _groupRepository;
+        public WorkflowStepService(IWorkflowStepRepository repository,
+            IWorkflowRepository workflowRepository, IMapper mapper, 
+            IUserRepository userRepository, IGroupRepository groupRepository)
         {
             _repository = repository;
             _workflowRepository = workflowRepository;
             _mapper = mapper;
+            _userRepository = userRepository;
+            _groupRepository = groupRepository;
         }
 
         public List<WorkflowStepDTO> GetWorkflowsStep()
@@ -32,11 +38,13 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task CreateWorkflowStep(CreateUpdateWorkflowStepDTO createUpdateWorkflowStepDTO)
         {
+            await ValidationUserGroup(createUpdateWorkflowStepDTO);
             var workflowStep = _mapper.Map<WorkflowStep>(createUpdateWorkflowStepDTO);
             workflowStep.WorkflowStepId = await GetNextId();
+            workflowStep.CreatedDate = DateTime.Now;
             await _repository.AddWorkflowStep(workflowStep);
         }
-
+ 
         public async Task UpdateWorkflowStep(string workflowStepId, CreateUpdateWorkflowStepDTO CreateUpdateWorkflowStepDTO)
         {
             WorkflowStep workflowStep = await _repository.GetWorkflowStepById(workflowStepId);
@@ -52,6 +60,34 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.UpdateWorkflowStep(workflowStep);
         }
 
+        private async Task ValidationUserGroup(CreateUpdateWorkflowStepDTO createUpdateWorkflowStepDTO)
+        {
+            if(!string.IsNullOrEmpty(createUpdateWorkflowStepDTO.AssignerId))
+            {
+                var user = await _userRepository.GetUserDetails(createUpdateWorkflowStepDTO.AssignerId);
+                if(user == null)
+                {
+                    throw new AppException($"User with id {createUpdateWorkflowStepDTO.AssignerId} not found");
+                }
+            }
+            if (!string.IsNullOrEmpty(createUpdateWorkflowStepDTO.GroupId))
+            {
+                var group = await _groupRepository.GetGroupById(createUpdateWorkflowStepDTO.GroupId);
+                if (group == null)
+                {
+                    throw new AppException($"Group with id {createUpdateWorkflowStepDTO.GroupId} not found");
+                }
+                if (!string.IsNullOrEmpty(createUpdateWorkflowStepDTO.AssignerId))
+                {
+                    var userInGroup = group.Users.FirstOrDefault(u => u.UserId == createUpdateWorkflowStepDTO.AssignerId);
+                    if(userInGroup == null)
+                    {
+                        throw new AppException($"User with id {createUpdateWorkflowStepDTO.AssignerId} not in group");
+                    }
+                }
+            }
+
+        }
         public async Task DeleteWorkflowStep(string workflowStepId)
         {
 

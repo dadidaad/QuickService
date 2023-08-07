@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using QuickServiceWebAPI.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.WorkflowStep
 {
@@ -6,18 +7,24 @@ namespace QuickServiceWebAPI.DTOs.WorkflowStep
     {
         [Required]
         [MaxLength(255)]
-        public string WorkflowStepName { get; set; }
-
-        [Required]
-        [MaxLength(100)]
-        public string ActionType { get; set; }
-
-        [Required]
-        [MaxLength(255)]
-        public string ActionDetails { get; set; }
+        public string WorkflowStepName { get; set; } = null!;
 
         [Required]
         [MaxLength(10)]
-        public string WorkflowId { get; set; }
+        [EnumDataType(typeof(StatusWorkflowStepEnum))]
+        public string Status { get; set; } = null!;
+
+        [Required(AllowEmptyStrings = false)]
+        public string ActionDetail { get; set; } = null!;
+
+        [Required]
+        [MaxLength(10)]
+        public string WorkflowId { get; set; } = null!;
+
+        [MaxLength(10)]
+        public string? AssignerId { get; set; }
+
+        [MaxLength(10)]
+        public string? GroupId { get; set; }
     }
 }

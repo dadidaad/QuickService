@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.WorkflowAssignment;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Profiles
 {
@@ -11,11 +12,10 @@ namespace QuickServiceWebAPI.Profiles
             CreateMap<WorkflowAssignment, WorkflowAssignmentDTO>()
                 .ForMember(dest => dest.WorkflowStepEntity,
                 opt => opt.MapFrom(src => src.CurrentStep))
-                .ForMember(dest => dest.RequestTicketEntity,
-                opt => opt.MapFrom(src => src.RequestTicket))
                 .ForMember(dest => dest.WorkflowEntity,
                 opt => opt.MapFrom(src => src.Workflow));
             CreateMap<CreateUpdateWorkflowAssignmentDTO, WorkflowAssignment>();
+            CreateMap<CheckWorkflowAssignmentDTO, WorkflowAssignment>().IgnoreAllNonExisting();
         }
     }
 }

@@ -21,36 +21,55 @@
       "description": "All about permission access"
     }
   ],
-  "Sla": {
-    "Slaid": "SELA000001",
-    "Slaname": "Default SLA policy",
-    "Description": "Default policy",
-    "IsActive": true,
-    "Slametrics": [
-      {
-        "SlametricId": "SLAM000001",
-        "Piority": "Low",
-        "ResponseTime": 7200,
-        "ResolutionTime": 259200
-      },
-      {
-        "SlametricId": "SLAM000002",
-        "Piority": "Medium",
-        "ResponseTime": 28800,
-        "ResolutionTime": 86400
-      },
-      {
-        "SlametricId": "SLAM000003",
-        "Piority": "High",
-        "ResponseTime": 14400,
-        "ResolutionTime": 43200
-      },
-      {
-        "SlametricId": "SLAM000004",
-        "Piority": "Urgency",
-        "ResponseTime": 3600,
-        "ResolutionTime": 14400
-      }
-    ]
-  }
+  "Sla": [
+    {
+      "Slaid": "SELA000001",
+      "Slaname": "Default SLA policy",
+      "Description": "Default policy",
+      "IsActive": true,
+      "IsDefault": true,
+      "Slametrics": [
+        {
+          "SlametricId": "SLAM000001",
+          "Piority": "Low",
+          "ResponseTime": 7200,
+          "ResolutionTime": 259200
+        },
+        {
+          "SlametricId": "SLAM000002",
+          "Piority": "Medium",
+          "ResponseTime": 28800,
+          "ResolutionTime": 86400
+        },
+        {
+          "SlametricId": "SLAM000003",
+          "Piority": "High",
+          "ResponseTime": 14400,
+          "ResolutionTime": 43200
+        },
+        {
+          "SlametricId": "SLAM000004",
+          "Piority": "Urgency",
+          "ResponseTime": 3600,
+          "ResolutionTime": 14400
+        }
+      ]
+    },
+    {
+      "Slaid": "SELA000002",
+      "Slaname": "Default OLA policy",
+      "Description": "Default OLA policy",
+      "IsActive": true,
+      "IsDefault" :  true,
+      "Slametrics": [
+        {
+          "SlametricId": "SLAM000005",
+          "Piority": "Target",
+          "ResponseTime": 0,
+          "ResolutionTime": 86400
+        }
+      ]
+    }
+
+  ]
 }

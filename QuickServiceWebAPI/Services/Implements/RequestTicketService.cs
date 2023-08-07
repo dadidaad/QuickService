@@ -20,11 +20,12 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IServiceItemRepository _serviceItemRepository;
         private readonly IAttachmentService _attachmentService;
         private readonly ISlaRepository _slaRepository;
+        private readonly IWorkflowAssignmentService _workflowAssignmentService;
         public RequestTicketService(IRequestTicketRepository requestTicketRepository,
             ILogger<RequestTicketService> logger, IMapper mapper,
             IUserRepository userRepository,
             IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService,
-            ISlaRepository slaRepository)
+            ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService)
         {
             _requestTicketRepository = requestTicketRepository;
             _logger = logger;
@@ -33,6 +34,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _serviceItemRepository = serviceItemRepository;
             _attachmentService = attachmentService;
             _slaRepository = slaRepository;
+            _workflowAssignmentService = workflowAssignmentService;
         }
 
         public async Task SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
@@ -48,7 +50,6 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.State = StateEnum.New.ToString();
             requestTicket.RequestTicketId = await GetNextId();
             requestTicket.CreatedAt = DateTime.Now;
-            requestTicket.Sla = await _slaRepository.GetDefaultSla();
             using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 if (createRequestTicketDTO.IsIncident)
@@ -59,7 +60,12 @@ namespace QuickServiceWebAPI.Services.Implements
                 {
                     await HandleServiceRequestTicket(requestTicket, createRequestTicketDTO);
                 }
-                await _requestTicketRepository.AddRequestTicket(requestTicket);
+                requestTicket.Sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
+                var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
+                if(requestTicketAdded != null)
+                {
+                    await _workflowAssignmentService.AssignWorkflow(requestTicketAdded);
+                }
                 transactionScope.Complete();
             }
         }
@@ -155,7 +161,6 @@ namespace QuickServiceWebAPI.Services.Implements
             var requestTickets = _requestTicketRepository.GetRequestTicketsForRequester(requesterResquestDTO.Requester);
             return requestTickets.Select(requestTicket => new RequestTicketForRequesterDTO
             {
-                IsIncident = requestTicket.IsIncident,
                 RequestTicketId = requestTicket.RequestTicketId,
                 IsIncident = requestTicket.IsIncident,
                 Title = requestTicket.Title,
@@ -201,6 +206,12 @@ namespace QuickServiceWebAPI.Services.Implements
             if (existingRequestTicket == null)
             {
                 throw new AppException($"Request ticket item with id {updateRequestTicketDTO.RequestTicketId} not found");
+            }
+            if(existingRequestTicket.Status != updateRequestTicketDTO.Status 
+                && await _workflowAssignmentService.CheckRequestTicketExists(updateRequestTicketDTO.RequestTicketId)
+                && _workflowAssignmentService.CheckStatusRequestTicketInStatusMapping(updateRequestTicketDTO.Status.ToEnum(StatusEnum.Open)))
+            {
+                throw new AppException($"Request ticket with id {updateRequestTicketDTO.RequestTicketId} already assign to a workflow and cannot update status");
             }
             if ((existingRequestTicket.Impact != updateRequestTicketDTO.Impact
                 || existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency)

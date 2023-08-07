@@ -58,4 +58,6 @@ public partial class Change
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
 
     public virtual User Requester { get; set; } = null!;
+
+    public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();
 }

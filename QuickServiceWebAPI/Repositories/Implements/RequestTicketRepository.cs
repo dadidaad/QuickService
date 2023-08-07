@@ -13,12 +13,23 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _context = context;
             _logger = logger;
         }
-        public async Task AddRequestTicket(RequestTicket requestTicket)
+        public async Task<RequestTicket?> AddRequestTicket(RequestTicket requestTicket)
         {
             try
             {
                 _context.RequestTickets.Add(requestTicket);
                 await _context.SaveChangesAsync();
+                var entry = _context.Entry(requestTicket);
+                if (entry.State == EntityState.Added)
+                {
+                    // The request ticket was inserted successfully
+                    return requestTicket;
+                }
+                else
+                {
+                    // An error occurred during insertion
+                    return null;
+                }
             }
             catch (Exception ex)
             {

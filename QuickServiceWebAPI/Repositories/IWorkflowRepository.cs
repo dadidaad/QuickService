@@ -10,5 +10,7 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateWorkflow(Workflow Workflow);
         public Task DeleteWorkflow(Workflow Workflow);
         public Task<Workflow> GetLastWorkflow();
+        public Task<int> CheckTotalOfWorkflowAssignTo(bool forServiceRequest, string? serivceItemId);
+        public Task<Workflow> GetWorkflowAssignTo(bool forServiceRequest, string? serviceItemId);
     }
 }

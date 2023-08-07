@@ -8,14 +8,6 @@ namespace QuickServiceWebAPI.DTOs.Workflow
         [MaxLength(255)]
         public string WorkflowName { get; set; }
 
-        [Required]
-        public bool IsActive { get; set; }
-
-        [Required]
-        public DateTime CreatedAt { get; set; }
-
-        [MaxLength(255)]
-        public string? Description { get; set; }
 
         [Required]
         [MaxLength(10)]
