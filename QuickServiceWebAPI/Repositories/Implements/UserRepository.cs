@@ -88,6 +88,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 _context.Entry(existingUser).CurrentValues.SetValues(updateUser);
+                _context.Users.Update(existingUser);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

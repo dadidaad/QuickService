@@ -108,7 +108,6 @@ namespace QuickServiceWebAPI.Services.Implements
                 filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
             }
 
-
             var updateUser = _mapper.Map(updateDTO, existingUser);
             if (!string.IsNullOrEmpty(filePath))
             {
