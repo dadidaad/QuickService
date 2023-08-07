@@ -62,8 +62,8 @@ namespace QuickServiceWebAPI.Controllers
         [Authorize]
         public async Task<IActionResult> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
-            await _requestTicketService.SendRequestTicket(createRequestTicketDTO);
-            return Ok(new { message = "Send successfully" });
+            var ticketId = await _requestTicketService.SendRequestTicket(createRequestTicketDTO);
+            return Ok(new { message = "Send successfully", ticketId = ticketId });
         }
 
         [HttpPut("update")]

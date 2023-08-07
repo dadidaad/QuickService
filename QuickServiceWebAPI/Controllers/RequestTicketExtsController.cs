@@ -32,11 +32,13 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateRequestTicketExt(CreateUpdateRequestTicketExtDTO createUpdateRequestTicketExtDTO)
+        public async Task<IActionResult> CreateRequestTicketExt([FromBody] List<CreateUpdateRequestTicketExtDTO> createUpdateRequestTicketExtDTOs)
         {
-            await _requestTicketExtService.CreateRequestTicketExt(createUpdateRequestTicketExtDTO);
+            await _requestTicketExtService.CreateRequestTicketExt(createUpdateRequestTicketExtDTOs);
             return Ok(new { message = "Create successfully" });
         }
+
+
 
         [HttpPut("update")]
         public async Task<IActionResult> UpdateRequestTicketExt(string requestTicketExtId, CreateUpdateRequestTicketExtDTO createUpdateRequestTicketExtDTO)

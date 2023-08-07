@@ -41,11 +41,28 @@ namespace QuickServiceWebAPI.Repositories.Implements
         }
 
         public async Task UpdateWorkflowAssignment(WorkflowAssignment workflowAssignment)
+        }
+
+        public List<WorkflowAssignment> GetWorkflowAssignments()
+                return _context.WorkflowAssignments.Include(w => w.CurrentStep).Include(r => r.RequestTicket).Include(w => w.Workflow).ToList();
+
+        public List<WorkflowAssignment> GetWorkflowAssignments()
+        }
+
+        public List<WorkflowAssignment> GetWorkflowAssignments()
+        }
+
+        public List<WorkflowAssignment> GetWorkflowAssignments()
+        }
+
+        public List<WorkflowAssignment> GetWorkflowAssignments()
+        }
+
+        public List<WorkflowAssignment> GetWorkflowAssignments()
         {
             try
             {
-                _context.WorkflowAssignments.Update(workflowAssignment);
-                await _context.SaveChangesAsync();
+                return _context.WorkflowAssignments.Include(w => w.CurrentStep).Include(r => r.RequestTicket).Include(w => w.Workflow).ToList();
             }
             catch (Exception ex)
             {
@@ -77,24 +94,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
-                throw; // Rethrow the exception to propagate it up the call stack if necessary
-            }
-        }
-
-        public async Task AddRangeWorkflowAssignment(List<WorkflowAssignment> workflowAssignments)
-        {
-            try
-            {
-                _context.WorkflowAssignments.AddRangeAsync(workflowAssignments);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw;
-            }
-        }
-
         public async Task<WorkflowAssignment> GetWorkflowAssignmentByCompositeKey(string referenceId, string workflowId, string currentStepId)
         {
             try
@@ -148,6 +147,24 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 _logger.LogError(ex, "An error occurred");
                 throw;
+            }
+        }
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task<WorkflowAssignment> GetLastWorkflowAssignment()
+        {
+            try
+            {
+                return await _context.WorkflowAssignments.OrderByDescending(u => u.WorkflowAssignmentId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
     }
