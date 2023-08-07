@@ -53,7 +53,7 @@ namespace QuickServiceWebAPI.Controllers
 
         [HttpPost("update")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser([FromForm] UpdateDTO updateDTO)
+        public async Task<IActionResult> UpdateUser(UpdateUserDTO updateDTO)
         {
             await _userService.UpdateUser(updateDTO);
             return Ok(new { message = "Update successfully" });

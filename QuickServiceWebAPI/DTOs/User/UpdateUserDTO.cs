@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.User
 {
-    public class UpdateDTO
+    public class UpdateUserDTO
     {
         [Required]
         [MaxLength(10)]

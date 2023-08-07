@@ -5,7 +5,7 @@ using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
-using UpdateDTO = QuickServiceWebAPI.DTOs.User.UpdateDTO;
+using UpdateUserDTO = QuickServiceWebAPI.DTOs.User.UpdateUserDTO;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -95,7 +95,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        public async Task UpdateUser(UpdateDTO updateDTO)
+        public async Task UpdateUser(UpdateUserDTO updateDTO)
         {
             User existingUser = await _repository.GetUserDetails(updateDTO.UserId);
             if (existingUser == null)
