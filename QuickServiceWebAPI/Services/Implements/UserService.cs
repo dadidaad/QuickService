@@ -111,7 +111,7 @@ namespace QuickServiceWebAPI.Services.Implements
             string wallpaperPath = "";
             if (updateDTO.WallpaperUpload != null && CloudHelper.IsImage(updateDTO.WallpaperUpload))
             {
-                avatarPath = await UpdateImage(updateDTO.WallpaperUpload, existingUser.UserId, _storageConfig.WallpaperContainer);
+                wallpaperPath = await UpdateImage(updateDTO.WallpaperUpload, existingUser.UserId, _storageConfig.WallpaperContainer);
             }
             var updateUser = _mapper.Map(updateDTO, existingUser);
             if (!string.IsNullOrEmpty(avatarPath))

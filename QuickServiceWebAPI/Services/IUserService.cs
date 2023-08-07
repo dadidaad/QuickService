@@ -11,7 +11,6 @@ namespace QuickServiceWebAPI.Services
         public Task<UserDTO> GetUserById(string userId);
         public Task<User> DeactiveUser(string userId);
         public List<UserDTO> GetUsers();
-        Task<string> UpdateAvatar(IFormFile image, string userId);
         public Task AssignRole(AssignRoleDTO assignRoleDTO);
         public Task ChangePassword(ChangePasswordDTO changePasswordDTO);
         public Task ResetPassword(ResetPasswordDTO resetPasswordDTO);
