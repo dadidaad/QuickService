@@ -102,21 +102,30 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("User not found");
             }
-            string filePath = "";
+            string avatarPath = "";
             if (updateDTO.AvatarUpload != null && CloudHelper.IsImage(updateDTO.AvatarUpload))
             {
-                filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
+                avatarPath = await UpdateImage(updateDTO.AvatarUpload, existingUser.UserId, _storageConfig.ImageContainer);
             }
 
-            var updateUser = _mapper.Map(updateDTO, existingUser);
-            if (!string.IsNullOrEmpty(filePath))
+            string wallpaperPath = "";
+            if (updateDTO.WallpaperUpload != null && CloudHelper.IsImage(updateDTO.WallpaperUpload))
             {
-                updateUser.Avatar = filePath;
+                avatarPath = await UpdateImage(updateDTO.WallpaperUpload, existingUser.UserId, _storageConfig.WallpaperContainer);
+            }
+            var updateUser = _mapper.Map(updateDTO, existingUser);
+            if (!string.IsNullOrEmpty(avatarPath))
+            {
+                updateUser.Avatar = avatarPath;
+            }
+            if (!string.IsNullOrEmpty(wallpaperPath))
+            {
+                updateUser.WallPaper = wallpaperPath;
             }
             await _repository.UpdateUser(existingUser, updateUser);
         }
 
-        public async Task<string> UpdateAvatar(IFormFile image, string userId)
+        public async Task<string> UpdateImage(IFormFile image, string userId, string container)
         {
             string filePath = null;
 
@@ -135,7 +144,7 @@ namespace QuickServiceWebAPI.Services.Implements
                         using (Stream stream = image.OpenReadStream())
                         {
                             string fileName = userId + Path.GetExtension(image.FileName);
-                            filePath = await CloudHelper.UploadFileToStorage(stream, fileName, _storageConfig, _storageConfig.ImageContainer);
+                            filePath = await CloudHelper.UploadFileToStorage(stream, fileName, _storageConfig, container);
                         }
                     }
                     else

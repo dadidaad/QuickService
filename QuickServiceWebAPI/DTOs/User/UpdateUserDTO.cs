@@ -26,6 +26,10 @@ namespace QuickServiceWebAPI.DTOs.User
         [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
         public IFormFile? AvatarUpload { get; set; }
 
+        [Display(Name = "Wallpaper")]
+        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
+        public IFormFile? WallpaperUpload { get; set; }
+
         [RegularExpression(@"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}" +
          @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\" +
          @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$"
