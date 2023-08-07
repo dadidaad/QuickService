@@ -14,9 +14,13 @@ namespace QuickServiceWebAPI.DTOs.Comment
 
         public string CommentBy { get; set; } = null!;
 
+        public DateTime CommentTime { get; set; }
+
         public string RequestTicketId { get; set; } = null!;
 
         public string? AttachmentId { get; set; }
+
+        public DateTime LastModified { get; set; }
 
         public virtual AttachmentDTO? AttachmentEntity { get; set; }
 

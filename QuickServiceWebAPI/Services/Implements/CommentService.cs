@@ -51,6 +51,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 comment.IsInternal = true;
             }
             comment.CommentId = await GetNextId();
+            comment.CommentTime = DateTime.Now;
             await _repository.AddComment(comment);
         }
 
@@ -62,6 +63,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("BusinessHour not found");
             }
             comment = _mapper.Map(updateCommentDTO, comment);
+            comment.LastModified = DateTime.Now;
             await _repository.UpdateComment(comment);
         }
 
