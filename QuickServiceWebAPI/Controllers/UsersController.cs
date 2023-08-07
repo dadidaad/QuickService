@@ -82,12 +82,5 @@ namespace QuickServiceWebAPI.Controllers
             await _userService.ResetPassword(resetPasswordDTO);
             return Ok(new { message = "Reset password successfully" });
         }
-
-        [Authorize]
-        [HttpPost("get/{userId}")]
-        public async Task<IActionResult> GetById(string userId)
-        {
-            return Ok(await _userService.GetUserById(userId));
-        }
     }
 }
