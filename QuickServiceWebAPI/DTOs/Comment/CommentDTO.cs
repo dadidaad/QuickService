@@ -10,8 +10,6 @@ namespace QuickServiceWebAPI.DTOs.Comment
 
         public string CommentText { get; set; } = null!;
 
-        public DateTime CommentTime { get; set; }
-
         public bool IsInternal { get; set; }
 
         public string CommentBy { get; set; } = null!;
