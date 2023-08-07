@@ -6,6 +6,6 @@ namespace QuickServiceWebAPI.DTOs.User
     {
         [Required]
         [MaxLength(10)]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = null!;
     }
 }

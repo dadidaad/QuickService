@@ -10,15 +10,17 @@ namespace QuickServiceWebAPI.DTOs.Comment
 
         public string CommentText { get; set; } = null!;
 
-        public DateTime CommentTime { get; set; }
-
         public bool IsInternal { get; set; }
 
         public string CommentBy { get; set; } = null!;
 
+        public DateTime CommentTime { get; set; }
+
         public string RequestTicketId { get; set; } = null!;
 
         public string? AttachmentId { get; set; }
+
+        public DateTime LastModified { get; set; }
 
         public virtual AttachmentDTO? AttachmentEntity { get; set; }
 

@@ -19,6 +19,8 @@ public partial class Comment
 
     public string? AttachmentId { get; set; }
 
+    public DateTime? LastModified { get; set; }
+
     public virtual Attachment? Attachment { get; set; }
 
     public virtual User CommentByNavigation { get; set; } = null!;
