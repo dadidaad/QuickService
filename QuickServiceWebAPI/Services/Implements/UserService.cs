@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
+using QuickServiceWebAPI.DTOs.Role;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
@@ -102,17 +103,8 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("User not found");
             }
-            string avatarPath = "";
-            if (updateDTO.AvatarUpload != null && CloudHelper.IsImage(updateDTO.AvatarUpload))
-            {
-                avatarPath = await UpdateImage(updateDTO.AvatarUpload, existingUser.UserId, _storageConfig.ImageContainer);
-            }
-
-            string wallpaperPath = "";
-            if (updateDTO.WallpaperUpload != null && CloudHelper.IsImage(updateDTO.WallpaperUpload))
-            {
-                wallpaperPath = await UpdateImage(updateDTO.WallpaperUpload, existingUser.UserId, _storageConfig.WallpaperContainer);
-            }
+            string? avatarPath = await GetPathImpageUpload(updateDTO.AvatarUpload, updateDTO.UserId, _storageConfig.ImageContainer);
+            string? wallpaperPath = await GetPathImpageUpload(updateDTO.WallpaperUpload, updateDTO.UserId, _storageConfig.WallpaperContainer);
             var updateUser = _mapper.Map(updateDTO, existingUser);
             if (!string.IsNullOrEmpty(avatarPath))
             {
@@ -125,9 +117,17 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.UpdateUser(existingUser, updateUser);
         }
 
-        public async Task<string> UpdateImage(IFormFile image, string userId, string container)
+        private async Task<string?> GetPathImpageUpload(IFormFile image, string userId, string container)
         {
-            string filePath = null;
+            if (image != null && CloudHelper.IsImage(image))
+            {
+                return await UpdateImage(image, userId, container);
+            }
+            return null;
+        }
+        private async Task<string> UpdateImage(IFormFile image, string userId, string container)
+        {
+            string? filePath = null;
 
             try
             {
