@@ -8,7 +8,7 @@ namespace QuickServiceWebAPI.Services
         public List<CommentDTO> GetCustomerCommentsByRequestTicket(string requestTicketId);
         public List<CommentDTO> GetCommentsByRequestTicket(string requestTicketId);
         public Task<string> CreateComment(CreateCommentDTO createCommentDTO);
-        public Task UpdateComment(string commentId, UpdateCommentDTO updateCommentDTO);
+        public Task UpdateComment(UpdateCommentDTO updateCommentDTO);
         public Task DeleteComment(string commentId);
         public Task<string> GetNextId();
     }
