@@ -112,6 +112,11 @@ builder.Services.AddScoped<IRequestTicketExtService, RequestTicketExtService>();
 builder.Services.AddScoped<IRequestTicketHistoryRepository, RequestTicketHistoryRepository>();
 builder.Services.AddScoped<IWorkflowAssignmentRepository, WorkflowAssignmentRepository>();
 builder.Services.AddScoped<IWorkflowAssignmentService, WorkflowAssignmentService>();
+builder.Services.AddScoped<IChangeRepository, ChangeRepository>();
+builder.Services.AddScoped<IChangeService, ChangeService>();
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IWorkflowAssignmentService, WorkflowAssignmentService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 

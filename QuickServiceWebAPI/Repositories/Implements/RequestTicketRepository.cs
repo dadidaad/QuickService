@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Repositories.Implements
@@ -130,6 +131,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 _logger.LogError(ex, "An error occurred");
                 throw;
             }
-        }
+        }      
     }
 }
