@@ -9,9 +9,6 @@ namespace QuickServiceWebAPI.DTOs.Comment
         public string CommentText { get; set; } = null!;
 
         [Required]
-        public DateTime CommentTime { get; set; }
-
-        [Required]
         [MaxLength(10)]
         public string CommentBy { get; set; } = null!;
 

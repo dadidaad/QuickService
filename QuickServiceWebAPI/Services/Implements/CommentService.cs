@@ -37,7 +37,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
         }
 
-        public async Task CreateComment(CreateCommentDTO createCommentDTO)
+        public async Task<string> CreateComment(CreateCommentDTO createCommentDTO)
         {
 
             var comment = _mapper.Map<Comment>(createCommentDTO);
@@ -52,6 +52,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             comment.CommentId = await GetNextId();
             await _repository.AddComment(comment);
+            return comment.CommentId;
         }
 
         public async Task UpdateComment(string commentId, UpdateCommentDTO updateCommentDTO)
