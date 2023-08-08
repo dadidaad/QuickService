@@ -38,7 +38,8 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("get/{requestTicketId}")]
-        [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        [Authorize]
         public async Task<IActionResult> GetRequestTicket(string requestTicketId)
         {
             return Ok(await _requestTicketService.GetDetailsRequestTicket(requestTicketId));
@@ -57,7 +58,7 @@ namespace QuickServiceWebAPI.Controllers
             };
             return Ok(await _requestTicketService.GetDetailsRequestTicketForRequester(requesterResquestDTO));
         }
-
+     
         [HttpPost("sendticket")]
         [Authorize]
         public async Task<IActionResult> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)

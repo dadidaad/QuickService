@@ -10,6 +10,5 @@ namespace QuickServiceWebAPI.Services
         public Task<List<ChangeDTO>> GetAllChanges();
         public Task<ChangeDTO> GetChange(string changeId);
         public Task DeleteChange(string changeId);
-
     }
 }

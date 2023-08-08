@@ -93,6 +93,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 _logger.LogError(ex, "An error occurred");
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
-        }
+        }    
     }
 }

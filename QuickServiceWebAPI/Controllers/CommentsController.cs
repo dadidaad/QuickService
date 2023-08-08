@@ -38,8 +38,8 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateComment(CreateCommentDTO createCommentDTO)
         {
-            await _commentService.CreateComment(createCommentDTO);
-            return Ok(new { message = "Create successfully" });
+            var cmtId = await _commentService.CreateComment(createCommentDTO);
+            return Ok(new { message = "Create successfully", commentId = cmtId });
         }
 
         [HttpPut("update")]

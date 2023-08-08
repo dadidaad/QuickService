@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.ServiceItem;
@@ -228,6 +229,6 @@ namespace QuickServiceWebAPI.Services.Implements
         public Task DeleteRequestTicket(string requestTicketId)
         {
             throw new NotImplementedException();
-        }
+        }     
     }
 }

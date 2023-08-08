@@ -1,6 +1,6 @@
 ﻿namespace QuickServiceWebAPI.Services
 {
-    public class IProblemService
-    {
+    public interface IProblemService
+    {     
     }
 }

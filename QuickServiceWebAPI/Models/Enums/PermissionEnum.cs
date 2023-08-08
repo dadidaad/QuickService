@@ -59,6 +59,9 @@ namespace QuickServiceWebAPI.Models.Enums
         ManageComments,
 
         [Display(Name = "Only need login")]
-        OnlyNeedLogin
+        OnlyNeedLogin,
+
+        [Display(Name = "Manage dashboard")]
+        ManageDashboard,     
     }
 }
