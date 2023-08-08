@@ -19,6 +19,16 @@ namespace QuickServiceWebAPI.Helpers
             return formats.Any(item => file.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
         }
 
+        public static async Task DeleteBlob(string uri, AzureStorageConfig _storageConfig)
+        {
+            Uri blobUri = new Uri(uri);
+            StorageSharedKeyCredential storageCredentials =
+               new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
+            BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
+            await blobClient.DeleteAsync();
+
+        }
+
         public static async Task<string?> UploadFileToStorage(Stream fileStream, string fileName,
                                                             AzureStorageConfig _storageConfig, string container)
         {

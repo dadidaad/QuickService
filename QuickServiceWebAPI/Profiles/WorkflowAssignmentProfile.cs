@@ -18,6 +18,7 @@ namespace QuickServiceWebAPI.Profiles
                 opt => opt.MapFrom(src => src.Workflow));
             CreateMap<CreateUpdateWorkflowAssignmentDTO, WorkflowAssignment>();
             CreateMap<CheckWorkflowAssignmentDTO, WorkflowAssignment>().IgnoreAllNonExisting();
+            CreateMap<RejectWorkflowStepDTO, WorkflowAssignment>().IgnoreAllNonExisting();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
 
@@ -10,18 +11,24 @@ namespace QuickServiceWebAPI.Services.Implements
     {
         private readonly IWorkflowStepRepository _repository;
         private readonly IWorkflowRepository _workflowRepository;
+        private readonly IWorkflowAssignmentRepository _workflowAssignmentRepository;
+        private readonly IWorkflowAssignmentService _workflowAssignmentService;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
         private readonly IGroupRepository _groupRepository;
         public WorkflowStepService(IWorkflowStepRepository repository,
             IWorkflowRepository workflowRepository, IMapper mapper, 
-            IUserRepository userRepository, IGroupRepository groupRepository)
+            IUserRepository userRepository, IGroupRepository groupRepository, 
+            IWorkflowAssignmentRepository workflowAssignmentRepository,
+            IWorkflowAssignmentService workflowAssignmentService)
         {
             _repository = repository;
             _workflowRepository = workflowRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _groupRepository = groupRepository;
+            _workflowAssignmentRepository = workflowAssignmentRepository;
+            _workflowAssignmentService = workflowAssignmentService;
         }
 
         public List<WorkflowStepDTO> GetWorkflowsStep()
@@ -38,6 +45,15 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task CreateWorkflowStep(CreateUpdateWorkflowStepDTO createUpdateWorkflowStepDTO)
         {
+            var workflow = _workflowRepository.GetWorkflowById(createUpdateWorkflowStepDTO.WorkflowId);
+            if(workflow == null)
+            {
+                throw new AppException($"Workflow with id {createUpdateWorkflowStepDTO.WorkflowId} not found");
+            }
+            if(createUpdateWorkflowStepDTO.Status == StatusWorkflowStepEnum.Resolved.ToString())
+            {
+                throw new AppException($"Workflow already have resolved step");
+            }
             await ValidationUserGroup(createUpdateWorkflowStepDTO);
             var workflowStep = _mapper.Map<WorkflowStep>(createUpdateWorkflowStepDTO);
             workflowStep.WorkflowStepId = await GetNextId();
@@ -45,18 +61,22 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.AddWorkflowStep(workflowStep);
         }
  
-        public async Task UpdateWorkflowStep(string workflowStepId, CreateUpdateWorkflowStepDTO CreateUpdateWorkflowStepDTO)
+        public async Task UpdateWorkflowStep(string workflowStepId, CreateUpdateWorkflowStepDTO createUpdateWorkflowStepDTO)
         {
             WorkflowStep workflowStep = await _repository.GetWorkflowStepById(workflowStepId);
             if (workflowStep == null)
             {
                 throw new AppException("WorkflowStep not found");
             }
-            if (_workflowRepository.GetWorkflowById(CreateUpdateWorkflowStepDTO.WorkflowId) == null)
+            if (_workflowRepository.GetWorkflowById(createUpdateWorkflowStepDTO.WorkflowId) == null)
             {
-                throw new AppException("Workflow with id " + CreateUpdateWorkflowStepDTO.WorkflowId + " not found");
+                throw new AppException("Workflow with id " + createUpdateWorkflowStepDTO.WorkflowId + " not found");
             }
-            workflowStep = _mapper.Map(CreateUpdateWorkflowStepDTO, workflowStep);
+            if (createUpdateWorkflowStepDTO.Status == StatusWorkflowStepEnum.Resolved.ToString())
+            {
+                throw new AppException($"Workflow already have resolved step");
+            }
+            workflowStep = _mapper.Map(createUpdateWorkflowStepDTO, workflowStep);
             await _repository.UpdateWorkflowStep(workflowStep);
         }
 
@@ -88,14 +108,24 @@ namespace QuickServiceWebAPI.Services.Implements
             }
 
         }
+
         public async Task DeleteWorkflowStep(string workflowStepId)
         {
-
+            var workflowStep = await _repository.GetWorkflowStepById(workflowStepId);
+            if(workflowStep == null)
+            {
+                throw new AppException($"Workflow step with id {workflowStepId} not found");
+            }
+            var listWorkflowAssignment = await _workflowAssignmentRepository.GetWorkflowAssignmentsByWorkflowStepId(workflowStepId);
+            await _workflowAssignmentService.DeleteListWorkflowAssignment(listWorkflowAssignment);
+            await _repository.DeleteWorkflowStep(workflowStep);
         }
+
+
         public async Task<string> GetNextId()
         {
             WorkflowStep lastWorkflowStep = await _repository.GetLastWorkflowStep();
-            int id = 0;
+            int id;
             if (lastWorkflowStep == null)
             {
                 id = 1;

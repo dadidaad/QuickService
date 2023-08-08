@@ -56,7 +56,13 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task DeleteAttachment(string attachmentId)
         {
-
+            Attachment attachment = await _repository.GetAttachmentById(attachmentId);
+            if (attachment == null)
+            {
+                throw new AppException("Attachment not found");
+            }
+            await CloudHelper.DeleteBlob(attachment.FilePath, _storageConfig);
+            await _repository.DeleteAttachment(attachment);
         }
         public async Task<string> GetNextId()
         {

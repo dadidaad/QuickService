@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.Workflow;
 using QuickServiceWebAPI.Models.Enums;
@@ -6,7 +7,6 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkflowsController : ControllerBase
@@ -16,14 +16,15 @@ namespace QuickServiceWebAPI.Controllers
         {
             _workflowService = workflowService;
         }
-
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpGet("getall")]
-        public IActionResult GetAllWorkflow()
+        public async Task<IActionResult> GetAllWorkflow()
         {
-            var workflows = _workflowService.GetWorkflows();
+            var workflows = await _workflowService.GetWorkflows();
             return Ok(workflows);
         }
 
+        [Authorize]
         [HttpGet("{workflowId}")]
         public async Task<IActionResult> GetWorkflowById(string workflowId)
         {
@@ -31,25 +32,34 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(workflow);
         }
 
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateWorkflow(CreateUpdateWorkflowDTO createUpdateWorkflowDTO)
         {
             await _workflowService.CreateWorkflow(createUpdateWorkflowDTO);
             return Ok(new { message = "Create successfully" });
         }
-
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateWorkflow(string workflowId, CreateUpdateWorkflowDTO createUpdateWorkflowDTO)
         {
             await _workflowService.UpdateWorkflow(workflowId, createUpdateWorkflowDTO);
             return Ok(new { message = "Update successfully" });
         }
-
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteWorkflow(string workflowId)
         {
             await _workflowService.DeleteWorkflow(workflowId);
             return Ok(new { message = "Delete successfully" });
+        }
+
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        [HttpPut("assign")]
+        public async Task<IActionResult> AssignWorkflow(AssignWorkflowDTO assignWorkflowDTO)
+        {
+            await _workflowService.AssignWorkflow(assignWorkflowDTO);
+            return Ok(new { message = "Assign successfully" });
         }
     }
 }

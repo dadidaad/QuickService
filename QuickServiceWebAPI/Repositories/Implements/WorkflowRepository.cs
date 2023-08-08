@@ -13,12 +13,21 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _context = context;
             _logger = logger;
         }
-        public async Task AddWorkflow(Workflow Workflow)
+        public async Task<Workflow?> AddWorkflow(Workflow workflow)
         {
             try
             {
-                _context.Workflows.Add(Workflow);
+                _context.Workflows.Add(workflow);
                 await _context.SaveChangesAsync();
+                var entry = _context.Entry(workflow);
+                if(entry.State == EntityState.Added)
+                {
+                    return workflow;
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -42,11 +51,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<Workflow> GetWorkflows()
+        public async Task<List<Workflow>> GetWorkflows()
         {
             try
             {
-                return _context.Workflows.Include(u => u.CreatedByNavigation.Role).ToList();
+                return await _context.Workflows.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -137,7 +146,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 else if (!forServiceRequest && string.IsNullOrEmpty(serviceItemId))
                 {
                     totalRecords = totalRecords.Where(u => u.ReferenceId == null && u.ForIncident);
-                    return await totalRecords.FirstOrDefaultAsync();
+                    return await totalRecords.OrderByDescending(u => u.CreatedAt).FirstOrDefaultAsync();
                 }
                 else
                 {

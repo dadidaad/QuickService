@@ -13,5 +13,11 @@ namespace QuickServiceWebAPI.Services
         public Task<bool> CheckRequestTicketExists(string requestTicketId);
         
         public bool CheckStatusRequestTicketInStatusMapping(StatusEnum statusEnum);
+        
+        public Task RejectWorkflowStep(RejectWorkflowStepDTO rejectWorkflowStepDTO);
+
+        public Task DeleteListWorkflowAssignment(List<WorkflowAssignment> workflowAssignments);
+
+        public Task<List<WorkflowAssignmentDTO>> GetWorkflowAssignmentsForTicket(string requestTicketId);
     }
 }

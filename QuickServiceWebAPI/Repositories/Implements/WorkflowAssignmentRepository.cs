@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -143,6 +144,75 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 return await _context.WorkflowAssignments.AnyAsync(ws => ws.ReferenceId == requestTicketId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task<bool> CheckAllWorkflowStepCompleted(List<WorkflowStep> workflowSteps, RequestTicket requestTicket)
+        {
+            try
+            {
+                return await _context.WorkflowAssignments.Include(ws => ws.CurrentStep)
+                    .AnyAsync(ws => workflowSteps.All(wst => wst.WorkflowStepId == ws.CurrentStepId) 
+                    && !ws.IsCompleted && ws.ReferenceId == requestTicket.RequestTicketId 
+                    && ws.CurrentStep.Status != StatusWorkflowStepEnum.Resolved.ToString() );
+                //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task DeleteRangeWorkflowAssignment(List<WorkflowAssignment> workflowAssignments)
+        {
+            try
+            {
+                _context.WorkflowAssignments.RemoveRange(workflowAssignments);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByWorkflowStepId(string workflowStepId)
+        {
+            try
+            {
+                List<WorkflowAssignment> workflowAssignments = await _context.WorkflowAssignments
+                                                        .Include(a => a.CurrentStep) // Include the CurrentStep navigation property
+                                                        .Include(a => a.Reference1) // Include the Reference1 navigation property
+                                                        .Include(a => a.Workflow) // Include the Workflow navigation property
+                                                        .Where(a => a.CurrentStepId == workflowStepId).ToListAsync();
+                //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
+                return workflowAssignments;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByWorkflowId(string workflowId)
+        {
+            try
+            {
+                List<WorkflowAssignment> workflowAssignments = await _context.WorkflowAssignments
+                                                        .Include(a => a.CurrentStep) // Include the CurrentStep navigation property
+                                                        .Include(a => a.Reference1) // Include the Reference1 navigation property
+                                                        .Include(a => a.Workflow) // Include the Workflow navigation property
+                                                        .Where(a => a.WorkflowId == workflowId).ToListAsync();
+                //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
+                return workflowAssignments;
             }
             catch (Exception ex)
             {

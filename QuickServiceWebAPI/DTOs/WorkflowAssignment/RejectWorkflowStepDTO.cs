@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 {
-    public class CheckWorkflowAssignmentDTO
+    public class RejectWorkflowStepDTO
     {
         [Required(AllowEmptyStrings = false)]
         [MaxLength(10)]
@@ -17,17 +17,10 @@ namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
         [MaxLength(10)]
         public string CurrentStepId { get; set; } = null!;
 
-        public bool IsCompleted { get; set; }
+        public bool IsReject { get; set; }
 
-        [Required]
-        [MaxLength(10)]
-        public string ReceiverId { get; set; } = null!;
-
-        [MaxLength]
-        public string? CompleteMessage { get; set; }
-
-        [FileSize(1024 * 1024 * 10)]
-        public IFormFile? File { get; set; }
-
+        [MaxLength(255)]
+        [Required(AllowEmptyStrings = false)]
+        public string RejectReason { get; set; } = null!;
     }
 }

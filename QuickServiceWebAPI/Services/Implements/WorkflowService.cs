@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Workflow;
+using QuickServiceWebAPI.DTOs.WorkflowStep;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
@@ -14,27 +15,38 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IServiceItemRepository _serviceItemRepository;
         private readonly ISlaRepository _slaRepository;
         private readonly IMapper _mapper;
-
+        private readonly IWorkflowStepService _workflowStepService;
+        private readonly IWorkflowAssignmentRepository _workflowAssignmentRepository;
         public WorkflowService(IWorkflowRepository repository,
             IUserRepository userRepository, IMapper mapper,
-            IServiceItemRepository serviceItemRepository, ISlaRepository slaRepository)
+            IServiceItemRepository serviceItemRepository, ISlaRepository slaRepository,
+            IWorkflowStepService workflowStepService,
+            IWorkflowAssignmentRepository workflowAssignmentRepository)
         {
             _repository = repository;
             _userRepository = userRepository;
             _mapper = mapper;
             _serviceItemRepository = serviceItemRepository;
             _slaRepository = slaRepository;
+            _workflowStepService = workflowStepService;
+            _workflowAssignmentRepository = workflowAssignmentRepository;
         }
 
-        public List<WorkflowDTO> GetWorkflows()
+        public async Task<List<WorkflowDTO>> GetWorkflows()
         {
-            var workflows = _repository.GetWorkflows();
+            var workflows = await _repository.GetWorkflows();
+            workflows.ForEach(async w => await HandleStatusInWorkflow(w));
             return workflows.Select(workflow => _mapper.Map<WorkflowDTO>(workflow)).ToList();
         }
 
         public async Task<WorkflowDTO> GetWorkflowById(string workflowId)
         {
             var workflow = await _repository.GetWorkflowById(workflowId);
+            if(workflow == null)
+            {
+                throw new AppException($"Workflow with id {workflowId} not found");
+            }
+            await HandleStatusInWorkflow(workflow);
             return _mapper.Map<WorkflowDTO>(workflow);
         }
 
@@ -49,7 +61,18 @@ namespace QuickServiceWebAPI.Services.Implements
             workflow.WorkflowId = await GetNextId();
             workflow.Status = StatusWorkflowEnum.Active.ToString();
             workflow.CreatedAt = DateTime.Now;
-            await _repository.AddWorkflow(workflow);
+            var addedWorkflow = await _repository.AddWorkflow(workflow);
+            if(addedWorkflow != null)
+            {
+                CreateUpdateWorkflowStepDTO createUpdateWorkflowStepDTO = new()
+                {
+                    WorkflowStepName = "Resolved Step",
+                    Status = StatusWorkflowStepEnum.Resolved.ToString(),
+                    ActionDetail = "Resolved all step in workflow",
+                    WorkflowId = workflow.WorkflowId
+                };
+                await _workflowStepService.CreateWorkflowStep(createUpdateWorkflowStepDTO);
+            }
         }
 
         public async Task UpdateWorkflow(string workflowId, CreateUpdateWorkflowDTO createUpdateWorkflowDTO)
@@ -113,11 +136,12 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             else if(string.IsNullOrEmpty(assignWorkflowDTO.ReferenceId) && assignWorkflowDTO.ForIncident)
             {
-                bool mustOnlyOnceWorkflowForIncident = await _repository.CheckTotalOfWorkflowAssignTo(false, null) != 0;
-                if (mustOnlyOnceWorkflowForIncident)
-                {
-                    throw new AppException($"Already have workflow for incident");
-                }
+                //option: can have multiple workflow for incident, take newest or only one
+                //bool mustOnlyOnceWorkflowForIncident = await _repository.CheckTotalOfWorkflowAssignTo(false, null) != 0;
+                //if (mustOnlyOnceWorkflowForIncident)
+                //{
+                //    throw new AppException($"Already have workflow for incident");
+                //}
             }
             else
             {
@@ -133,6 +157,24 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.UpdateWorkflow(updateWorkflow);
         }
 
+        private async Task HandleStatusInWorkflow(Workflow workflow)
+        {
+            bool checkAnyWorkflowInUse = (await _workflowAssignmentRepository
+                .GetWorkflowAssignmentsByWorkflowId(workflow.WorkflowId)).Any(ws => !ws.IsCompleted);
+            if (checkAnyWorkflowInUse)
+            {
+                workflow.Status = StatusWorkflowEnum.InUse.ToString();
+            }
+            else if (string.IsNullOrEmpty(workflow.ReferenceId) && !workflow.ForIncident)
+            {
+                workflow.Status = StatusWorkflowEnum.InActive.ToString();
+            }
+            else if(!string.IsNullOrEmpty(workflow.ReferenceId) || workflow.ForIncident)
+            {
+                workflow.Status = StatusWorkflowEnum.Active.ToString();
+            }
+            await _repository.UpdateWorkflow(workflow);
+        }
         private async Task HandleWorkflowStepInWorkflow(Workflow workflow)
         {
             var steps = workflow.WorkflowSteps.ToList();

@@ -4,5 +4,6 @@
     {
         Active,
         InUse,
+        InActive
     }
 }
