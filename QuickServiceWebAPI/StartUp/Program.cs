@@ -109,6 +109,7 @@ builder.Services.AddScoped<IRequestTicketRepository, RequestTicketRepository>();
 builder.Services.AddScoped<IRequestTicketService, RequestTicketService>();
 builder.Services.AddScoped<IRequestTicketExtRepository, RequestTicketExtRepository>();
 builder.Services.AddScoped<IRequestTicketExtService, RequestTicketExtService>();
+builder.Services.AddScoped<IRequestTicketHistoryRepository, RequestTicketHistoryRepository>();
 builder.Services.AddScoped<IWorkflowAssignmentRepository, WorkflowAssignmentRepository>();
 builder.Services.AddScoped<IWorkflowAssignmentService, WorkflowAssignmentService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
