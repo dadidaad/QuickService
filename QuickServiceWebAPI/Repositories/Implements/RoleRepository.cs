@@ -65,12 +65,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 await _context.Entry(role).Collection("Permissions").LoadAsync();
 
-                List<Permission> permissions = _context.Permissions
-                    .Where(p => role.Permissions.All(pr => pr.PermissionId == p.PermissionId)).ToList();
-                foreach (var permission in permissions)
-                {
-                    role.Permissions.Remove(permission);
-                }
+                role.Permissions.Clear();
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
