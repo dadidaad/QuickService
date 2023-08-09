@@ -1,4 +1,6 @@
-﻿namespace QuickServiceWebAPI.Repositories
+﻿using System.Threading.Tasks;
+
+namespace QuickServiceWebAPI.Repositories
 {
     public interface IDashboardRepository
     {
@@ -7,6 +9,6 @@
         public Task<int> GetProblemCount();
         public Task<int> GetChangeCount();
 
-        public Task<List<int>> GetRequestTicketByServiceCategoryCount();
+        public Task <Dictionary<string, int>> GetRequestTicketByServiceCategoryCount();
     }
 }

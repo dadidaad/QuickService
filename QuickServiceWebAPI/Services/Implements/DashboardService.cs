@@ -32,25 +32,12 @@ namespace QuickServiceWebAPI.Services.Implements
             return await _repository.GetRequestTicketCount();
         }
 
-        public async Task<List<Dictionary<string, int>>> GetRequestTicketByServiceCategoryCount()
+        public async Task<Dictionary<string, int>> GetRequestTicketByServiceCategoryCount()
         {
-            List<int> requestTicketCounts = await _repository.GetRequestTicketByServiceCategoryCount();
+            var requestTicketCounts = await _repository.GetRequestTicketByServiceCategoryCount();
 
-            var result = new List<Dictionary<string, int>>();
-
-            for (int i = 0; i < requestTicketCounts.Count; i++)
-            {
-                var propertyName = $"SECA{i + 1}";
-                var propertyValue = requestTicketCounts[i];
-
-                var propertyObject = new Dictionary<string, int>
-                {
-                    { propertyName, propertyValue }
-                };
-                result.Add(propertyObject);
-            }
-
-            return result;
+                    
+            return requestTicketCounts;
         }
     }
 }

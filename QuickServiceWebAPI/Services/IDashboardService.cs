@@ -6,6 +6,6 @@
         public Task<int> GetRequestTicketIncidentCount();
         public Task<int> GetProblemCount();
         public Task<int> GetChangeCount();
-        public Task<List<Dictionary<string, int>>> GetRequestTicketByServiceCategoryCount();
+        public Task<Dictionary<string, int>> GetRequestTicketByServiceCategoryCount();
     }
 }
