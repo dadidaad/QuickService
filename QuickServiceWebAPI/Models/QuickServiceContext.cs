@@ -37,6 +37,8 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<Problem> Problems { get; set; }
 
+    public virtual DbSet<Query> Queries { get; set; }
+
     public virtual DbSet<RequestTicket> RequestTickets { get; set; }
 
     public virtual DbSet<RequestTicketExt> RequestTicketExts { get; set; }
@@ -472,6 +474,34 @@ public partial class QuickServiceContext : DbContext
                 .HasForeignKey(d => d.RequesterId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Problems_User2");
+        });
+
+        modelBuilder.Entity<Query>(entity =>
+        {
+            entity.HasKey(e => e.QueryId).HasName("PK__Queries__5967F7FB6A725E8C");
+
+            entity.ToTable("Queries", "QuickServices");
+
+            entity.Property(e => e.QueryId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("QueryID");
+            entity.Property(e => e.QueryName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.QueryStatement)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.UserId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("UserID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Queries)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK__Queries__UserID__40C49C62");
         });
 
         modelBuilder.Entity<RequestTicket>(entity =>

@@ -116,6 +116,8 @@ builder.Services.AddScoped<IChangeRepository, ChangeRepository>();
 builder.Services.AddScoped<IChangeService, ChangeService>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IQueryRepository, QueryRepository>();
+builder.Services.AddScoped<IQueryService, QueryService>();
 builder.Services.AddScoped<IWorkflowAssignmentService, WorkflowAssignmentService>();
 builder.Services.AddScoped<IJWTUtils, JWTUtils>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();

@@ -51,6 +51,8 @@ public partial class User
 
     public virtual ICollection<Problem> ProblemRequesters { get; set; } = new List<Problem>();
 
+    public virtual ICollection<Query> Queries { get; set; } = new List<Query>();
+
     public virtual ICollection<RequestTicket> RequestTicketAssignedToNavigations { get; set; } = new List<RequestTicket>();
 
     public virtual ICollection<RequestTicket> RequestTicketRequesters { get; set; } = new List<RequestTicket>();
