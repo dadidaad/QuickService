@@ -55,6 +55,19 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        public async Task<List<RequestTicketExt>> GetRequestTicketExtsForTicket(string requestTicketId)
+        {
+            try
+            {
+                return await _context.RequestTicketExts.Where(x=>x.TicketId == requestTicketId).Include(r => r.Ticket).ThenInclude(sa => sa.Sla).ThenInclude(slm => slm.Slametrics).Include(f => f.Field).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
         public async Task UpdateRequestTicketExt(RequestTicketExt requestTicketExt)
         {
             try
@@ -95,5 +108,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
+
+        
     }
 }

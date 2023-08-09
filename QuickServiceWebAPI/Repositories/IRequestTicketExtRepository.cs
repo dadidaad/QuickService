@@ -6,6 +6,7 @@ namespace QuickServiceWebAPI.Repositories
     {
         public List<RequestTicketExt> GetRequestTicketExts();
         public Task<RequestTicketExt> GetRequestTicketExtById(string requestTicketExtId);
+        public Task<List<RequestTicketExt>> GetRequestTicketExtsForTicket(string requestTicketExtId);
         public Task AddRequestTicketExt(RequestTicketExt requestTicketExt);
         public Task UpdateRequestTicketExt(RequestTicketExt requestTicketExt);
         public Task DeleteRequestTicketExt(RequestTicketExt requestTicketExt);
