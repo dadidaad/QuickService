@@ -1,5 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.ServiceItem;
+using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.User;
 
 namespace QuickServiceWebAPI.DTOs.RequestTicket
@@ -41,6 +42,7 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
         public string? AssignedTo { get; set; }
 
         public string Title { get; set; } = null!;
+        public virtual SlaDTO? Sla { get; set; }
 
         public virtual UserDTO? AssignedToUserEntity { get; set; }
 

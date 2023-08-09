@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.ServiceItem;
+using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
@@ -147,6 +148,8 @@ namespace QuickServiceWebAPI.Services.Implements
                 Title = requestTicket.Title,
                 RequesterUserEntity = _mapper.Map<UserDTO>(requestTicket.Requester),
                 Status = requestTicket.Status,
+                Sla = _mapper.Map<SlaDTO>(requestTicket.Sla),
+                Description = requestTicket.Description,
                 Priority = requestTicket.Priority,
                 CreatedAt = requestTicket.CreatedAt,
                 AssignedToUserEntity = _mapper.Map<UserDTO>(requestTicket.AssignedToNavigation),
