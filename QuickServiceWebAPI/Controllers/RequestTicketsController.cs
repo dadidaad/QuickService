@@ -31,14 +31,14 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet]
-        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
         public async Task<IActionResult> GetAllTickets()
         {
             return Ok(await _requestTicketService.GetAllListRequestTicket());
         }
 
         [HttpGet("get/{requestTicketId}")]
-        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
         public async Task<IActionResult> GetRequestTicket(string requestTicketId)
         {
             return Ok(await _requestTicketService.GetDetailsRequestTicket(requestTicketId));
@@ -65,7 +65,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpPut("update")]
-        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
         public async Task<IActionResult> UpdateRequestTicket(UpdateRequestTicketDTO updateRequestTicketDTO)
         {
             await _requestTicketService.UpdateRequestTicket(updateRequestTicketDTO);
