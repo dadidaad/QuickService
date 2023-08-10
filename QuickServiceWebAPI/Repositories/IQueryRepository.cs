@@ -10,5 +10,7 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateQuery(Query query);
         public Task DeleteQuery(Query query);
         public Task<Query> GetLastQuery();
+        public List<RequestTicket> GetQueryRequestTicket(string? assignee, DateTime? createFrom, DateTime? createTo, string? description,
+                                                         string? group, string? requester, string? requestType, string? priority, string? status);
     }
 }

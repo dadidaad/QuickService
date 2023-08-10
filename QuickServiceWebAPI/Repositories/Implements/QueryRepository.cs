@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
+using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -33,6 +35,36 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 Query query = await _context.Queries.Include(u => u.User).AsNoTracking().FirstOrDefaultAsync(x => x.QueryId == queryId);
                 return query;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public List<RequestTicket> GetQueryRequestTicket(string? assignee, DateTime? createFrom, DateTime? createTo, string? description,
+                                                         string? group, string? requester, string? requestType, string? priority, string? status)
+        {
+            try
+            {
+                return _context.RequestTickets.Include(g => g.AssignedToGroupNavigation)
+                    .Include(u => u.AssignedToNavigation)
+                    .Include(a => a.Attachment)
+                    .Include(r => r.Requester)
+                    .Include(s => s.ServiceItem)
+                    .Include(sl => sl.Sla)
+                    .ThenInclude(slm => slm.Slametrics)
+                    .Where(x => (x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName == assignee || assignee == null) &&
+                        ((createFrom == null || x.CreatedAt >= createFrom)  && (createTo == null || x.CreatedAt <= createTo)) &&
+                        (description == null || x.Description.Contains(description)) &&
+                        (group == null || x.AssignedToGroupNavigation.GroupName == group) &&
+                        (requester == null || x.Requester.FirstName + x.Requester.LastName == requester) &&
+                        (x.Priority == priority || priority == null) &&
+                        (requestType == null || x.ServiceItem.ServiceItemName == requestType) &&
+                        (x.Status == status || status == null))
+                    .OrderBy(x => x.ServiceItem.ServiceItemName)
+                    .ToList();
             }
             catch (Exception ex)
             {
