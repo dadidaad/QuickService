@@ -41,42 +41,50 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task<string> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
-            var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.RequesterEmail);
-            if (requester == null)
+            try
             {
-                throw new AppException($"User with email {createRequestTicketDTO.RequesterEmail} not found");
-            }
-            var requestTicket = _mapper.Map<RequestTicket>(createRequestTicketDTO);
-            requestTicket.RequesterId = requester.UserId;
-            requestTicket.Status = StatusEnum.Open.ToString();
-            requestTicket.State = StateEnum.New.ToString();
-            requestTicket.RequestTicketId = await GetNextId();
-            requestTicket.CreatedAt = DateTime.Now;
-            bool hasWorkflow = false;
-            using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                if (createRequestTicketDTO.IsIncident)
+                var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.RequesterEmail);
+                if (requester == null)
                 {
-                    await HandleIncidentTicket(requestTicket, createRequestTicketDTO);
+                    throw new AppException($"User with email {createRequestTicketDTO.RequesterEmail} not found");
                 }
-                else
+                var requestTicket = _mapper.Map<RequestTicket>(createRequestTicketDTO);
+                requestTicket.RequesterId = requester.UserId;
+                requestTicket.Status = StatusEnum.Open.ToString();
+                requestTicket.State = StateEnum.New.ToString();
+                requestTicket.RequestTicketId = await GetNextId();
+                requestTicket.CreatedAt = DateTime.Now;
+                bool hasWorkflow = false;
+                using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    await HandleServiceRequestTicket(requestTicket, createRequestTicketDTO);
-                    if(requestTicket.WorkflowId != null)
+                    if (createRequestTicketDTO.IsIncident)
                     {
-                        hasWorkflow = true;
+                        await HandleIncidentTicket(requestTicket, createRequestTicketDTO);
                     }
+                    else
+                    {
+                        await HandleServiceRequestTicket(requestTicket, createRequestTicketDTO);
+                        if (requestTicket.WorkflowId != null)
+                        {
+                            hasWorkflow = true;
+                        }
+                    }
+                    requestTicket.Sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
+                    var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
+                    if (requestTicketAdded != null && hasWorkflow)
+                    {
+                        List<string> sourcesWorkflowTasks = await _workflowAssignmentService.GetSourcesTasks(requestTicket.Workflow);
+                        await _workflowAssignmentService.AssignWorkflow(sourcesWorkflowTasks, requestTicketAdded);
+                    }
+                    transactionScope.Complete();
+                    return requestTicket.RequestTicketId;
                 }
-                requestTicket.Sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
-                var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
-                if(requestTicketAdded != null && hasWorkflow)
-                {
-                    List<string> sourcesWorkflowTasks = await _workflowAssignmentService.GetSourcesTasks(requestTicket.Workflow);
-                    await _workflowAssignmentService.AssignWorkflow(sourcesWorkflowTasks, requestTicketAdded);
-                }
-                transactionScope.Complete();
-                return requestTicket.RequestTicketId; 
             }
+            catch (Exception e)
+            {
+                throw new AppException($"Eror! Please contact to admin - {e.Message}"); ;
+            }
+           
         }
 
         private const ImpactEnum DefaultImpactForIncident = ImpactEnum.Low;
@@ -110,6 +118,10 @@ namespace QuickServiceWebAPI.Services.Implements
             if (serviceItem.Workflow != null)
             {
                 requestTicket.Workflow = serviceItem.Workflow;
+            }
+            if (createRequestTicketDTO.Attachment != null)
+            {
+                requestTicket.Attachment = await _attachmentService.CreateAttachment(createRequestTicketDTO.Attachment);
             }
         }
 
