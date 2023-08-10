@@ -45,7 +45,11 @@ namespace QuickServiceWebAPI.Services.Implements
             var requestTicketExts = _repository.GetRequestTicketExts();
             return requestTicketExts.Select(requestTicketExt => _mapper.Map<RequestTicketExtDTO>(requestTicketExt)).ToList();
         }
-
+        public async Task<List<RequestTicketExtDTO>> GetRequestTicketExtsForTicket(string requestTicketId)
+        {
+            var requestTicketExts = await _repository.GetRequestTicketExtsForTicket(requestTicketId);
+            return requestTicketExts.Select(requestTicketExt => _mapper.Map<RequestTicketExtDTO>(requestTicketExt)).ToList();
+        }
         public async Task<RequestTicketExtDTO> GetRequestTicketExtById(string requestTicketExtId)
         {
             var requestTicketExt = await _repository.GetRequestTicketExtById(requestTicketExtId);

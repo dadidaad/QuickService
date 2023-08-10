@@ -56,12 +56,12 @@ namespace QuickServiceWebAPI.Services.Implements
             return comment.CommentId;
         }
 
-        public async Task UpdateComment(string commentId, UpdateCommentDTO updateCommentDTO)
+        public async Task UpdateComment(UpdateCommentDTO updateCommentDTO)
         {
-            Comment comment = await _repository.GetCommentById(commentId);
+            Comment comment = await _repository.GetCommentById(updateCommentDTO.CommentId);
             if (comment == null)
             {
-                throw new AppException("BusinessHour not found");
+                throw new AppException("Comment not found");
             }
             comment = _mapper.Map(updateCommentDTO, comment);
             comment.LastModified = DateTime.Now;
@@ -70,7 +70,12 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task DeleteComment(string commentId)
         {
-
+            Comment comment = await _repository.GetCommentById(commentId);
+            if (comment == null)
+            {
+                throw new AppException("Comment not found");
+            }
+            await _repository.DeleteComment(comment);
         }
         public async Task<string> GetNextId()
         {

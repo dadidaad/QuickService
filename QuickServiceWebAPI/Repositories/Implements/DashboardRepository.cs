@@ -66,26 +66,22 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<List<int>> GetRequestTicketByServiceCategoryCount()
+        public async Task<Dictionary<string, int>> GetRequestTicketByServiceCategoryCount()
         {
             try
             {
-                var serviceCategory = await _context.ServiceCategories.Include(category => category.ServiceItems)
-                                      .ThenInclude(item => item.RequestTickets).ToListAsync();
-
-                List<int> requestTicketCounts = new List<int>();
-
-                foreach (var item in serviceCategory)
-                {
-                    var requestTicketCount = item.ServiceItems
-                        .SelectMany(item => item.RequestTickets)
-                        .Count();
-
-                    requestTicketCounts.Add(requestTicketCount);
-                }
-
-                return requestTicketCounts;
-
+                var query = from sc in _context.ServiceCategories
+                            join si in _context.ServiceItems on sc.ServiceCategoryId equals si.ServiceCategoryId
+                            join rt in _context.RequestTickets on si.ServiceItemId equals rt.ServiceItemId into rtGroup
+                            from rt in rtGroup.DefaultIfEmpty()
+                            group rt by sc.ServiceCategoryId into g
+                            select new
+                            {
+                                ServiceCategoryID = g.Key,
+                                RequestCount = g.Count(rt => rt != null)
+                            };
+                var resultDictionary = query.ToDictionary(s => s.ServiceCategoryID, r => r.RequestCount);
+                return resultDictionary;
             }
             catch (Exception ex)
             {
