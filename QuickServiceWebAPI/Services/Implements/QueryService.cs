@@ -20,6 +20,12 @@ namespace QuickServiceWebAPI.Services.Implements
         public List<RequestTicketDTO> GetQueryRequestTicket(QueryDTO query)
         {
             var requestTickets = _repository.GetQueryRequestTicket(query);
+            if (query.OrderASC == true)
+            {
+                requestTickets.OrderBy(x => x.GetType().GetProperty(query.OrderyBy).GetValue(x, null));
+                return requestTickets.Select(requestTicket => _mapper.Map<RequestTicketDTO>(requestTicket)).ToList();
+            }
+            requestTickets.OrderByDescending(x => x.GetType().GetProperty(query.OrderyBy).GetValue(x, null));
             return requestTickets.Select(requestTicket => _mapper.Map<RequestTicketDTO>(requestTicket)).ToList();
         }
     }
