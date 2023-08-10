@@ -11,17 +11,13 @@ public partial class Sla
 
     public string? Description { get; set; }
 
-    public bool IsActive { get; set; }
-
     public bool IsDefault { get; set; }
 
-    public string? ServiceItemId { get; set; }
-
-    public bool? ForIncident { get; set; }
+    public bool? IsActive { get; set; }
 
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
 
-    public virtual ServiceItem? ServiceItem { get; set; }
+    public virtual ICollection<ServiceItem> ServiceItems { get; set; } = new List<ServiceItem>();
 
     public virtual ICollection<Slametric> Slametrics { get; set; } = new List<Slametric>();
 

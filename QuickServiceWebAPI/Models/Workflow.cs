@@ -17,19 +17,15 @@ public partial class Workflow
 
     public string CreatedBy { get; set; } = null!;
 
-    public string? ReferenceId { get; set; }
-
-    public bool ForIncident { get; set; }
-
     public string? Slaid { get; set; }
 
     public virtual User CreatedByNavigation { get; set; } = null!;
 
-    public virtual ServiceItem? Reference { get; set; }
+    public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
+
+    public virtual ICollection<ServiceItem> ServiceItems { get; set; } = new List<ServiceItem>();
 
     public virtual Sla? Sla { get; set; }
 
-    public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();
-
-    public virtual ICollection<WorkflowStep> WorkflowSteps { get; set; } = new List<WorkflowStep>();
+    public virtual ICollection<WorkflowTask> WorkflowTasks { get; set; } = new List<WorkflowTask>();
 }

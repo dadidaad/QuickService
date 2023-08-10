@@ -1,23 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using System.Data;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
-    public class WorkflowStepRepository : IWorkflowStepRepository
+    public class WorkflowTaskRepository : IWorkflowTaskRepository
     {
         private readonly QuickServiceContext _context;
 
-        private readonly ILogger<WorkflowStepRepository> _logger;
-        public WorkflowStepRepository(QuickServiceContext context, ILogger<WorkflowStepRepository> logger)
+        private readonly ILogger<WorkflowTaskRepository> _logger;
+        public WorkflowTaskRepository(QuickServiceContext context, ILogger<WorkflowTaskRepository> logger)
         {
             _context = context;
             _logger = logger;
         }
-        public async Task AddWorkflowStep(WorkflowStep WorkflowStep)
+        public async Task AddWorkflowTask(WorkflowTask workflowTask)
         {
             try
             {
-                _context.WorkflowSteps.Add(WorkflowStep);
+                _context.WorkflowTasks.Add(workflowTask);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -27,12 +28,12 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<WorkflowStep> GetWorkflowStepById(string workflowStepId)
+        public async Task<WorkflowTask> GetWorkflowTaskById(string workflowTaskId)
         {
             try
             {
-                WorkflowStep workflowStep = await _context.WorkflowSteps.Include(w => w.Workflow).AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowStepId == workflowStepId);
-                return workflowStep;
+                WorkflowTask workflowTask = await _context.WorkflowTasks.Include(w => w.Workflow).AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowTaskId == workflowTaskId);
+                return workflowTask;
             }
             catch (Exception ex)
             {
@@ -41,11 +42,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<WorkflowStep> GetWorkflowSteps()
+        public List<WorkflowTask> GetWorkflowTasks()
         {
             try
             {
-                return _context.WorkflowSteps.Include(w => w.Workflow).ToList();
+                return _context.WorkflowTasks.Include(w => w.Workflow).ToList();
             }
             catch (Exception ex)
             {
@@ -54,11 +55,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task UpdateWorkflowStep(WorkflowStep WorkflowStep)
+        public async Task UpdateWorkflowTask(WorkflowTask workflowTask)
         {
             try
             {
-                _context.WorkflowSteps.Update(WorkflowStep);
+                _context.WorkflowTasks.Update(workflowTask);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -68,11 +69,15 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task DeleteWorkflowStep(WorkflowStep WorkflowStep)
+        public async Task DeleteWorkflowTask(WorkflowTask workflowTask)
         {
             try
             {
-                _context.WorkflowSteps.Remove(WorkflowStep);
+                await _context.Entry(workflowTask).Collection("WorkflowTransitionFromWorkflowTaskNavigations").LoadAsync();
+                await _context.Entry(workflowTask).Collection("WorkflowTransitionToWorkflowTaskNavigations").LoadAsync();
+                workflowTask.WorkflowTransitionFromWorkflowTaskNavigations.Clear();
+                workflowTask.WorkflowTransitionToWorkflowTaskNavigations.Clear();
+                _context.WorkflowTasks.Remove(workflowTask);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -82,11 +87,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<WorkflowStep> GetLastWorkflowStep()
+        public async Task<WorkflowTask> GetLastWorkflowTask()
         {
             try
             {
-                return await _context.WorkflowSteps.OrderByDescending(u => u.WorkflowStepId).FirstOrDefaultAsync();
+                return await _context.WorkflowTasks.OrderByDescending(u => u.WorkflowTaskId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

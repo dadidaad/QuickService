@@ -32,7 +32,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.WorkflowAssignments.Include(w => w.CurrentStep).Include(w => w.Workflow).ToList();
+                return _context.WorkflowAssignments.Include(w => w.CurrentStep).ToList();
             }
             catch (Exception ex)
             {
@@ -69,19 +69,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<WorkflowAssignment> GetLastWorkflowAssignment()
-        {
-            try
-            {
-                return await _context.WorkflowAssignments/*.OrderByDescending(u => u.WorkflowAssignmentId)*/.FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw; // Rethrow the exception to propagate it up the call stack if necessary
-            }
-        }
-
         public async Task AddRangeWorkflowAssignment(List<WorkflowAssignment> workflowAssignments)
         {
             try
@@ -96,17 +83,15 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<WorkflowAssignment> GetWorkflowAssignmentByCompositeKey(string referenceId, string workflowId, string currentStepId)
+        public async Task<WorkflowAssignment> GetWorkflowAssignmentByCompositeKey(string referenceId, string currentStepId)
         {
             try
             {
                 WorkflowAssignment workflowAssignment = await _context.WorkflowAssignments
                                                         .Include(a => a.CurrentStep) // Include the CurrentStep navigation property
                                                         .Include(a => a.Reference1) // Include the Reference1 navigation property
-                                                        .Include(a => a.Workflow) // Include the Workflow navigation property
                                                         .AsNoTracking()
                                                         .SingleOrDefaultAsync(a => a.ReferenceId == referenceId
-                                                                           && a.WorkflowId == workflowId
                                                                            && a.CurrentStepId == currentStepId);
                 //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
                 return workflowAssignment;
@@ -118,17 +103,15 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<List<WorkflowAssignment>> GetAllCurrentWorkflowAssignments(List<WorkflowStep> workflowSteps, Workflow workflow, RequestTicket requestTicket)
+        public async Task<List<WorkflowAssignment>> GetAllCurrentWorkflowAssignments(List<string> workflowTasks, RequestTicket requestTicket)
         {
             try
             {
                 List<WorkflowAssignment> workflowAssignments = await _context.WorkflowAssignments
                                                         .Include(a => a.CurrentStep) // Include the CurrentStep navigation property
                                                         .Include(a => a.Reference1) // Include the Reference1 navigation property
-                                                        .Include(a => a.Workflow) // Include the Workflow navigation property
                                                         .Where(a => a.ReferenceId == requestTicket.RequestTicketId
-                                                                           && a.WorkflowId == workflow.WorkflowId
-                                                                           && workflowSteps.Any(ws => ws.WorkflowStepId == a.CurrentStepId)).ToListAsync();
+                                                                           && workflowTasks.Any(ws => ws == a.CurrentStepId)).ToListAsync();
                 //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
                 return workflowAssignments;
             }
@@ -152,22 +135,22 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<bool> CheckAllWorkflowStepCompleted(List<WorkflowStep> workflowSteps, RequestTicket requestTicket)
-        {
-            try
-            {
-                return await _context.WorkflowAssignments.Include(ws => ws.CurrentStep)
-                    .AnyAsync(ws => workflowSteps.All(wst => wst.WorkflowStepId == ws.CurrentStepId) 
-                    && !ws.IsCompleted && ws.ReferenceId == requestTicket.RequestTicketId 
-                    && ws.CurrentStep.Status != StatusWorkflowStepEnum.Resolved.ToString() );
-                //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw;
-            }
-        }
+        //public async Task<bool> CheckAllWorkflowStepCompleted(List<WorkflowStep> workflowSteps, RequestTicket requestTicket)
+        //{
+        //    try
+        //    {
+        //        return await _context.WorkflowAssignments.Include(ws => ws.CurrentStep)
+        //            .AnyAsync(ws => workflowSteps.All(wst => wst.WorkflowStepId == ws.CurrentStepId) 
+        //            && !ws.IsCompleted && ws.ReferenceId == requestTicket.RequestTicketId 
+        //            && ws.CurrentStep.Status != StatusWorkflowStepEnum.Resolved.ToString() );
+        //        //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "An error occurred");
+        //        throw;
+        //    }
+        //}
 
         public async Task DeleteRangeWorkflowAssignment(List<WorkflowAssignment> workflowAssignments)
         {
@@ -183,15 +166,14 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByWorkflowStepId(string workflowStepId)
+        public async Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByWorkflowTaskId(string workflowTaskId)
         {
             try
             {
                 List<WorkflowAssignment> workflowAssignments = await _context.WorkflowAssignments
                                                         .Include(a => a.CurrentStep) // Include the CurrentStep navigation property
                                                         .Include(a => a.Reference1) // Include the Reference1 navigation property
-                                                        .Include(a => a.Workflow) // Include the Workflow navigation property
-                                                        .Where(a => a.CurrentStepId == workflowStepId).ToListAsync();
+                                                        .Where(a => a.CurrentStepId == workflowTaskId).ToListAsync();
                 //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
                 return workflowAssignments;
             }
@@ -209,8 +191,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 List<WorkflowAssignment> workflowAssignments = await _context.WorkflowAssignments
                                                         .Include(a => a.CurrentStep) // Include the CurrentStep navigation property
                                                         .Include(a => a.Reference1) // Include the Reference1 navigation property
-                                                        .Include(a => a.Workflow) // Include the Workflow navigation property
-                                                        .Where(a => a.WorkflowId == workflowId).ToListAsync();
+                                                        .ToListAsync();
                 //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
                 return workflowAssignments;
             }

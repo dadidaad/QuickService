@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace QuickServiceWebAPI.Models;
 
-public partial class WorkflowStep
+public partial class WorkflowTask
 {
-    public string WorkflowStepId { get; set; } = null!;
+    public string WorkflowTaskId { get; set; } = null!;
 
-    public string WorkflowStepName { get; set; } = null!;
+    public string WorkflowTaskName { get; set; } = null!;
 
     public string Status { get; set; } = null!;
 
-    public string ActionDetail { get; set; } = null!;
+    public string Description { get; set; } = null!;
 
     public string WorkflowId { get; set; } = null!;
 
@@ -24,4 +24,8 @@ public partial class WorkflowStep
     public virtual Workflow Workflow { get; set; } = null!;
 
     public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();
+
+    public virtual ICollection<WorkflowTransition> WorkflowTransitionFromWorkflowTaskNavigations { get; set; } = new List<WorkflowTransition>();
+
+    public virtual ICollection<WorkflowTransition> WorkflowTransitionToWorkflowTaskNavigations { get; set; } = new List<WorkflowTransition>();
 }

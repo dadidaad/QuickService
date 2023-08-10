@@ -48,6 +48,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(a => a.Attachment)
                     .Include(r => r.Requester)
                     .Include(s => s.ServiceItem)
+                    .Include(r => r.Workflow)
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
                     .AsNoTracking()

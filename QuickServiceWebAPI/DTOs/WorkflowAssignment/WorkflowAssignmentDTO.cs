@@ -1,25 +1,36 @@
-﻿using QuickServiceWebAPI.DTOs.RequestTicket;
+﻿using QuickServiceWebAPI.DTOs.Attachment;
+using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.Workflow;
-using QuickServiceWebAPI.DTOs.WorkflowStep;
+using QuickServiceWebAPI.DTOs.WorkflowTask;
+using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 {
     public class WorkflowAssignmentDTO
     {
-        public string WorkflowAssignmentId { get; set; } = null!;
 
-        public bool IsCompleted { get; set; }
-
-        public string RequestTicketId { get; set; } = null!;
-
-        public string WorkflowId { get; set; } = null!;
+        public string ReferenceId { get; set; } = null!;
 
         public string CurrentStepId { get; set; } = null!;
 
-        public virtual WorkflowStepDTO WorkflowStepEntity { get; set; } = null!;
+        public bool IsCompleted { get; set; }
 
-        public virtual RequestTicketDTO RequestTicketEntity { get; set; } = null!;
+        public bool IsReject { get; set; }
 
-        public virtual WorkflowDTO WorkflowEntity { get; set; } = null!;
+        public string? RejectReason { get; set; }
+
+        public DateTime? CompletedTime { get; set; }
+
+        public string? CompleteMessage { get; set; }
+
+
+        public DateTime? DueDate { get; set; }
+
+        public virtual AttachmentDTO? Attachment { get; set; }
+
+        public virtual WorkflowTaskDTO CurrentStep { get; set; } = null!;
+
+        public virtual RequestTicketDTO Reference1 { get; set; } = null!;
+
     }
 }

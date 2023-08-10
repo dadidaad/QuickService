@@ -51,6 +51,7 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.State = StateEnum.New.ToString();
             requestTicket.RequestTicketId = await GetNextId();
             requestTicket.CreatedAt = DateTime.Now;
+            bool hasWorkflow = false;
             using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 if (createRequestTicketDTO.IsIncident)
@@ -60,12 +61,17 @@ namespace QuickServiceWebAPI.Services.Implements
                 else
                 {
                     await HandleServiceRequestTicket(requestTicket, createRequestTicketDTO);
+                    if(requestTicket.WorkflowId != null)
+                    {
+                        hasWorkflow = true;
+                    }
                 }
                 requestTicket.Sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
                 var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
-                if(requestTicketAdded != null)
+                if(requestTicketAdded != null && hasWorkflow)
                 {
-                    await _workflowAssignmentService.AssignWorkflow(requestTicketAdded);
+                    List<string> sourcesWorkflowTasks = await _workflowAssignmentService.GetSourcesTasks(requestTicket.Workflow);
+                    await _workflowAssignmentService.AssignWorkflow(sourcesWorkflowTasks, requestTicketAdded);
                 }
                 transactionScope.Complete();
                 return requestTicket.RequestTicketId; 
@@ -99,6 +105,11 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.Urgency = DefaultUrgencyForService.ToString();
             requestTicket.Priority = CalculatePriority(DefaultImpactForService, DefaultUrgencyForService).ToString();
             requestTicket.Title = $"Request for {serviceItem.ServiceItemName}";
+            requestTicket.ServiceItem = serviceItem;
+            if (serviceItem.Workflow != null)
+            {
+                requestTicket.Workflow = serviceItem.Workflow;
+            }
         }
 
         private async Task<string> GetNextId()
@@ -117,7 +128,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return requestTicketId;
         }
 
-        private PriorityEnum CalculatePriority(ImpactEnum impact, UrgencyEnum urgency)
+        private static PriorityEnum CalculatePriority(ImpactEnum impact, UrgencyEnum urgency)
         {
             if (impact == ImpactEnum.High && urgency == UrgencyEnum.High)
             {
@@ -137,10 +148,10 @@ namespace QuickServiceWebAPI.Services.Implements
 
         }
 
-        public async Task<List<RequestTicketDTO>> GetAllListRequestTicket()
+        public Task<List<RequestTicketDTO>> GetAllListRequestTicket()
         {
             var requestTickets = _requestTicketRepository.GetRequestTickets();
-            return requestTickets.Select(requestTicket => new RequestTicketDTO
+            return Task.FromResult(requestTickets.Select(requestTicket => new RequestTicketDTO
             {
                 IsIncident = requestTicket.IsIncident,
                 RequestTicketId = requestTicket.RequestTicketId,
@@ -150,7 +161,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 Priority = requestTicket.Priority,
                 CreatedAt = requestTicket.CreatedAt,
                 AssignedToUserEntity = _mapper.Map<UserDTO>(requestTicket.AssignedToNavigation),
-            }).ToList();
+            }).ToList());
         }
 
         public async Task<List<RequestTicketForRequesterDTO>> GetAllListRequestTicketForRequester(RequesterResquestDTO requesterResquestDTO)

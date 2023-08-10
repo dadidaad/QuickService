@@ -3,15 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 {
-    public class RejectWorkflowStepDTO
+    public class RejectWorkflowTaskDTO
     {
         [Required(AllowEmptyStrings = false)]
         [MaxLength(10)]
         public string ReferenceId { get; set; } = null!;
-
-        [Required(AllowEmptyStrings = false)]
-        [MaxLength(10)]
-        public string WorkflowId { get; set; } = null!;
 
         [Required(AllowEmptyStrings = false)]
         [MaxLength(10)]

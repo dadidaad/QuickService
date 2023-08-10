@@ -40,7 +40,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Workflow Workflow = await _context.Workflows.Include(w => w.WorkflowSteps)
+                Workflow Workflow = await _context.Workflows.Include(w => w.WorkflowTasks)
                     .Include(u => u.CreatedByNavigation).AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowId == workflowId);
                 return Workflow;
             }
@@ -97,61 +97,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 return await _context.Workflows.OrderByDescending(u => u.WorkflowId).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw; // Rethrow the exception to propagate it up the call stack if necessary
-            }
-        }
-
-        public async Task<int> CheckTotalOfWorkflowAssignTo(bool forServiceRequest, string? serviceItemId)
-        {
-            try
-            {
-                IQueryable<Workflow> totalRecords = _context.Workflows;
-                if (forServiceRequest && !string.IsNullOrEmpty(serviceItemId))
-                {
-                    totalRecords = totalRecords.Where(u => u.ReferenceId == serviceItemId);
-                    return await totalRecords.CountAsync();
-                }
-                else if(!forServiceRequest && string.IsNullOrEmpty(serviceItemId))
-                {
-                    totalRecords = totalRecords.Where(u => u.ReferenceId == null && u.ForIncident);
-                    return await totalRecords.CountAsync();
-                }
-                else
-                {
-                    throw new Exception("Invalid query");
-                }
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw; // Rethrow the exception to propagate it up the call stack if necessary
-            }
-        }
-
-        public async Task<Workflow> GetWorkflowAssignTo(bool forServiceRequest, string? serviceItemId)
-        {
-            try
-            {
-                IQueryable<Workflow> totalRecords = _context.Workflows.Include(w => w.WorkflowSteps)
-                    .Include(w => w.Sla).ThenInclude(s => s.Slametrics);
-                if (forServiceRequest && !string.IsNullOrEmpty(serviceItemId))
-                {
-                    totalRecords = totalRecords.Where(u => u.ReferenceId == serviceItemId);
-                    return await totalRecords.FirstOrDefaultAsync();
-                }
-                else if (!forServiceRequest && string.IsNullOrEmpty(serviceItemId))
-                {
-                    totalRecords = totalRecords.Where(u => u.ReferenceId == null && u.ForIncident);
-                    return await totalRecords.OrderByDescending(u => u.CreatedAt).FirstOrDefaultAsync();
-                }
-                else
-                {
-                    throw new Exception("Invalid query");
-                }
             }
             catch (Exception ex)
             {

@@ -1,17 +1,17 @@
 ﻿using QuickServiceWebAPI.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuickServiceWebAPI.DTOs.WorkflowStep
+namespace QuickServiceWebAPI.DTOs.WorkflowTask
 {
-    public class CreateUpdateWorkflowStepDTO
+    public class CreateUpdateWorkflowTaskDTO
     {
         [Required]
         [MaxLength(255)]
-        public string WorkflowStepName { get; set; } = null!;
+        public string WorkflowTaskName { get; set; } = null!;
 
         [Required]
         [MaxLength(10)]
-        [EnumDataType(typeof(StatusWorkflowStepEnum))]
+        [EnumDataType(typeof(StatusWorkflowTaskEnum))]
         public string Status { get; set; } = null!;
 
         [Required(AllowEmptyStrings = false)]

@@ -37,6 +37,8 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<Problem> Problems { get; set; }
 
+    public virtual DbSet<Query> Queries { get; set; }
+
     public virtual DbSet<RequestTicket> RequestTickets { get; set; }
 
     public virtual DbSet<RequestTicketExt> RequestTicketExts { get; set; }
@@ -67,13 +69,15 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<WorkflowAssignment> WorkflowAssignments { get; set; }
 
-    public virtual DbSet<WorkflowStep> WorkflowSteps { get; set; }
+    public virtual DbSet<WorkflowTask> WorkflowTasks { get; set; }
+
+    public virtual DbSet<WorkflowTransition> WorkflowTransitions { get; set; }
 
     public virtual DbSet<YearlyHolidayList> YearlyHolidayLists { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=tcp:quick-service.database.windows.net,1433; database=Quick service; user=quickservice; password=admin123!");
+        => optionsBuilder.UseSqlServer("server=tcp:quick-service.database.windows.net,1433; database=Quick Service;uid=quickservice;pwd=admin123!;TrustServerCertificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -474,6 +478,34 @@ public partial class QuickServiceContext : DbContext
                 .HasConstraintName("FK_Problems_User2");
         });
 
+        modelBuilder.Entity<Query>(entity =>
+        {
+            entity.HasKey(e => e.QueryId).HasName("PK__Queries__5967F7FB6A725E8C");
+
+            entity.ToTable("Queries", "QuickServices");
+
+            entity.Property(e => e.QueryId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("QueryID");
+            entity.Property(e => e.QueryName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.QueryStatement)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.UserId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("UserID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Queries)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK__Queries__UserID__40C49C62");
+        });
+
         modelBuilder.Entity<RequestTicket>(entity =>
         {
             entity.HasKey(e => e.RequestTicketId).HasName("PK__RequestT__99AAD2D7A5B8B93C");
@@ -549,6 +581,11 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.Urgency)
                 .HasMaxLength(10)
                 .IsUnicode(false);
+            entity.Property(e => e.WorkflowId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("WorkflowID");
 
             entity.HasOne(d => d.AssignedToNavigation).WithMany(p => p.RequestTicketAssignedToNavigations)
                 .HasForeignKey(d => d.AssignedTo)
@@ -585,6 +622,11 @@ public partial class QuickServiceContext : DbContext
                 .HasForeignKey(d => d.Slaid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__RequestTi__SLAID__10566F31");
+
+            entity.HasOne(d => d.Workflow).WithMany(p => p.RequestTickets)
+                .HasForeignKey(d => d.WorkflowId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_RequestTickets_Workflows");
         });
 
         modelBuilder.Entity<RequestTicketExt>(entity =>
@@ -840,14 +882,32 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.ShortDescription)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.Slaid)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("SLAID");
             entity.Property(e => e.Status)
                 .HasMaxLength(10)
                 .IsUnicode(false);
+            entity.Property(e => e.WorkflowId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("WorkflowID");
 
             entity.HasOne(d => d.ServiceCategory).WithMany(p => p.ServiceItems)
                 .HasForeignKey(d => d.ServiceCategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__ServiceIt__Servi__08B54D69");
+
+            entity.HasOne(d => d.Sla).WithMany(p => p.ServiceItems)
+                .HasForeignKey(d => d.Slaid)
+                .HasConstraintName("FK__ServiceIt__SLAID__61316BF4");
+
+            entity.HasOne(d => d.Workflow).WithMany(p => p.ServiceItems)
+                .HasForeignKey(d => d.WorkflowId)
+                .HasConstraintName("FK_ServiceItems_Workflows");
         });
 
         modelBuilder.Entity<ServiceItemCustomField>(entity =>
@@ -915,18 +975,10 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.IsActive).HasColumnName("isActive");
             entity.Property(e => e.IsDefault).HasColumnName("isDefault");
-            entity.Property(e => e.ServiceItemId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength();
             entity.Property(e => e.Slaname)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("SLAName");
-
-            entity.HasOne(d => d.ServiceItem).WithMany(p => p.Slas)
-                .HasForeignKey(d => d.ServiceItemId)
-                .HasConstraintName("FK_SLAs_ServiceItems");
         });
 
         modelBuilder.Entity<Slametric>(entity =>
@@ -1073,11 +1125,6 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength();
             entity.Property(e => e.LastUpdate).HasColumnType("datetime");
-            entity.Property(e => e.ReferenceId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("ReferenceID");
             entity.Property(e => e.Slaid)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -1095,10 +1142,6 @@ public partial class QuickServiceContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Workflows__Creat__1CBC4616");
 
-            entity.HasOne(d => d.Reference).WithMany(p => p.Workflows)
-                .HasForeignKey(d => d.ReferenceId)
-                .HasConstraintName("FK_Workflows_ServiceItems");
-
             entity.HasOne(d => d.Sla).WithMany(p => p.Workflows)
                 .HasForeignKey(d => d.Slaid)
                 .HasConstraintName("FK_Workflows_SLAs");
@@ -1106,7 +1149,7 @@ public partial class QuickServiceContext : DbContext
 
         modelBuilder.Entity<WorkflowAssignment>(entity =>
         {
-            entity.HasKey(e => new { e.ReferenceId, e.WorkflowId, e.CurrentStepId });
+            entity.HasKey(e => new { e.ReferenceId, e.CurrentStepId });
 
             entity.ToTable("WorkflowAssignments", "QuickServices");
 
@@ -1115,11 +1158,6 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("ReferenceID");
-            entity.Property(e => e.WorkflowId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("WorkflowID");
             entity.Property(e => e.CurrentStepId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -1130,6 +1168,7 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("AttachmentID");
+            entity.Property(e => e.CompleteMessage).HasMaxLength(255);
             entity.Property(e => e.CompletedTime).HasColumnType("datetime");
             entity.Property(e => e.DueDate).HasColumnType("datetime");
             entity.Property(e => e.RejectReason).HasMaxLength(255);
@@ -1142,7 +1181,7 @@ public partial class QuickServiceContext : DbContext
             entity.HasOne(d => d.CurrentStep).WithMany(p => p.WorkflowAssignments)
                 .HasForeignKey(d => d.CurrentStepId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WorkflowA__Curre__1B9317B3");
+                .HasConstraintName("FK__WorkflowA__Curre__603D47BB");
 
             entity.HasOne(d => d.Reference).WithMany(p => p.WorkflowAssignments)
                 .HasForeignKey(d => d.ReferenceId)
@@ -1157,25 +1196,20 @@ public partial class QuickServiceContext : DbContext
             entity.HasOne(d => d.Reference1).WithMany(p => p.WorkflowAssignments)
                 .HasForeignKey(d => d.ReferenceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WorkflowA__Refer__18B6AB08");
-
-            entity.HasOne(d => d.Workflow).WithMany(p => p.WorkflowAssignments)
-                .HasForeignKey(d => d.WorkflowId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WorkflowA__Workf__1A9EF37A");
+                .HasConstraintName("FK__WorkflowA__Refer__5C6CB6D7");
         });
 
-        modelBuilder.Entity<WorkflowStep>(entity =>
+        modelBuilder.Entity<WorkflowTask>(entity =>
         {
-            entity.HasKey(e => e.WorkflowStepId).HasName("PK__Workflow__36121401BF6110DD");
+            entity.HasKey(e => e.WorkflowTaskId).HasName("PK__Workflow__36121401BF6110DD");
 
-            entity.ToTable("WorkflowSteps", "QuickServices");
+            entity.ToTable("WorkflowTasks", "QuickServices");
 
-            entity.Property(e => e.WorkflowStepId)
+            entity.Property(e => e.WorkflowTaskId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
-                .HasColumnName("WorkflowStepID");
+                .HasColumnName("WorkflowTaskID");
             entity.Property(e => e.AssignerId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -1195,12 +1229,39 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("WorkflowID");
-            entity.Property(e => e.WorkflowStepName).HasMaxLength(255);
+            entity.Property(e => e.WorkflowTaskName).HasMaxLength(255);
 
-            entity.HasOne(d => d.Workflow).WithMany(p => p.WorkflowSteps)
+            entity.HasOne(d => d.Workflow).WithMany(p => p.WorkflowTasks)
                 .HasForeignKey(d => d.WorkflowId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_WorkflowSteps_Workflow");
+        });
+
+        modelBuilder.Entity<WorkflowTransition>(entity =>
+        {
+            entity.HasKey(e => new { e.FromWorkflowTask, e.ToWorkflowTask });
+
+            entity.ToTable("WorkflowTransitions", "QuickServices");
+
+            entity.Property(e => e.FromWorkflowTask)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength();
+            entity.Property(e => e.ToWorkflowTask)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength();
+            entity.Property(e => e.WorkflowTransitionName).HasMaxLength(50);
+
+            entity.HasOne(d => d.FromWorkflowTaskNavigation).WithMany(p => p.WorkflowTransitionFromWorkflowTaskNavigations)
+                .HasForeignKey(d => d.FromWorkflowTask)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_WorkflowTransitions_WorkflowTasksFrom");
+
+            entity.HasOne(d => d.ToWorkflowTaskNavigation).WithMany(p => p.WorkflowTransitionToWorkflowTaskNavigations)
+                .HasForeignKey(d => d.ToWorkflowTask)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_WorkflowTransitions_WorkflowTasksTo");
         });
 
         modelBuilder.Entity<YearlyHolidayList>(entity =>

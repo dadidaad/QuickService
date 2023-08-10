@@ -12,6 +12,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task<Sla> GetLastSLA();
         public Task<Sla> GetDefaultSla();
         public Task<Sla> GetSlaForRequestTicket(RequestTicket requestTicket);
-        public Task<Sla> GetSlaForWorflow(Workflow workflow);
+        public Task<Sla> GetOlaForWorflow();
     }
 }

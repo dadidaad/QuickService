@@ -10,15 +10,14 @@ namespace QuickServiceWebAPI.Profiles
         public WorkflowAssignmentProfile()
         {
             CreateMap<WorkflowAssignment, WorkflowAssignmentDTO>()
-                .ForMember(dest => dest.WorkflowStepEntity,
+                .ForMember(dest => dest.CurrentStep,
                 opt => opt.MapFrom(src => src.CurrentStep))
-                .ForMember(dest => dest.RequestTicketEntity,
+                .ForMember(dest => dest.Reference1,
                 opt => opt.MapFrom(src => src.Reference1))
-                .ForMember(dest => dest.WorkflowEntity,
-                opt => opt.MapFrom(src => src.Workflow));
-            CreateMap<CreateUpdateWorkflowAssignmentDTO, WorkflowAssignment>();
+                .ForMember(dest => dest.Attachment,
+                opt => opt.MapFrom(src => src.Attachment));
             CreateMap<CheckWorkflowAssignmentDTO, WorkflowAssignment>().IgnoreAllNonExisting();
-            CreateMap<RejectWorkflowStepDTO, WorkflowAssignment>().IgnoreAllNonExisting();
+            CreateMap<RejectWorkflowTaskDTO, WorkflowAssignment>().IgnoreAllNonExisting();
         }
     }
 }
