@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Utilities;
@@ -43,11 +44,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<RequestTicket> GetQueryRequestTicket(string? assignee, DateTime? createFrom, DateTime? createTo, string? description,
-                                                         string? group, string? requester, string? requestType, string? priority, string? status)
+        public List<RequestTicket> GetQueryRequestTicket(QueryDTO query)
         {
             try
             {
+
                 return _context.RequestTickets.Include(g => g.AssignedToGroupNavigation)
                     .Include(u => u.AssignedToNavigation)
                     .Include(a => a.Attachment)
@@ -55,14 +56,14 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(s => s.ServiceItem)
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
-                    .Where(x => (x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName == assignee || assignee == null) &&
-                        ((createFrom == null || x.CreatedAt >= createFrom)  && (createTo == null || x.CreatedAt <= createTo)) &&
-                        (description == null || x.Description.Contains(description)) &&
-                        (group == null || x.AssignedToGroupNavigation.GroupName == group) &&
-                        (requester == null || x.Requester.FirstName + x.Requester.LastName == requester) &&
-                        (x.Priority == priority || priority == null) &&
-                        (requestType == null || x.ServiceItem.ServiceItemName == requestType) &&
-                        (x.Status == status || status == null))
+                    .Where(x => (x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName == query.Assignee || query.Assignee == null) &&
+                        ((query.CreateFrom == null || x.CreatedAt >= query.CreateFrom)  && (query.CreateTo == null || x.CreatedAt <= query.CreateTo)) &&
+                        (query.Description == null || x.Description.Contains(query.Description)) &&
+                        (query.Group == null || x.AssignedToGroupNavigation.GroupName == query.Group) &&
+                        (query.Requester == null || query.Requester.Contains(x.Requester.FirstName + x.Requester.LastName)) &&
+                        (query.Priority.Contains(x.Priority) || query.Priority == null) &&
+                        (query.RequestType == null || x.ServiceItem.ServiceItemName == query.RequestType) &&
+                        (query.Status.Contains(x.Status) || query.Status == null))
                     .OrderBy(x => x.ServiceItem.ServiceItemName)
                     .ToList();
             }

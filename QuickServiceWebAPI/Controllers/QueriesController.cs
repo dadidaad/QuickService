@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Services.Implements;
 
@@ -16,10 +17,9 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("getall")]
-        public IActionResult GetQueryRequestTicket(string? assignee, DateTime? createFrom, DateTime? createTo, string? description,
-                                                         string? group, string? requester, string? requestType, string? priority, string? status)
+        public IActionResult GetQueryRequestTicket([FromQuery] QueryDTO query)
         {
-            var requestTickets = _queryService.GetQueryRequestTicket(assignee, createFrom, createTo, description, group, requester, requestType, priority, status);
+            var requestTickets = _queryService.GetQueryRequestTicket(query);
             return Ok(requestTickets);
         }
     }

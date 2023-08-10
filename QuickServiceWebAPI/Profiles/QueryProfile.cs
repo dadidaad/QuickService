@@ -8,7 +8,7 @@ namespace QuickServiceWebAPI.Profiles
     {
         public QueryProfile() 
         {
-            CreateMap<Query, QueryDTO>()
+            CreateMap<Query, GetQueryDTO>()
                 .ForMember(dest => dest.UserEntity,
                 opt => opt.MapFrom(src => src.User));
         }

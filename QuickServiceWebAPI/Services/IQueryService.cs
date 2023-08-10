@@ -1,10 +1,10 @@
-﻿using QuickServiceWebAPI.DTOs.RequestTicket;
+﻿using QuickServiceWebAPI.DTOs.Query;
+using QuickServiceWebAPI.DTOs.RequestTicket;
 
 namespace QuickServiceWebAPI.Services
 {
     public interface IQueryService 
     {
-        public List<RequestTicketDTO> GetQueryRequestTicket(string? assignee, DateTime? createFrom, DateTime? createTo, string? description,
-                                                         string? group, string? requester, string? requestType, string? priority, string? status);
+        public List<RequestTicketDTO> GetQueryRequestTicket(QueryDTO query);
     }
 }

@@ -1,4 +1,5 @@
-﻿using QuickServiceWebAPI.Models;
+﻿using QuickServiceWebAPI.DTOs.Query;
+using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Repositories
 {
@@ -10,7 +11,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateQuery(Query query);
         public Task DeleteQuery(Query query);
         public Task<Query> GetLastQuery();
-        public List<RequestTicket> GetQueryRequestTicket(string? assignee, DateTime? createFrom, DateTime? createTo, string? description,
-                                                         string? group, string? requester, string? requestType, string? priority, string? status);
+        public List<RequestTicket> GetQueryRequestTicket(QueryDTO query);
     }
 }
