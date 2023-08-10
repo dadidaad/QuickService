@@ -98,7 +98,8 @@ namespace QuickServiceWebAPI.Services.Implements
                     {
                         attachment.AttachmentId = await GetNextId();
                         attachment.Filename = attachmentFile.FileName;
-                        attachment.FilePath = await CloudHelper.UploadFileToStorage(stream, attachment.AttachmentId, _storageConfig, _storageConfig.AttachmentContainer);
+                        string fileNameStore = attachment.AttachmentId + GetFileExtension(attachmentFile);
+                        attachment.FilePath = await CloudHelper.UploadFileToStorage(stream, fileNameStore, _storageConfig, _storageConfig.AttachmentContainer);
                         attachment.FileSize = Convert.ToInt32(attachmentFile.Length);
                         attachment.CreatedAt = DateTime.Now;
                     }
@@ -123,6 +124,17 @@ namespace QuickServiceWebAPI.Services.Implements
                 _logger.LogError(ex.Message);
                 throw new AppException("Error when try to upload image!!");
             }
+        }
+
+        public string GetFileExtension(IFormFile file)
+        {
+            // Get the file name from the ContentDisposition header
+            var fileName = file.FileName;
+
+            // Get the file extension
+            var fileExtension = Path.GetExtension(fileName);
+
+            return fileExtension;
         }
     }
 }

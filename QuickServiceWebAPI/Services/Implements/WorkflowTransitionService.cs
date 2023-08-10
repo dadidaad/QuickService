@@ -23,7 +23,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _workflowRepository = workflowRepository;
         }
 
-        public async Task CreateWorkflowTransition(WorkflowTransitionDTO workflowTransitionDTO)
+        public async Task CreateWorkflowTransition(CreateWorkflowTransitionDTO workflowTransitionDTO)
         {
             var fromWorkflowTask = await _taskRepository.GetWorkflowTaskById(workflowTransitionDTO.FromWorkflowTask);
             if(fromWorkflowTask == null)

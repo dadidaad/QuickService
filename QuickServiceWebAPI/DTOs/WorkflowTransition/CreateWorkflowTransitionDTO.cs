@@ -1,19 +1,21 @@
-﻿using QuickServiceWebAPI.DTOs.WorkflowTask;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.WorkflowTransition
 {
-    public class WorkflowTransitionDTO
+    public class CreateWorkflowTransitionDTO
     {
+        [Required]
+        [MaxLength(10)]
         public string FromWorkflowTask { get; set; } = null!;
 
+        [Required]
+        [MaxLength(10)]
         public string ToWorkflowTask { get; set; } = null!;
 
+        [Required]
+        [MaxLength(50)]
         public string WorkflowTransitionName { get; set; } = null!;
 
         public bool Condition { get; set; }
-
-        public virtual WorkflowTaskDTO FromWorkflowTaskNavigation { get; set; } = null!;
-
-        public virtual WorkflowTaskDTO ToWorkflowTaskNavigation { get; set; } = null!;
     }
 }

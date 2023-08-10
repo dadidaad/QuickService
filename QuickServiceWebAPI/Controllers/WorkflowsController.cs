@@ -24,7 +24,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(workflows);
         }
 
-        [Authorize]
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpGet("{workflowId}")]
         public async Task<IActionResult> GetWorkflowById(string workflowId)
         {

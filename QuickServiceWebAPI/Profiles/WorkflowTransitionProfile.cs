@@ -8,8 +8,12 @@ namespace QuickServiceWebAPI.Profiles
     {
         public WorkflowTransitionProfile()
         {
-            CreateMap<WorkflowTransitionDTO, WorkflowTransition>();
-            CreateMap<WorkflowTransition, WorkflowTransitionDTO>();
+            CreateMap<CreateWorkflowTransitionDTO, WorkflowTransition>();
+            CreateMap<WorkflowTransition, WorkflowTransitionDTO>()
+                .ForMember(dest => dest.FromWorkflowTaskNavigation,
+                opt => opt.MapFrom(src => src.FromWorkflowTaskNavigation))
+                .ForMember(dest => dest.ToWorkflowTaskNavigation,
+                opt => opt.MapFrom(src => src.ToWorkflowTaskNavigation));
             CreateMap<DeleteWorkflowTransitionDTO, WorkflowTransition>();
         }
     }

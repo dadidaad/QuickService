@@ -41,7 +41,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 return await _context.WorkflowTransitions
-                    .Include(wt => wt.FromWorkflowTaskNavigation)
+                    .Include(wt => wt.FromWorkflowTaskNavigation).Include(wt => wt.ToWorkflowTaskNavigation)
                     .Where(wt => workflow.WorkflowTasks.Contains(wt.FromWorkflowTaskNavigation))
                     .ToListAsync();
             }
@@ -83,7 +83,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         public async Task<WorkflowTransition> GetWorkflowTransitionById(string fromWorkflowTask, string toWorkflowTask)
         {
             WorkflowTransition workflowTransition = await _context.WorkflowTransitions
-                .Include(wt => wt.FromWorkflowTask).Include(wt => wt.ToWorkflowTask)
+                .Include(wt => wt.FromWorkflowTaskNavigation).Include(wt => wt.ToWorkflowTaskNavigation)
                    .AsNoTracking().FirstOrDefaultAsync(x => x.FromWorkflowTask == fromWorkflowTask && x.ToWorkflowTask == toWorkflowTask);
             return workflowTransition;
         }
@@ -91,7 +91,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         public async Task<List<WorkflowTransition>> GetWorkflowTransitionsByFromWorkflowTask(string fromWorkflowTask)
         {
             List<WorkflowTransition> workflowTransitions = await _context.WorkflowTransitions
-                .Include(wt => wt.FromWorkflowTask).Include(wt => wt.ToWorkflowTask)
+                .Include(wt => wt.FromWorkflowTaskNavigation).Include(wt => wt.ToWorkflowTaskNavigation)
                    .Where(x => x.FromWorkflowTask == fromWorkflowTask).ToListAsync();
             return workflowTransitions;
         }

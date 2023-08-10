@@ -6,7 +6,7 @@ namespace QuickServiceWebAPI.Services
     {
         public Task<List<WorkflowTransitionDTO>> GetWorkflowTransitionsByWorkflow(string workflowId);
         public Task<List<WorkflowTransitionDTO>> GetWorkflowTransitionByFromTaskId(string fromWorkflowTaskId);
-        public Task CreateWorkflowTransition(WorkflowTransitionDTO workflowTransitionDTO);
+        public Task CreateWorkflowTransition(CreateWorkflowTransitionDTO workflowTransitionDTO);
         public Task DeleteWorkflowTransition(DeleteWorkflowTransitionDTO deleteWorkflowTransitionDTO);
     }
 }

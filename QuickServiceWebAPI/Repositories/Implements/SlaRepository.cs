@@ -112,24 +112,18 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                IQueryable<Sla> slaQuery = _context.Slas
+                IQueryable<Sla> slaQuery = _context.Slas.Include(s => s.ServiceItems)
                     .Include(s => s.Slametrics);
-                //if (requestTicket.ServiceItemId != null && !requestTicket.IsIncident)
-                //{
-                //    return await slaQuery
-                //    .Where(s => s. == requestTicket.ServiceItemId).FirstOrDefaultAsync() 
-                //    ?? await slaQuery.Where(s => s.IsDefault && s.Slaname.Contains("SLA")).FirstOrDefaultAsync();
-                //}
-                //else if(string.IsNullOrEmpty(requestTicket.ServiceItemId) && requestTicket.IsIncident)
-                //{
-                //    return await slaQuery
-                //        .Where(s => s.ForIncident == true && string.IsNullOrEmpty(requestTicket.ServiceItemId))
-                //        .FirstOrDefaultAsync() ?? await slaQuery.Where(s => s.IsDefault && s.Slaname.Contains("SLA")).FirstOrDefaultAsync();
-                //}
-                //else
-                //{
+                if (requestTicket.ServiceItemId != null && !requestTicket.IsIncident)
+                {
+                    return await slaQuery
+                    .Where(s => s.ServiceItems.Contains(requestTicket.ServiceItem)).FirstOrDefaultAsync()
+                    ?? await slaQuery.Where(s => s.IsDefault && s.Slaname.Contains("SLA")).FirstOrDefaultAsync();
+                }
+                else
+                {
                     return await slaQuery.Where(s => s.IsDefault && s.Slaname.Contains("SLA")).FirstOrDefaultAsync();
-                //}
+                }
             }
             catch (Exception ex)
             {
