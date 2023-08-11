@@ -7,6 +7,7 @@ namespace QuickServiceWebAPI.Repositories
         public List<WorkflowAssignment> GetWorkflowAssignments();
         public Task<WorkflowAssignment> GetWorkflowAssignmentByCompositeKey(string referenceId, string currentStepId);
         public Task<List<WorkflowAssignment>> GetAllCurrentWorkflowAssignments(List<string> workflowTasks, RequestTicket requestTicket);
+        public Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByRequestTicket(string requestTicketId);
         public Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByWorkflowTaskId(string workflowTaskId);
         public Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByWorkflowId(string workflowId);
         public Task AddWorkflowAssignment(WorkflowAssignment workflowAssignment);

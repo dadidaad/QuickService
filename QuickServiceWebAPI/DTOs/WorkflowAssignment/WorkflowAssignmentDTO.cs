@@ -23,14 +23,12 @@ namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 
         public string? CompleteMessage { get; set; }
 
-
         public DateTime? DueDate { get; set; }
 
         public virtual AttachmentDTO? Attachment { get; set; }
 
         public virtual WorkflowTaskDTO CurrentStep { get; set; } = null!;
 
-        public virtual RequestTicketDTO Reference1 { get; set; } = null!;
 
     }
 }

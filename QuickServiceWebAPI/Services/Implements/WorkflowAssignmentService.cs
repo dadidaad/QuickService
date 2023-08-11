@@ -256,9 +256,15 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.DeleteRangeWorkflowAssignment(workflowAssignments);
         }
 
-        public Task<List<WorkflowAssignmentDTO>> GetWorkflowAssignmentsForTicket(string requestTicketId)
+        public async Task<List<WorkflowAssignmentDTO>> GetWorkflowAssignmentsForTicket(string requestTicketId)
         {
-            throw new NotImplementedException();
+            var requestTicket = await _requestTicketRepository.GetRequestTicketById(requestTicketId);
+            if(requestTicket == null)
+            {
+                throw new AppException($"Request ticket with id {requestTicketId} not found");
+            }
+            var workflowAssignment = await _repository.GetWorkflowAssignmentsByRequestTicket(requestTicketId);
+            return workflowAssignment.Select(wa => _mapper.Map<WorkflowAssignmentDTO>(wa)).ToList();
         }
     }
 }

@@ -201,5 +201,24 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw;
             }
         }
+
+        public async Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByRequestTicket(string requestTicketId)
+        {
+            try
+            {
+                List<WorkflowAssignment> workflowAssignments = await _context.WorkflowAssignments
+                                                        .Include(wa => wa.Attachment)
+                                                        .Include(a => a.CurrentStep) // Include the CurrentStep navigation property
+                                                        .Where(s => s.ReferenceId == requestTicketId)// Include the Reference1 navigation property
+                                                        .ToListAsync();
+                //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
+                return workflowAssignments;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
     }
 }
