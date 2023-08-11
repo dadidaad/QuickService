@@ -105,7 +105,7 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.Impact = DefaultImpactForService.ToString();
             requestTicket.Urgency = DefaultUrgencyForService.ToString();
             requestTicket.Priority = CalculatePriority(DefaultImpactForService, DefaultUrgencyForService).ToString();
-            requestTicket.Title = $"Request for {serviceItem.ServiceItemName}";
+            //requestTicket.Title = $"Request for {serviceItem.ServiceItemName}";
             requestTicket.ServiceItemId = serviceItem.ServiceItemId;
             if (serviceItem.Workflow != null)
             {
