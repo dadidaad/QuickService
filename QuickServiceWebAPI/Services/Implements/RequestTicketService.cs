@@ -168,7 +168,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 Priority = requestTicket.Priority,
                 CreatedAt = requestTicket.CreatedAt,
                 AssignedToUserEntity = _mapper.Map<UserDTO>(requestTicket.AssignedToNavigation),
-            }).ToList());
+            }).OrderByDescending(x => x.CreatedAt).ToList());
         }
 
         public async Task<List<RequestTicketForRequesterDTO>> GetAllListRequestTicketForRequester(RequesterResquestDTO requesterResquestDTO)
@@ -182,12 +182,13 @@ namespace QuickServiceWebAPI.Services.Implements
             return requestTickets.Select(requestTicket => new RequestTicketForRequesterDTO
             {
                 RequestTicketId = requestTicket.RequestTicketId,
+                IsIncident = requestTicket.IsIncident,
                 Title = requestTicket.Title,
                 Status = requestTicket.Status,
                 CreatedAt = requestTicket.CreatedAt,
                 AssignedToUserEntity = _mapper.Map<UserDTO>(requestTicket.AssignedToNavigation),
                 ServiceItemEntity = _mapper.Map<ServiceItemDTO>(requestTicket.ServiceItem),
-            }).ToList();
+            }).OrderByDescending(x=>x.CreatedAt).ToList();
         }
 
         public async Task<RequestTicketDTO> GetDetailsRequestTicket(string requestTicketId)
