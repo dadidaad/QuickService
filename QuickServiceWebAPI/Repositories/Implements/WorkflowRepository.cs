@@ -19,15 +19,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 _context.Workflows.Add(workflow);
                 await _context.SaveChangesAsync();
-                var entry = _context.Entry(workflow);
-                if(entry.State == EntityState.Added)
-                {
-                    return workflow;
-                }
-                else
-                {
-                    return null;
-                }
+                return workflow;
             }
             catch (Exception ex)
             {

@@ -46,7 +46,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 string currentId = await _slametricService.GetNextId();
                 if (slaMetrics.MoveNext())
                 {
-                    //slaMetrics. = currentId;
+                    slaMetrics.Current.SlametricId = currentId;
                     slaMetrics.Current.Slaid = sla.Slaid;
                 }
                 while (slaMetrics.MoveNext())
@@ -58,6 +58,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     currentId = nextId;
                 }
             }
+            sla.Slametrics = slametrics;
             var slaAdded = await _repository.AddSLA(sla);
             if(slaAdded == null)
             {
