@@ -40,7 +40,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var sla = _mapper.Map<Sla>(createSlaDTO);
             sla.Slaid = await GetNextId();
             var defaultSla = await _repository.GetDefaultSla();
-            List<Slametric> slametrics = new List<Slametric>(defaultSla.Slametrics.ToList());
+            List<Slametric> slametrics = EnumerableUtils.DeepCopy(defaultSla.Slametrics.ToList());
             using (var slaMetrics = slametrics.GetEnumerator())
             {
                 string currentId = await _slametricService.GetNextId();

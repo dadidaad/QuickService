@@ -15,7 +15,7 @@ namespace QuickServiceWebAPI.DTOs.WorkflowTask
         public string Status { get; set; } = null!;
 
         [Required(AllowEmptyStrings = false)]
-        public string ActionDetail { get; set; } = null!;
+        public string Description { get; set; } = null!;
 
         [Required]
         [MaxLength(10)]

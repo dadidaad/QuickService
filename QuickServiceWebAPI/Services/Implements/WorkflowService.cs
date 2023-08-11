@@ -71,7 +71,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 {
                     WorkflowTaskName = "Resolved Step",
                     Status = StatusWorkflowTaskEnum.Resolved.ToString(),
-                    ActionDetail = "Resolved all task in workflow",
+                    Description = "Resolved all task in workflow",
                     WorkflowId = workflow.WorkflowId
                 };
                 await _WorkflowTaskService.CreateWorkflowTask(createUpdateWorkflowTaskDTO, true);

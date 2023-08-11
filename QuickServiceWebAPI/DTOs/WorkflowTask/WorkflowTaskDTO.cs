@@ -1,4 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.Workflow;
+using QuickServiceWebAPI.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.WorkflowTask
 {
@@ -6,11 +8,11 @@ namespace QuickServiceWebAPI.DTOs.WorkflowTask
     {
         public string? WorkflowStepId { get; set; }
 
-        public string? WorkflowStepName { get; set; }
+        public string WorkflowTaskName { get; set; } = null!;
 
-        public string? ActionType { get; set; }
+        public string Status { get; set; } = null!;
 
-        public string? ActionDetails { get; set; }
+        public string Description { get; set; } = null!;
 
         public string? WorkflowId { get; set; }
 
