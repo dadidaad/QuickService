@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.ServiceItemCustomField;
 using QuickServiceWebAPI.Models.Enums;
@@ -6,9 +7,9 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ServiceItemCustomFieldsController : ControllerBase
     {
         private readonly IServiceItemCustomFieldService _serviceItemCustomFieldService;
