@@ -56,15 +56,15 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(s => s.ServiceItem)
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
-                    .Where(x => (x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName == query.Assignee || query.Assignee == null) &&
+                    .Where(x => (query.Assignee.Contains(x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName) || query.Assignee == null) &&
                         ((query.CreateFrom == null || x.CreatedAt >= query.CreateFrom)  && (query.CreateTo == null || x.CreatedAt <= query.CreateTo)) &&
                         (query.Description == null || x.Description.Contains(query.Description)) &&
-                        (query.Group == null || x.AssignedToGroupNavigation.GroupName == query.Group) &&
-                        (query.Requester == null || query.Requester.Contains(x.Requester.FirstName + x.Requester.LastName)) &&
+                        (query.Group == null || query.Group.Contains(x.AssignedToGroupNavigation.GroupName)) &&
+                        (query.Reporter == null || query.Reporter.Contains(x.Requester.FirstName + " " + x.Requester.LastName)) &&
+                        (query.Service == null || query.Service.Contains(x.ServiceItem.ServiceCategory.ServiceCategoryName)) &&
                         (query.Priority.Contains(x.Priority) || query.Priority == null) &&
-                        (query.RequestType == null || x.ServiceItem.ServiceItemName == query.RequestType) &&
+                        (query.RequestType == null || query.RequestType.Contains(x.ServiceItem.ServiceItemName)) &&
                         (query.Status.Contains(x.Status) || query.Status == null))
-                    .OrderBy(x => x.ServiceItem.ServiceItemName)
                     .ToList();
             }
             catch (Exception ex)

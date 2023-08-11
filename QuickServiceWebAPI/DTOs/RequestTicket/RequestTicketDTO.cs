@@ -35,7 +35,7 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
 
         public string Urgency { get; set; } = null!;
 
-        public string Requester { get; set; } = null!;
+        public string RequesterId { get; set; } = null!;
 
         public string ServiceItemId { get; set; } = null!;
 

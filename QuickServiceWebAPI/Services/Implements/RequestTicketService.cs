@@ -67,7 +67,7 @@ namespace QuickServiceWebAPI.Services.Implements
                         hasWorkflow = true;
                     }
                 }
-                requestTicket.Slaid = (await _slaRepository.GetSlaForRequestTicket(requestTicket)).Slaid;
+                requestTicket.Sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
                 var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
                 if(requestTicketAdded != null && hasWorkflow)
                 {
@@ -110,6 +110,10 @@ namespace QuickServiceWebAPI.Services.Implements
             if (serviceItem.Workflow != null)
             {
                 requestTicket.WorkflowId = serviceItem.WorkflowId;
+            }
+            if (createRequestTicketDTO.Attachment != null)
+            {
+                requestTicket.Attachment = await _attachmentService.CreateAttachment(createRequestTicketDTO.Attachment);
             }
         }
 
