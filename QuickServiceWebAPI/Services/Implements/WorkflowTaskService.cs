@@ -45,7 +45,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledTask)
         {
-            var workflow = _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId);
+            var workflow = await _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId);
             if (workflow == null)
             {
                 throw new AppException($"Workflow with id {createUpdateWorkflowTaskDTO.WorkflowId} not found");

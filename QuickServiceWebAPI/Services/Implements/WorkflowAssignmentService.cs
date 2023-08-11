@@ -54,7 +54,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var workflow = await _workflowRepository.GetWorkflowById(requestTicket.WorkflowId);
             var sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
             workflowAssignment.DueDate = DateTime.Now 
-                + TimeSpan.FromTicks(sla.Slametrics.FirstOrDefault(sm => sm.Piority == requestTicket.Priority).ResolutionTime);
+                + TimeSpan.FromTicks(sla.Slametrics.FirstOrDefault(sm => sm.Priority == requestTicket.Priority).ResolutionTime);
             if (workflowTasks.Count == 0)
             {
                 HandleForNoneConfigureTransition(workflowAssignment, workflow);

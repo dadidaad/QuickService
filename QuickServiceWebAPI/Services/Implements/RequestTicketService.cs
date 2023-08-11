@@ -137,7 +137,7 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             if (impact == ImpactEnum.High && urgency == UrgencyEnum.High)
             {
-                return PriorityEnum.Urgent;
+                return PriorityEnum.Urgency;
             }
             else
             {

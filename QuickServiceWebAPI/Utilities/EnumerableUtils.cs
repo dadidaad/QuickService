@@ -16,7 +16,11 @@ namespace QuickServiceWebAPI.Utilities
 
         public static T DeepCopy<T>(this T self)
         {
-            var serialized = JsonConvert.SerializeObject(self);
+            var serialized = JsonConvert.SerializeObject(self, Formatting.Indented,
+            new JsonSerializerSettings
+            {
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            });
             return JsonConvert.DeserializeObject<T>(serialized);
         }
 

@@ -19,7 +19,7 @@ namespace QuickServiceWebAPI.DTOs.Sla
         public string? Description { get; set; }
 
         [MinLength(4, ErrorMessage = "The list must have 4 items."), MaxLength(4, ErrorMessage = "The list must have 4 items.")]
-        [AllPrioritiesIncluded(typeof(PriorityEnum), nameof(SlametricsDetails))]
-        public List<UpdateSlametricsDTO> SlametricsDetails { get; set; } = new List<UpdateSlametricsDTO>();
+        [AllPrioritiesIncluded(typeof(PriorityEnum), nameof(Slametrics))]
+        public List<UpdateSlametricsDTO> Slametrics { get; set; } = new List<UpdateSlametricsDTO>();
     }
 }

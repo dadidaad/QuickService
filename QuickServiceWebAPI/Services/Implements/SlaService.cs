@@ -74,6 +74,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Sla not found");
             }
+            updateSlaDTO.Slametrics.ForEach(slam => slam.SlaId = updateSlaDTO.SlaId);
             sla = _mapper.Map(updateSlaDTO, sla);
             await _repository.UpdateSLA(sla);
         }
