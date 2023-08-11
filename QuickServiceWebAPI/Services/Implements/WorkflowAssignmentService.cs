@@ -16,6 +16,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IRequestTicketRepository _requestTicketRepository;
         private readonly IWorkflowTransitionRepository _workflowTransitionRepository;
         private readonly IAttachmentService _attachmentService;
+        private readonly ISlaRepository _slaRepository;
         private readonly IMapper _mapper;
         public WorkflowAssignmentService(IWorkflowAssignmentRepository repository
             , IWorkflowRepository workflowRepository
@@ -23,7 +24,8 @@ namespace QuickServiceWebAPI.Services.Implements
             , IWorkflowTaskRepository WorkflowTaskRepository
             , IAttachmentService attachmentService
             , IMapper mapper
-            , IWorkflowTransitionRepository workflowTransitionRepository)
+            , IWorkflowTransitionRepository workflowTransitionRepository
+            , ISlaRepository slaRepository)
         {
             _repository = repository;
             _workflowRepository = workflowRepository;
@@ -32,6 +34,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _attachmentService = attachmentService;
             _mapper = mapper;
             _workflowTransitionRepository = workflowTransitionRepository;
+            _slaRepository = slaRepository;
         }
 
         private static readonly Dictionary<StatusEnum, StatusWorkflowTaskEnum> StatusMapping = new Dictionary<StatusEnum, StatusWorkflowTaskEnum>
@@ -49,7 +52,9 @@ namespace QuickServiceWebAPI.Services.Implements
                 ReferenceId = requestTicket.RequestTicketId
             };
             var workflow = await _workflowRepository.GetWorkflowById(requestTicket.WorkflowId);
-            workflowAssignment.DueDate = DateTime.Now + TimeSpan.FromTicks(workflow.Sla.Slametrics.FirstOrDefault().ResolutionTime);
+            var sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
+            workflowAssignment.DueDate = DateTime.Now 
+                + TimeSpan.FromTicks(sla.Slametrics.FirstOrDefault(sm => sm.Piority == requestTicket.Priority).ResolutionTime);
             if (workflowTasks.Count == 0)
             {
                 HandleForNoneConfigureTransition(workflowAssignment, workflow);
@@ -136,7 +141,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 }
                 if (checkWorkflowAssignmentDTO.File != null)
                 {
-                    workflowAssignment.Attachment = await _attachmentService.CreateAttachment(checkWorkflowAssignmentDTO.File);
+                    workflowAssignment.AttachmentId = (await _attachmentService.CreateAttachment(checkWorkflowAssignmentDTO.File)).AttachmentId;
                 }
                 var updateWorkflowAssignment = _mapper.Map(checkWorkflowAssignmentDTO, workflowAssignment);
                 updateWorkflowAssignment.CompletedTime = DateTime.Now;

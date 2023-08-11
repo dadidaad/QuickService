@@ -13,12 +13,18 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _context = context;
             _logger = logger;
         }
-        public async Task AddSLA(Sla sla)
+        public async Task<Sla> AddSLA(Sla sla)
         {
             try
             {
                 _context.Slas.Add(sla);
                 await _context.SaveChangesAsync();
+                var entry = _context.Entry(sla);
+                if(entry.State == EntityState.Added)
+                {
+                    return sla;
+                }
+                return null;
             }
             catch (Exception ex)
             {

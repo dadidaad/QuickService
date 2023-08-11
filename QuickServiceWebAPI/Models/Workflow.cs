@@ -17,15 +17,11 @@ public partial class Workflow
 
     public string CreatedBy { get; set; } = null!;
 
-    public string? Slaid { get; set; }
-
     public virtual User CreatedByNavigation { get; set; } = null!;
 
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
 
     public virtual ICollection<ServiceItem> ServiceItems { get; set; } = new List<ServiceItem>();
-
-    public virtual Sla? Sla { get; set; }
 
     public virtual ICollection<WorkflowTask> WorkflowTasks { get; set; } = new List<WorkflowTask>();
 }

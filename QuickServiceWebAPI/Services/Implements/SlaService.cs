@@ -28,11 +28,16 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<SlaDTO>(sla);
         }
 
-        public async Task CreateSLA(CreateUpdateSlaDTO createUpdateSlaDTO)
+        public async Task<SlaDTO> CreateSLA(CreateUpdateSlaDTO createUpdateSlaDTO)
         {
             var sla = _mapper.Map<Sla>(createUpdateSlaDTO);
             sla.Slaid = await GetNextId();
-            await _repository.AddSLA(sla);
+            var slaAdded = await _repository.AddSLA(sla);
+            if(slaAdded == null)
+            {
+                throw new AppException($"Create failed");
+            }
+            return _mapper.Map<SlaDTO>(slaAdded);
         }
 
         public async Task UpdateSLA(string slaId, CreateUpdateSlaDTO createUpdateSlaDTO)

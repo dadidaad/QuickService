@@ -64,7 +64,6 @@ namespace QuickServiceWebAPI.Services.Implements
             workflow.WorkflowId = await GetNextId();
             workflow.Status = StatusWorkflowEnum.Active.ToString();
             workflow.CreatedAt = DateTime.Now;
-            workflow.Sla = await _slaRepository.GetOlaForWorflow();
             var addedWorkflow = await _repository.AddWorkflow(workflow);
             if(addedWorkflow != null)
             {
@@ -132,7 +131,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 {
                     throw new AppException($"Service item with id {assignWorkflowDTO.ServiceItemId} not found");
                 }
-                serviceItem.Workflow = workflow;
+                serviceItem.WorkflowId = workflow.WorkflowId;
                 await _serviceItemRepository.UpdateServiceItem(serviceItem);
 
             }
@@ -148,7 +147,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 {
                     throw new AppException($"Only add workflow to incident ticket");
                 }
-                requestTicket.Workflow = workflow;
+                requestTicket.WorkflowId = workflow.WorkflowId;
                 await _requestTicketRepository.UpdateRequestTicket(requestTicket);
             }
         }

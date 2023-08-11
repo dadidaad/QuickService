@@ -35,7 +35,7 @@ namespace QuickServiceWebAPI.Controllers
         public async Task<IActionResult> CreateSLA(CreateUpdateSlaDTO createUpdateSlaDTO)
         {
             await _slaService.CreateSLA(createUpdateSlaDTO);
-            return Ok(new { message = "Create successfully" });
+            return Ok(await _slaService.CreateSLA(createUpdateSlaDTO));
         }
 
         [HttpPut("update")]

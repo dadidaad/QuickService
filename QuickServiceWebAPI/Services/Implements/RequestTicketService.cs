@@ -67,7 +67,7 @@ namespace QuickServiceWebAPI.Services.Implements
                         hasWorkflow = true;
                     }
                 }
-                requestTicket.Sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
+                requestTicket.Slaid = (await _slaRepository.GetSlaForRequestTicket(requestTicket)).Slaid;
                 var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
                 if(requestTicketAdded != null && hasWorkflow)
                 {
@@ -106,10 +106,10 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.Urgency = DefaultUrgencyForService.ToString();
             requestTicket.Priority = CalculatePriority(DefaultImpactForService, DefaultUrgencyForService).ToString();
             requestTicket.Title = $"Request for {serviceItem.ServiceItemName}";
-            requestTicket.ServiceItem = serviceItem;
+            requestTicket.ServiceItemId = serviceItem.ServiceItemId;
             if (serviceItem.Workflow != null)
             {
-                requestTicket.Workflow = serviceItem.Workflow;
+                requestTicket.WorkflowId = serviceItem.WorkflowId;
             }
         }
 

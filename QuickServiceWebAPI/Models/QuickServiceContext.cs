@@ -1125,11 +1125,6 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength();
             entity.Property(e => e.LastUpdate).HasColumnType("datetime");
-            entity.Property(e => e.Slaid)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("SLAID");
             entity.Property(e => e.Status)
                 .HasMaxLength(10)
                 .IsUnicode(false);
@@ -1141,10 +1136,6 @@ public partial class QuickServiceContext : DbContext
                 .HasForeignKey(d => d.CreatedBy)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Workflows__Creat__1CBC4616");
-
-            entity.HasOne(d => d.Sla).WithMany(p => p.Workflows)
-                .HasForeignKey(d => d.Slaid)
-                .HasConstraintName("FK_Workflows_SLAs");
         });
 
         modelBuilder.Entity<WorkflowAssignment>(entity =>

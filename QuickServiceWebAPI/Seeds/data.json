@@ -54,22 +54,6 @@
           "ResolutionTime": 14400
         }
       ]
-    },
-    {
-      "Slaid": "SELA000002",
-      "Slaname": "Default OLA policy",
-      "Description": "Default OLA policy",
-      "IsActive": true,
-      "IsDefault" :  true,
-      "Slametrics": [
-        {
-          "SlametricId": "SLAM000005",
-          "Piority": "Target",
-          "ResponseTime": 0,
-          "ResolutionTime": 86400
-        }
-      ]
     }
-
   ]
 }

@@ -11,7 +11,5 @@ namespace QuickServiceWebAPI.DTOs.Sla
         [MaxLength(255)]
         public string? Description { get; set; }
 
-        [Required]
-        public bool IsActive { get; set; }
     }
 }

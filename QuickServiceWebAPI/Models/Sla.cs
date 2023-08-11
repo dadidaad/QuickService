@@ -20,6 +20,4 @@ public partial class Sla
     public virtual ICollection<ServiceItem> ServiceItems { get; set; } = new List<ServiceItem>();
 
     public virtual ICollection<Slametric> Slametrics { get; set; } = new List<Slametric>();
-
-    public virtual ICollection<Workflow> Workflows { get; set; } = new List<Workflow>();
 }
