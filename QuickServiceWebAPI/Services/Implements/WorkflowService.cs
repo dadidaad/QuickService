@@ -81,12 +81,13 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task UpdateWorkflow(string workflowId, CreateUpdateWorkflowDTO createUpdateWorkflowDTO)
         {
-            Workflow workflow = await _repository.GetWorkflowById(workflowId);
+            var workflow = await _repository.GetWorkflowById(workflowId);
             if (workflow == null)
             {
                 throw new AppException("Workflow not found");
             }
-            if (_userRepository.GetUserDetails(createUpdateWorkflowDTO.CreatedBy) == null)
+            var user = await _userRepository.GetUserDetails(createUpdateWorkflowDTO.CreatedBy);
+            if (user == null)
             {
                 throw new AppException("Create by user with id " + createUpdateWorkflowDTO.CreatedBy + " not found");
             }

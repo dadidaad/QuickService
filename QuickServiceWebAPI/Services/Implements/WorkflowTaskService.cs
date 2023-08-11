@@ -73,7 +73,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("WorkflowTask not found");
             }
-            if (_workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId) == null)
+            if (await _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId) == null)
             {
                 throw new AppException("Workflow with id " + createUpdateWorkflowTaskDTO.WorkflowId + " not found");
             }

@@ -72,7 +72,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Workflow with id {workflowId} not found");
             }
-            var workflowTransitions = await _repository.GetWorkflowTransitionsByWorkflow(workflow);
+            var workflowTransitions = await _repository.GetWorkflowTransitionsByWorkflow(workflow.WorkflowId);
             return workflowTransitions.Select(wt => _mapper.Map<WorkflowTransitionDTO>(wt)).ToList();
         }
     }

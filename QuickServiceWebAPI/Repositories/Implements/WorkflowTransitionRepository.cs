@@ -28,13 +28,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<List<WorkflowTransition>> GetWorkflowTransitionsByWorkflow(Workflow workflow)
+        public async Task<List<WorkflowTransition>> GetWorkflowTransitionsByWorkflow(string workflowId)
         {
             try
             {
                 return await _context.WorkflowTransitions
                     .Include(wt => wt.FromWorkflowTaskNavigation).Include(wt => wt.ToWorkflowTaskNavigation)
-                    .Where(wt => workflow.WorkflowTasks.Contains(wt.FromWorkflowTaskNavigation))
+                    .Where(wt => wt.ToWorkflowTaskNavigation.WorkflowId == workflowId)
                     .ToListAsync();
             }
             catch (Exception ex)

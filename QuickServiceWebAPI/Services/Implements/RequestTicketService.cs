@@ -71,7 +71,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
                 if(requestTicketAdded != null && hasWorkflow)
                 {
-                    List<string> sourcesWorkflowTasks = await _workflowAssignmentService.GetSourcesTasks(requestTicket.Workflow);
+                    List<string> sourcesWorkflowTasks = await _workflowAssignmentService.GetSourcesTasks(requestTicket.WorkflowId);
                     await _workflowAssignmentService.AssignWorkflow(sourcesWorkflowTasks, requestTicketAdded);
                 }
                 transactionScope.Complete();
@@ -163,7 +163,6 @@ namespace QuickServiceWebAPI.Services.Implements
                 Title = requestTicket.Title,
                 RequesterUserEntity = _mapper.Map<UserDTO>(requestTicket.Requester),
                 Status = requestTicket.Status,
-                Sla = _mapper.Map<SlaDTO>(requestTicket.Sla),
                 Description = requestTicket.Description,
                 Priority = requestTicket.Priority,
                 CreatedAt = requestTicket.CreatedAt,

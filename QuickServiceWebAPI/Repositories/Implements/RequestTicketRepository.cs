@@ -42,7 +42,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(r => r.Workflow)
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
-                    .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.RequestTicketId == requestTicketId);
                 return requestTicket;
             }

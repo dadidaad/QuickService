@@ -18,7 +18,7 @@ namespace QuickServiceWebAPI.Services
 
         public Task DeleteListWorkflowAssignment(List<WorkflowAssignment> workflowAssignments);
 
-        public Task<List<string>> GetSourcesTasks(Workflow workflow);
+        public Task<List<string>> GetSourcesTasks(string workflowId);
 
         public Task<List<WorkflowAssignmentDTO>> GetWorkflowAssignmentsForTicket(string requestTicketId);
     }

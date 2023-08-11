@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.DTOs.WorkflowTask
 {
     public class WorkflowTaskDTO
     {
-        public string? WorkflowStepId { get; set; }
+        public string? WorkflowTaskId { get; set; }
 
         public string WorkflowTaskName { get; set; } = null!;
 
@@ -25,6 +25,6 @@ namespace QuickServiceWebAPI.DTOs.WorkflowTask
 
         public virtual UserDTO? UserEntity { get; set; } 
 
-        public virtual WorkflowDTO? WorkflowEntity { get; set; }
+        //public virtual WorkflowDTO? WorkflowEntity { get; set; }
     }
 }

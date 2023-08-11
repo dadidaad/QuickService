@@ -53,7 +53,7 @@ namespace QuickServiceWebAPI.Services.Implements
             };
             var workflow = await _workflowRepository.GetWorkflowById(requestTicket.WorkflowId);
             var sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
-            workflowAssignment.DueDate = DateTime.Now 
+            workflowAssignment.DueDate = DateTime.Now
                 + TimeSpan.FromTicks(sla.Slametrics.FirstOrDefault(sm => sm.Priority == requestTicket.Priority).ResolutionTime);
             if (workflowTasks.Count == 0)
             {
@@ -103,7 +103,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         private async Task<WorkflowDAG> WorkflowTransitionToDAG(Workflow workflow)
         {
-            List<WorkflowTransition> workflowTransitionsForWorkflow = await _workflowTransitionRepository.GetWorkflowTransitionsByWorkflow(workflow);
+            List<WorkflowTransition> workflowTransitionsForWorkflow = await _workflowTransitionRepository.GetWorkflowTransitionsByWorkflow(workflow.WorkflowId);
             return new WorkflowDAG(workflowTransitionsForWorkflow);
         }
 
@@ -120,7 +120,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException($"Workflow step with id {checkWorkflowAssignmentDTO.CurrentStepId} not found" +
                     $" or not in workflow");
             }
-            if (currentWorkflowTask.AssignerId != null)
+            if (currentWorkflowTask.AssignerId == null)
             {
                 throw new AppException($"Workflow step not yet assign to any agent!");
             }
@@ -154,6 +154,14 @@ namespace QuickServiceWebAPI.Services.Implements
                 requestTicket.Status = MappingWorkflowTaskStatusToRequestTicketStatus(currentWorkflowTask.Status.ToEnum(StatusWorkflowTaskEnum.Open)).ToString();
                 await _requestTicketRepository.UpdateRequestTicket(requestTicket);
                 var nextWorkflowTasks = await GetNextWorkflowTasks(currentWorkflowTask);
+                var workflowAssignments = await _repository.GetWorkflowAssignmentsByRequestTicket(requestTicket.RequestTicketId);
+                for (int i = 0; i < nextWorkflowTasks.Count; i++)
+                {
+                    if (workflowAssignments.Any(wa => wa.CurrentStepId == nextWorkflowTasks[i]))
+                    {
+                        nextWorkflowTasks.RemoveAt(i);
+                    }
+                }
                 if (nextWorkflowTasks.Any())
                 {
                     await AssignWorkflow(nextWorkflowTasks, requestTicket);
@@ -162,8 +170,9 @@ namespace QuickServiceWebAPI.Services.Implements
         }
 
 
-        public async Task<List<string>> GetSourcesTasks(Workflow workflow)
+        public async Task<List<string>> GetSourcesTasks(string workflowId)
         {
+            var workflow = await _workflowRepository.GetWorkflowById(workflowId);
             WorkflowDAG workflowDAG = await WorkflowTransitionToDAG(workflow);
             return workflowDAG.GetSources();
         }
@@ -171,7 +180,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private async Task<List<string>> GetNextWorkflowTasks(WorkflowTask currentWorkflowTask)
         {
             WorkflowDAG workflowDAG = await WorkflowTransitionToDAG(currentWorkflowTask.Workflow);
-            return workflowDAG.GetNextNodes(currentWorkflowTask.WorkflowTaskId);
+            return workflowDAG.GetAdjacentNodes(currentWorkflowTask.WorkflowTaskId);
         }
 
         private async Task<List<string>> GetAllPreviousTasks(WorkflowTask currentWorkflowTask)
@@ -259,12 +268,12 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<List<WorkflowAssignmentDTO>> GetWorkflowAssignmentsForTicket(string requestTicketId)
         {
             var requestTicket = await _requestTicketRepository.GetRequestTicketById(requestTicketId);
-            if(requestTicket == null)
+            if (requestTicket == null)
             {
                 throw new AppException($"Request ticket with id {requestTicketId} not found");
             }
-            var workflowAssignment = await _repository.GetWorkflowAssignmentsByRequestTicket(requestTicketId);
-            return workflowAssignment.Select(wa => _mapper.Map<WorkflowAssignmentDTO>(wa)).ToList();
+            var workflowAssignments = await _repository.GetWorkflowAssignmentsByRequestTicket(requestTicketId);
+            return workflowAssignments.Select(wa => _mapper.Map<WorkflowAssignmentDTO>(wa)).ToList();
         }
     }
 }

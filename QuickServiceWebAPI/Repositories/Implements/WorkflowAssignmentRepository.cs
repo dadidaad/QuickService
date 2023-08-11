@@ -90,7 +90,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 WorkflowAssignment workflowAssignment = await _context.WorkflowAssignments
                                                         .Include(a => a.CurrentStep) // Include the CurrentStep navigation property
                                                         .Include(a => a.Reference1) // Include the Reference1 navigation property
-                                                        .AsNoTracking()
                                                         .SingleOrDefaultAsync(a => a.ReferenceId == referenceId
                                                                            && a.CurrentStepId == currentStepId);
                 //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
@@ -208,7 +207,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 List<WorkflowAssignment> workflowAssignments = await _context.WorkflowAssignments
                                                         .Include(wa => wa.Attachment)
-                                                        .Include(a => a.CurrentStep) // Include the CurrentStep navigation property
+                                                        .Include(a => a.CurrentStep).ThenInclude(c => c.Assigner)
+                                                        .Include(a => a.CurrentStep).ThenInclude(c => c.Group)// Include the CurrentStep navigation property
                                                         .Where(s => s.ReferenceId == requestTicketId)// Include the Reference1 navigation property
                                                         .ToListAsync();
                 //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
