@@ -74,7 +74,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     ActionDetail = "Resolved all task in workflow",
                     WorkflowId = workflow.WorkflowId
                 };
-                await _WorkflowTaskService.CreateWorkflowTask(createUpdateWorkflowTaskDTO);
+                await _WorkflowTaskService.CreateWorkflowTask(createUpdateWorkflowTaskDTO, true);
             }
             return _mapper.Map<WorkflowDTO>(addedWorkflow);
         }

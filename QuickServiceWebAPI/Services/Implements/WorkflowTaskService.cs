@@ -43,14 +43,14 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<WorkflowTaskDTO>(workflowTask);
         }
 
-        public async Task CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO)
+        public async Task CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledTask)
         {
             var workflow = _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId);
             if (workflow == null)
             {
                 throw new AppException($"Workflow with id {createUpdateWorkflowTaskDTO.WorkflowId} not found");
             }
-            if (createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString())
+            if (createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString() && !AcceptResovledTask)
             {
                 throw new AppException($"Workflow already have resolved Task");
             }

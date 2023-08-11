@@ -18,9 +18,5 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
 
         public long ResolutionTime { get; set; }
 
-        public string? EscalationPolicy { get; set; }
-
-        public string? NotificationRules { get; set; }
-
     }
 }
