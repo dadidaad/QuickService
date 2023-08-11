@@ -1108,7 +1108,7 @@ public partial class QuickServiceContext : DbContext
 
         modelBuilder.Entity<Workflow>(entity =>
         {
-            entity.HasKey(e => e.WorkflowId).HasName("PK__Workflow__5704A64AA4E82F20");
+            entity.HasKey(e => e.WorkflowId).HasName("PK__tmp_ms_x__5704A64A7A77662F");
 
             entity.ToTable("Workflows", "QuickServices");
 
@@ -1122,18 +1122,17 @@ public partial class QuickServiceContext : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength();
+            entity.Property(e => e.Description).HasMaxLength(1000);
             entity.Property(e => e.LastUpdate).HasColumnType("datetime");
             entity.Property(e => e.Status)
                 .HasMaxLength(10)
                 .IsUnicode(false);
-            entity.Property(e => e.WorkflowName)
-                .HasMaxLength(255)
-                .IsUnicode(false);
+            entity.Property(e => e.WorkflowName).HasMaxLength(255);
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Workflows)
                 .HasForeignKey(d => d.CreatedBy)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Workflows__Creat__1CBC4616");
+                .HasConstraintName("FK__Workflows__Creat__68D28DBC");
         });
 
         modelBuilder.Entity<WorkflowAssignment>(entity =>
@@ -1219,6 +1218,14 @@ public partial class QuickServiceContext : DbContext
                 .IsFixedLength()
                 .HasColumnName("WorkflowID");
             entity.Property(e => e.WorkflowTaskName).HasMaxLength(255);
+
+            entity.HasOne(d => d.Assigner).WithMany(p => p.WorkflowTasks)
+                .HasForeignKey(d => d.AssignerId)
+                .HasConstraintName("FK_WorkflowTasks_Users");
+
+            entity.HasOne(d => d.Group).WithMany(p => p.WorkflowTasks)
+                .HasForeignKey(d => d.GroupId)
+                .HasConstraintName("FK_WorkflowTasks_Groups");
 
             entity.HasOne(d => d.Workflow).WithMany(p => p.WorkflowTasks)
                 .HasForeignKey(d => d.WorkflowId)

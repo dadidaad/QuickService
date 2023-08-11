@@ -104,7 +104,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.WorkflowTasks.Where(u => u.WorkflowId == workflowId).ToListAsync();
+                return await _context.WorkflowTasks
+                    .Include(wt => wt.Assigner)
+                    .Include(wt => wt.Group)
+                    .Include(wt => wt.WorkflowTransitionFromWorkflowTaskNavigations).ThenInclude(wtf => wtf.ToWorkflowTaskNavigation)
+                    .Where(u => u.WorkflowId == workflowId).ToListAsync();
             }
             catch (Exception ex)
             {

@@ -31,5 +31,7 @@ public partial class Group
 
     public virtual ICollection<Service> Services { get; set; } = new List<Service>();
 
+    public virtual ICollection<WorkflowTask> WorkflowTasks { get; set; } = new List<WorkflowTask>();
+
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
