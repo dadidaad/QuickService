@@ -39,8 +39,25 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var sla = _mapper.Map<Sla>(createSlaDTO);
             sla.Slaid = await GetNextId();
-            List<CreateSlametricDTO> createSlametricDTOs = new List<CreateSlametricDTO>();
-            List<PriorityEnum> priorityEnums = Enum.GetValues(typeof(PriorityEnum)).Cast<PriorityEnum>().ToList();
+            var defaultSla = await _repository.GetDefaultSla();
+            List<Slametric> slametrics = new List<Slametric>(defaultSla.Slametrics.ToList());
+            using (var slaMetrics = slametrics.GetEnumerator())
+            {
+                string currentId = await _slametricService.GetNextId();
+                if (slaMetrics.MoveNext())
+                {
+                    //slaMetrics. = currentId;
+                    slaMetrics.Current.Slaid = sla.Slaid;
+                }
+                while (slaMetrics.MoveNext())
+                {
+                    var nextId = GenerateNextIdForSlaMetrics(currentId);
+                    var slaMetric = slaMetrics.Current;
+                    slaMetric.SlametricId = nextId;
+                    slaMetric.Slaid = sla.Slaid;
+                    currentId = nextId;
+                }
+            }
             var slaAdded = await _repository.AddSLA(sla);
             if(slaAdded == null)
             {

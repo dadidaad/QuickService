@@ -21,10 +21,11 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
         [MaxLength(255)]
         public string? EscalationPolicy { get; set; }
 
+
         [MaxLength(255)]
         public string? NotificationRules { get; set; }
 
-        public string? BusinessHourId { get; set; }
+        public string WorkflowId { get; set; } = null!;
 
     }
 }

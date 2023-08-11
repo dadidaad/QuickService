@@ -55,7 +55,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task<WorkflowDTO> CreateWorkflow(CreateUpdateWorkflowDTO createUpdateWorkflowDTO)
         {
-            var creator = _userRepository.GetUserDetails(createUpdateWorkflowDTO.CreatedBy);
+            var creator = await _userRepository.GetUserDetails(createUpdateWorkflowDTO.CreatedBy);
             if(creator == null)
             {
                 throw new AppException($"User with id {createUpdateWorkflowDTO.CreatedBy} not found");
