@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Sla;
+using QuickServiceWebAPI.DTOs.SLAMetric;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
 
@@ -37,23 +39,8 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var sla = _mapper.Map<Sla>(createSlaDTO);
             sla.Slaid = await GetNextId();
-            using(var slaMetrics = sla.Slametrics.GetEnumerator())
-            {
-                string currentId = await _slametricService.GetNextId();
-                if (slaMetrics.MoveNext())
-                {
-                    slaMetrics.Current.SlametricId = currentId;
-                    slaMetrics.Current.Slaid = sla.Slaid;
-                }
-                while (slaMetrics.MoveNext())
-                {
-                    var nextId = GenerateNextIdForSlaMetrics(currentId);
-                    var slaMetric = slaMetrics.Current;
-                    slaMetric.SlametricId = nextId;
-                    slaMetric.Slaid = sla.Slaid;
-                    currentId = nextId;
-                }
-            }
+            List<CreateSlametricDTO> createSlametricDTOs = new List<CreateSlametricDTO>();
+            List<PriorityEnum> priorityEnums = Enum.GetValues(typeof(PriorityEnum)).Cast<PriorityEnum>().ToList();
             var slaAdded = await _repository.AddSLA(sla);
             if(slaAdded == null)
             {

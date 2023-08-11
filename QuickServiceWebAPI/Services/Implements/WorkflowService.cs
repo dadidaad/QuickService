@@ -53,7 +53,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<WorkflowDTO>(workflow);
         }
 
-        public async Task CreateWorkflow(CreateUpdateWorkflowDTO createUpdateWorkflowDTO)
+        public async Task<WorkflowDTO> CreateWorkflow(CreateUpdateWorkflowDTO createUpdateWorkflowDTO)
         {
             var creator = _userRepository.GetUserDetails(createUpdateWorkflowDTO.CreatedBy);
             if(creator == null)
@@ -76,6 +76,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 };
                 await _WorkflowTaskService.CreateWorkflowTask(createUpdateWorkflowTaskDTO);
             }
+            return _mapper.Map<WorkflowDTO>(addedWorkflow);
         }
 
         public async Task UpdateWorkflow(string workflowId, CreateUpdateWorkflowDTO createUpdateWorkflowDTO)

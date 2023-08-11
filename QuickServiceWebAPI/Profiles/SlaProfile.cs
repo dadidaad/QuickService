@@ -10,10 +10,8 @@ namespace QuickServiceWebAPI.Profiles
         {
             CreateMap<Sla, SlaDTO>()
                 .ForMember(dest => dest.Slametrics,
-                 opt => opt.MapFrom(src => src.Slametrics.ToList())); 
-            CreateMap<CreateSlaDTO, Sla>()
-                .ForMember(dest => dest.Slametrics,
-                 opt => opt.MapFrom(src => src.SlametricsDetails));
+                 opt => opt.MapFrom(src => src.Slametrics.ToList()));
+            CreateMap<CreateSlaDTO, Sla>();
             CreateMap<UpdateSlaDTO, Sla>()
                 .ForMember(dest => dest.Slametrics,
                  opt => opt.MapFrom(src => src.SlametricsDetails)); 
