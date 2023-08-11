@@ -31,9 +31,14 @@ namespace QuickServiceWebAPI.Services.Implements
             _workflowAssignmentService = workflowAssignmentService;
         }
 
-        public List<WorkflowTaskDTO> GetWorkflowsTask()
+        public async Task<List<WorkflowTaskDTO>> GetWorkflowsTaskByWorkflow(string workflowId)
         {
-            var workflowTasks = _repository.GetWorkflowTasks();
+            var workflow = await _workflowRepository.GetWorkflowById(workflowId);
+            if(workflow == null)
+            {
+                throw new AppException($"Workflow with id {workflowId} not found");
+            }
+            var workflowTasks = await _repository.GetWorkflowTaskByWorkflow(workflowId);
             return workflowTasks.Select(workflowTask => _mapper.Map<WorkflowTaskDTO>(workflowTask)).ToList();
         }
 

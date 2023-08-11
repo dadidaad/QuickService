@@ -99,5 +99,18 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
+
+        public async Task<List<WorkflowTask>> GetWorkflowTaskByWorkflow(string workflowId)
+        {
+            try
+            {
+                return await _context.WorkflowTasks.Where(u => u.WorkflowId == workflowId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
     }
 }

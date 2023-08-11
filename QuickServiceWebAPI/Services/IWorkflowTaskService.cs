@@ -4,7 +4,7 @@ namespace QuickServiceWebAPI.Services
 {
     public interface IWorkflowTaskService
     {
-        public List<WorkflowTaskDTO> GetWorkflowsTask();
+        public Task<List<WorkflowTaskDTO>> GetWorkflowsTaskByWorkflow(string workflowId);
         public Task<WorkflowTaskDTO> GetWorkflowTaskById(string workflowTaskId);
         public Task CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledTask = false);
         public Task UpdateWorkflowTask(string workflowTaskId, CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO);

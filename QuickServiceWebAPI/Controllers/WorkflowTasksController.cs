@@ -18,13 +18,20 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
-
         [HttpGet("{workflowStepId}")]
         public async Task<IActionResult> GetWorkflowTaskById(string workflowStepId)
         {
             var workflowStep = await _workflowTaskService.GetWorkflowTaskById(workflowStepId);
             return Ok(workflowStep);
         }
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        [HttpGet("get/{workflowId}")]
+        public async Task<IActionResult> GetWorkflowTaskByWorflowId(string workflowId)
+        {
+            var workflowStep = await _workflowTaskService.GetWorkflowsTaskByWorkflow(workflowId);
+            return Ok(workflowStep);
+        }
+
         [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO)
