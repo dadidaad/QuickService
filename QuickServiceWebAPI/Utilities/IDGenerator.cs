@@ -110,7 +110,19 @@ namespace QuickServiceWebAPI.Utilities
             return formattedId;
         }
 
-        public static string GenerateWorkflowStepId(int workflowStepId)
+        public static string GenerateWorkflowTransitionId(int workflowTransitionId)
+        {
+            string formattedId = $"WKTR{workflowTransitionId.ToString("D6")}";
+            return formattedId;
+        }
+
+        public static string GenerateWorkflowAssignmentId(int workflowAssignmentId)
+        {
+            string formattedId = $"WKAS{workflowAssignmentId.ToString("D6")}";
+            return formattedId;
+        }
+
+        public static string GenerateWorkflowTaskId(int workflowStepId)
         {
             string formattedId = $"WOST{workflowStepId.ToString("D6")}";
             return formattedId;

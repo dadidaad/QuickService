@@ -44,9 +44,16 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(users);
         }
 
+        [Authorize]
+        [HttpPost("get/{userId}")]
+        public async Task<IActionResult> GetById(string userId)
+        {
+            return Ok(await _userService.GetUserById(userId));
+        }
+
         [HttpPost("update")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser([FromForm] UpdateDTO updateDTO)
+        public async Task<IActionResult> UpdateUser([FromForm] UpdateUserDTO updateDTO)
         {
             await _userService.UpdateUser(updateDTO);
             return Ok(new { message = "Update successfully" });
@@ -75,6 +82,5 @@ namespace QuickServiceWebAPI.Controllers
             await _userService.ResetPassword(resetPasswordDTO);
             return Ok(new { message = "Reset password successfully" });
         }
-
     }
 }

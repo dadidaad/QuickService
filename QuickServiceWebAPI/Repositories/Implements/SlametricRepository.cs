@@ -95,5 +95,19 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
+
+        public async Task DeleteSlaMetricsOfSla(Sla sla)
+        {
+            try
+            {
+                _context.Slametrics.RemoveRange(sla.Slametrics);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving sla with ID: {slaId}", sla.Slaid);
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
+using System.Text.RegularExpressions;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -56,7 +57,13 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task DeleteAttachment(string attachmentId)
         {
-
+            Attachment attachment = await _repository.GetAttachmentById(attachmentId);
+            if (attachment == null)
+            {
+                throw new AppException("Attachment not found");
+            }
+            await CloudHelper.DeleteBlob(attachment.FilePath, _storageConfig);
+            await _repository.DeleteAttachment(attachment);
         }
         public async Task<string> GetNextId()
         {
@@ -92,7 +99,9 @@ namespace QuickServiceWebAPI.Services.Implements
                     {
                         attachment.AttachmentId = await GetNextId();
                         attachment.Filename = attachmentFile.FileName;
-                        attachment.FilePath = await CloudHelper.UploadFileToStorage(stream, attachment.AttachmentId, _storageConfig, _storageConfig.AttachmentContainer);
+                        //string fileNameStore = attachment.AttachmentId + GetFileExtension(attachmentFile);
+                        string fileNameStore = $"{attachment.AttachmentId}_{RemoveVietnameseTone(attachmentFile.FileName)}";
+                        attachment.FilePath = await CloudHelper.UploadFileToStorage(stream, fileNameStore, _storageConfig, _storageConfig.AttachmentContainer);
                         attachment.FileSize = Convert.ToInt32(attachmentFile.Length);
                         attachment.CreatedAt = DateTime.Now;
                     }
@@ -117,6 +126,29 @@ namespace QuickServiceWebAPI.Services.Implements
                 _logger.LogError(ex.Message);
                 throw new AppException("Error when try to upload image!!");
             }
+        }
+
+        public string GetFileExtension(IFormFile file)
+        {
+            // Get the file name from the ContentDisposition header
+            var fileName = file.FileName;
+
+            // Get the file extension
+            var fileExtension = Path.GetExtension(fileName);
+
+            return fileExtension;
+        }
+        public string RemoveVietnameseTone(string text)
+        {
+            string result = text.ToLower();
+            result = Regex.Replace(result, "à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ|/g", "a");
+            result = Regex.Replace(result, "è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ|/g", "e");
+            result = Regex.Replace(result, "ì|í|ị|ỉ|ĩ|/g", "i");
+            result = Regex.Replace(result, "ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ|/g", "o");
+            result = Regex.Replace(result, "ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ|/g", "u");
+            result = Regex.Replace(result, "ỳ|ý|ỵ|ỷ|ỹ|/g", "y");
+            result = Regex.Replace(result, "đ", "d");
+            return result;
         }
     }
 }

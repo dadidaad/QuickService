@@ -49,6 +49,8 @@ public partial class RequestTicket
 
     public string? ProblemId { get; set; }
 
+    public string? WorkflowId { get; set; }
+
     public virtual Group? AssignedToGroupNavigation { get; set; }
 
     public virtual User? AssignedToNavigation { get; set; }
@@ -68,6 +70,8 @@ public partial class RequestTicket
     public virtual ServiceItem? ServiceItem { get; set; }
 
     public virtual Sla Sla { get; set; } = null!;
+
+    public virtual Workflow? Workflow { get; set; }
 
     public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();
 }

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.Comment;
 using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class CommentsController : ControllerBase
     {
@@ -43,10 +45,17 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateComment(string commentId, UpdateCommentDTO updateCommentDTO)
+        public async Task<IActionResult> UpdateComment(UpdateCommentDTO updateCommentDTO)
         {
-            await _commentService.UpdateComment(commentId, updateCommentDTO);
-            return Ok(new { message = "Update successfully" });
+            await _commentService.UpdateComment(updateCommentDTO);
+            return Ok(new { message = "Update successfully", errorCode = 0 });
+        }
+
+        [HttpDelete("delete/{commentId}")]
+        public async Task<IActionResult> DeleteComment(string commentId)
+        {
+            await _commentService.DeleteComment(commentId);
+            return Ok(new { message = "Delete successfully", errorCode = 0 });
         }
     }
 }

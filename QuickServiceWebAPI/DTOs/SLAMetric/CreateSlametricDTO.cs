@@ -1,11 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using QuickServiceWebAPI.CustomAttributes;
+using QuickServiceWebAPI.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.SLAMetric
 {
-    public class CreateUpdateSlametricDTO
+    public class CreateSlametricDTO
     {
+
         [Required]
         [MaxLength(10)]
+        [EnumDataType(typeof(PriorityEnum))]
         public string Piority { get; set; } = null!;
 
         [Required]
@@ -17,12 +21,11 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
         [MaxLength(255)]
         public string? EscalationPolicy { get; set; }
 
+
         [MaxLength(255)]
         public string? NotificationRules { get; set; }
 
-        public string? BusinessHourId { get; set; }
+        public string WorkflowId { get; set; } = null!;
 
-        [Required]
-        public string Slaid { get; set; } = null!;
     }
 }

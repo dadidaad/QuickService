@@ -6,8 +6,8 @@ namespace QuickServiceWebAPI.Services
     {
         public List<SlametricDTO> GetSLAmetrics();
         public Task<SlametricDTO> GetSLAmetricById(string slametricId);
-        public Task CreateSLAmetric(CreateUpdateSlametricDTO createUpdateSlametricDTO);
-        public Task UpdateSLAmetric(string slametricId, CreateUpdateSlametricDTO createUpdateSlametricDTO);
+        //public Task CreateSLAmetrics(CreateSlametricDTO createSlametricDTO);
+        public Task UpdateSLAmetric(UpdateSlametricsDTO updateSlametricDTO);
         public Task DeleteSLAmetric(string slametricId);
         public Task<string> GetNextId();
     }

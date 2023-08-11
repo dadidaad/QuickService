@@ -27,6 +27,16 @@ public partial class User
 
     public bool? IsActive { get; set; }
 
+    public DateTime? BirthDate { get; set; }
+
+    public string? JobTitle { get; set; }
+
+    public string? Department { get; set; }
+
+    public string? PersonalEmail { get; set; }
+
+    public string? WallPaper { get; set; }
+
     public virtual ICollection<AssetAssignment> AssetAssignments { get; set; } = new List<AssetAssignment>();
 
     public virtual ICollection<Change> ChangeAssigners { get; set; } = new List<Change>();
@@ -40,6 +50,8 @@ public partial class User
     public virtual ICollection<Problem> ProblemAssigners { get; set; } = new List<Problem>();
 
     public virtual ICollection<Problem> ProblemRequesters { get; set; } = new List<Problem>();
+
+    public virtual ICollection<Query> Queries { get; set; } = new List<Query>();
 
     public virtual ICollection<RequestTicket> RequestTicketAssignedToNavigations { get; set; } = new List<RequestTicket>();
 

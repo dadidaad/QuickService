@@ -19,10 +19,5 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
 
         public string BusinessHourId { get; set; } = null!;
 
-        public string Slaid { get; set; } = null!;
-
-        public virtual BusinessHourDTO BusinessHourEntity { get; set; } = null!;
-
-        public virtual SlaDTO SlaEntity { get; set; } = null!;
     }
 }

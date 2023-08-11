@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using System.Data;
+using System.Reflection.Metadata;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -13,12 +15,14 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _context = context;
             _logger = logger;
         }
-        public async Task AddSLA(Sla sla)
+        public async Task<Sla?> AddSLA(Sla sla)
         {
             try
             {
                 _context.Slas.Add(sla);
+                //_context.Slametrics.AddRange(sla.Slametrics);
                 await _context.SaveChangesAsync();
+                return sla;
             }
             catch (Exception ex)
             {
@@ -31,7 +35,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Sla sla = await _context.Slas.AsNoTracking().FirstOrDefaultAsync(x => x.Slaid == slaId);
+                Sla sla = await _context.Slas.Include(s => s.Slametrics).FirstOrDefaultAsync(x => x.Slaid == slaId);
                 return sla;
             }
             catch (Exception ex)
@@ -45,7 +49,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Slas.ToList();
+                return _context.Slas.Include(s => s.Slametrics).ToList();
             }
             catch (Exception ex)
             {
@@ -68,6 +72,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        
         public async Task DeleteSLA(Sla sla)
         {
             try
@@ -99,7 +104,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.Slas.Include(s => s.Slametrics).Where(s => s.IsDefault).FirstOrDefaultAsync();
+                return await _context.Slas.Include(s => s.Slametrics).Where(s => s.IsDefault && s.Slaname.Contains("SLA")).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,5 +112,43 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
+
+        public async Task<Sla> GetSlaForRequestTicket(RequestTicket requestTicket)
+        {
+            try
+            {
+                IQueryable<Sla> slaQuery = _context.Slas.Include(s => s.ServiceItems)
+                    .Include(s => s.Slametrics);
+                if (requestTicket.ServiceItemId != null && !requestTicket.IsIncident)
+                {
+                    return await slaQuery
+                    .Where(s => s.ServiceItems.Contains(requestTicket.ServiceItem)).FirstOrDefaultAsync()
+                    ?? await slaQuery.Where(s => s.IsDefault && s.Slaname.Contains("SLA")).FirstOrDefaultAsync();
+                }
+                else
+                {
+                    return await slaQuery.Where(s => s.IsDefault && s.Slaname.Contains("SLA")).FirstOrDefaultAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
+        public async Task<Sla> GetOlaForWorflow()
+        {
+            try
+            {
+                return await _context.Slas.Include(s => s.Slametrics).Where(s => s.IsDefault && s.Slaname.Contains("OLA")).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
     }
 }

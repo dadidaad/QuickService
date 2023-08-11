@@ -1,4 +1,5 @@
-﻿using QuickServiceWebAPI.DTOs.Sla;
+﻿using Microsoft.EntityFrameworkCore.Update.Internal;
+using QuickServiceWebAPI.DTOs.Sla;
 
 namespace QuickServiceWebAPI.Services
 {
@@ -6,8 +7,8 @@ namespace QuickServiceWebAPI.Services
     {
         public List<SlaDTO> GetSLAs();
         public Task<SlaDTO> GetSlaById(string slaId);
-        public Task CreateSLA(CreateUpdateSlaDTO createUpdateSlaDTO);
-        public Task UpdateSLA(string slaId, CreateUpdateSlaDTO createUpdateSlaDTO);
+        public Task<SlaDTO> CreateSLA(CreateSlaDTO createSlaDTO);
+        public Task UpdateSLA(UpdateSlaDTO updateSLADTO);
         public Task DeleteSLA(string slaId);
         public Task<string> GetNextId();
     }

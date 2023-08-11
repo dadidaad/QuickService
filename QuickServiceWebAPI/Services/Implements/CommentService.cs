@@ -42,7 +42,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
             var comment = _mapper.Map<Comment>(createCommentDTO);
             User user = await _userRepository.GetUserDetails(comment.CommentBy);
-            if (user.Role.RoleType.ToEnum(RoleType.Agent) == RoleType.Agent)
+            if (user.Role?.RoleType.ToEnum(RoleType.Agent) == RoleType.Agent)
             {
                 comment.IsInternal = false;
             }
@@ -51,24 +51,31 @@ namespace QuickServiceWebAPI.Services.Implements
                 comment.IsInternal = true;
             }
             comment.CommentId = await GetNextId();
+            comment.CommentTime = DateTime.Now;
             await _repository.AddComment(comment);
             return comment.CommentId;
         }
 
-        public async Task UpdateComment(string commentId, UpdateCommentDTO updateCommentDTO)
+        public async Task UpdateComment(UpdateCommentDTO updateCommentDTO)
         {
-            Comment comment = await _repository.GetCommentById(commentId);
+            Comment comment = await _repository.GetCommentById(updateCommentDTO.CommentId);
             if (comment == null)
             {
-                throw new AppException("BusinessHour not found");
+                throw new AppException("Comment not found");
             }
             comment = _mapper.Map(updateCommentDTO, comment);
+            comment.LastModified = DateTime.Now;
             await _repository.UpdateComment(comment);
         }
 
         public async Task DeleteComment(string commentId)
         {
-
+            Comment comment = await _repository.GetCommentById(commentId);
+            if (comment == null)
+            {
+                throw new AppException("Comment not found");
+            }
+            await _repository.DeleteComment(comment);
         }
         public async Task<string> GetNextId()
         {

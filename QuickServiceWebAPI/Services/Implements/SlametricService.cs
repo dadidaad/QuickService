@@ -32,29 +32,34 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<SlametricDTO>(slametric);
         }
 
-        public async Task CreateSLAmetric(CreateUpdateSlametricDTO createUpdateSlametricDTO)
-        {
-            var slametric = _mapper.Map<Slametric>(createUpdateSlametricDTO);
-            slametric.SlametricId = await GetNextId();
-            await _repository.AddSLAmetric(slametric);
-        }
+        //public async Task CreateSLAmetrics(CreateSlametricDTO createSlametricDTO)
+        //{
+        //    var sla = _slaRepository.GetSLAById(createSlametricDTO.Slaid);
+        //    if(sla == null)
+        //    {
+        //        throw new AppException("SLA with id " + createSlametricDTO.Slaid + " not found");
+        //    }
+        //    var slametrics = _mapper.Map<CreateSlametricDTO, IEnumerable<Slametric>>(createSlametricDTO).ToList();
+        //    foreach(var slametric in slametrics)
+        //    {
+        //        slametric.SlametricId = await GetNextId();
+        //        await _repository.AddSLAmetric(slametric);
+        //    }
+            
+        //}
 
-        public async Task UpdateSLAmetric(string slametricId, CreateUpdateSlametricDTO createUpdateSlametricDTO)
+        public async Task UpdateSLAmetric(UpdateSlametricsDTO updateSlametricsDTO)
         {
-            Slametric slametric = await _repository.GetSLAmetricById(slametricId);
+            Slametric slametric = await _repository.GetSLAmetricById(updateSlametricsDTO.SlametricId);
             if (slametric == null)
             {
                 throw new AppException("Slametric not found");
             }
-            if (_businessHourRepository.GetBusinessHourById(createUpdateSlametricDTO.BusinessHourId) == null)
-            {
-                throw new AppException("Business hour with id " + createUpdateSlametricDTO.BusinessHourId + " not found");
-            }
-            if (_slaRepository.GetSLAById(createUpdateSlametricDTO.Slaid) == null)
-            {
-                throw new AppException("SLA with id " + createUpdateSlametricDTO.Slaid + " not found");
-            }
-            slametric = _mapper.Map(createUpdateSlametricDTO, slametric);
+            //if (_businessHourRepository.GetBusinessHourById(updateSlametricsDTO.BusinessHourId) == null)
+            //{
+            //    throw new AppException("Business hour with id " + createUpdateSlametricDTO.BusinessHourId + " not found");
+            //}
+            slametric = _mapper.Map(updateSlametricsDTO, slametric);
             await _repository.UpdateSLAmetric(slametric);
         }
 

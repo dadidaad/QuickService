@@ -2,11 +2,11 @@
 {
     public enum StatusEnum
     {
-        Open,
-        Canceled,
-        InProgress,
-        Pending,
-        Resolved,
-        Closed
+        Open = 1,
+        InProgress = 2,
+        Pending = 3,
+        Resolved = 4,
+        Closed = 5,
+        Canceled = 6,
     }
 }

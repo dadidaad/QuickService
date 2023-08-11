@@ -22,4 +22,6 @@ public partial class Attachment
     public virtual ICollection<Problem> Problems { get; set; } = new List<Problem>();
 
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
+
+    public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();
 }

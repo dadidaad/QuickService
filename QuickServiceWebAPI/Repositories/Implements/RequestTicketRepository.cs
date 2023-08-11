@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Repositories.Implements
@@ -13,12 +14,14 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _context = context;
             _logger = logger;
         }
-        public async Task AddRequestTicket(RequestTicket requestTicket)
+        public async Task<RequestTicket?> AddRequestTicket(RequestTicket requestTicket)
         {
             try
             {
                 _context.RequestTickets.Add(requestTicket);
                 await _context.SaveChangesAsync();
+                var entry = _context.Entry(requestTicket);
+                return requestTicket;
             }
             catch (Exception ex)
             {
@@ -36,6 +39,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(a => a.Attachment)
                     .Include(r => r.Requester)
                     .Include(s => s.ServiceItem)
+                    .Include(r => r.Workflow)
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
                     .AsNoTracking()
@@ -119,6 +123,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 _logger.LogError(ex, "An error occurred");
                 throw;
             }
-        }
+        }      
     }
 }

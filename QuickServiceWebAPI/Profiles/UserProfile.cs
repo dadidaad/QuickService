@@ -13,7 +13,7 @@ namespace QuickServiceWebAPI.Profiles
                 opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
             CreateMap<User, AuthenticateResponseDTO>();
             CreateMap<RegisterDTO, User>();
-            CreateMap<UpdateDTO, User>().IgnoreAllNonExisting();
+            CreateMap<UpdateUserDTO, User>().IgnoreAllNonExisting();
         }
     }
 }

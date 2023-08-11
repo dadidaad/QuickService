@@ -10,5 +10,7 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateSLAmetric(Slametric slametric);
         public Task DeleteSLAmetric(Slametric slametric);
         public Task<Slametric> GetLastSLAmetric();
+        public Task DeleteSlaMetricsOfSla(Sla sla);
+
     }
 }

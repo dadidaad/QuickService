@@ -12,6 +12,7 @@ namespace QuickServiceWebAPI.Profiles
                 .ForMember(dest => dest.User,
                 opt => opt.MapFrom(src => src.CreatedByNavigation));
             CreateMap<CreateUpdateWorkflowDTO, Workflow>();
+            CreateMap<AssignWorkflowDTO, Workflow>();
         }
     }
 }

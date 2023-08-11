@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
+using QuickServiceWebAPI.DTOs.Role;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
-using UpdateDTO = QuickServiceWebAPI.DTOs.User.UpdateDTO;
+using UpdateUserDTO = QuickServiceWebAPI.DTOs.User.UpdateUserDTO;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -95,31 +96,38 @@ namespace QuickServiceWebAPI.Services.Implements
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        public async Task UpdateUser(UpdateDTO updateDTO)
+        public async Task UpdateUser(UpdateUserDTO updateDTO)
         {
             User existingUser = await _repository.GetUserDetails(updateDTO.UserId);
             if (existingUser == null)
             {
                 throw new AppException("User not found");
             }
-            string filePath = "";
-            if (updateDTO.AvatarUpload != null && CloudHelper.IsImage(updateDTO.AvatarUpload))
-            {
-                filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
-            }
-
-
+            string? avatarPath = await GetPathImpageUpload(updateDTO.AvatarUpload, updateDTO.UserId, _storageConfig.ImageContainer);
+            string? wallpaperPath = await GetPathImpageUpload(updateDTO.WallpaperUpload, updateDTO.UserId, _storageConfig.WallpaperContainer);
             var updateUser = _mapper.Map(updateDTO, existingUser);
-            if (!string.IsNullOrEmpty(filePath))
+            if (!string.IsNullOrEmpty(avatarPath))
             {
-                updateUser.Avatar = filePath;
+                updateUser.Avatar = avatarPath;
+            }
+            if (!string.IsNullOrEmpty(wallpaperPath))
+            {
+                updateUser.WallPaper = wallpaperPath;
             }
             await _repository.UpdateUser(existingUser, updateUser);
         }
 
-        public async Task<string> UpdateAvatar(IFormFile image, string userId)
+        private async Task<string?> GetPathImpageUpload(IFormFile image, string userId, string container)
         {
-            string filePath = null;
+            if (image != null && CloudHelper.IsImage(image))
+            {
+                return await UpdateImage(image, userId, container);
+            }
+            return null;
+        }
+        private async Task<string> UpdateImage(IFormFile image, string userId, string container)
+        {
+            string? filePath = null;
 
             try
             {
@@ -136,7 +144,7 @@ namespace QuickServiceWebAPI.Services.Implements
                         using (Stream stream = image.OpenReadStream())
                         {
                             string fileName = userId + Path.GetExtension(image.FileName);
-                            filePath = await CloudHelper.UploadFileToStorage(stream, fileName, _storageConfig, _storageConfig.ImageContainer);
+                            filePath = await CloudHelper.UploadFileToStorage(stream, fileName, _storageConfig, container);
                         }
                     }
                     else
