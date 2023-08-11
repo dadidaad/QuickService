@@ -1,4 +1,6 @@
-﻿namespace QuickServiceWebAPI.DTOs.Sla
+﻿using QuickServiceWebAPI.DTOs.SLAMetric;
+
+namespace QuickServiceWebAPI.DTOs.Sla
 {
     public class SlaDTO
     {
@@ -11,5 +13,7 @@
         public bool IsActive { get; set; }
 
         public bool IsDefault { get; set; }
+
+        public List<SlametricDTO> Slametrics { get; set; } = new List<SlametricDTO>();
     }
 }

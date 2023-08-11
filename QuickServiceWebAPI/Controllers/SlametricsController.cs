@@ -31,17 +31,17 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(slametric);
         }
 
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateSLAmetric(CreateUpdateSlametricDTO createUpdateSlametricDTO)
-        {
-            await _slametricService.CreateSLAmetric(createUpdateSlametricDTO);
-            return Ok(new { message = "Create successfully" });
-        }
+        //[HttpPost("create")]
+        //public async Task<IActionResult> CreateSLAmetric(CreateSlametricDTO createSlametricDTO)
+        //{
+        //    await _slametricService.CreateSLAmetrics(createSlametricDTO);
+        //    return Ok(new { message = "Create successfully" });
+        //}
 
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateSLAmetric(string slametricId, CreateUpdateSlametricDTO createUpdateSlametricDTO)
+        public async Task<IActionResult> UpdateSLAmetric(UpdateSlametricsDTO updateSlametricsDTO)
         {
-            await _slametricService.UpdateSLAmetric(slametricId, createUpdateSlametricDTO);
+            await _slametricService.UpdateSLAmetric(updateSlametricsDTO);
             return Ok(new { message = "Update successfully" });
         }
 

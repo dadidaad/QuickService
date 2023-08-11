@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using System.Data;
+using System.Reflection.Metadata;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -13,18 +15,14 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _context = context;
             _logger = logger;
         }
-        public async Task<Sla> AddSLA(Sla sla)
+        public async Task<Sla?> AddSLA(Sla sla)
         {
             try
             {
                 _context.Slas.Add(sla);
+                //_context.Slametrics.AddRange(sla.Slametrics);
                 await _context.SaveChangesAsync();
-                var entry = _context.Entry(sla);
-                if(entry.State == EntityState.Added)
-                {
-                    return sla;
-                }
-                return null;
+                return sla;
             }
             catch (Exception ex)
             {
@@ -37,7 +35,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Sla sla = await _context.Slas.AsNoTracking().FirstOrDefaultAsync(x => x.Slaid == slaId);
+                Sla sla = await _context.Slas.Include(s => s.Slametrics).FirstOrDefaultAsync(x => x.Slaid == slaId);
                 return sla;
             }
             catch (Exception ex)
@@ -51,7 +49,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Slas.ToList();
+                return _context.Slas.Include(s => s.Slametrics).ToList();
             }
             catch (Exception ex)
             {
@@ -74,6 +72,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        
         public async Task DeleteSLA(Sla sla)
         {
             try
@@ -150,5 +149,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
+
     }
 }

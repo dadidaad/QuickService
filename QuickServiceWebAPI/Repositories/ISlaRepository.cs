@@ -6,7 +6,7 @@ namespace QuickServiceWebAPI.Repositories
     {
         public List<Sla> GetSLAs();
         public Task<Sla> GetSLAById(string slaId);
-        public Task<Sla> AddSLA(Sla sla);
+        public Task<Sla?> AddSLA(Sla sla);
         public Task UpdateSLA(Sla sla);
         public Task DeleteSLA(Sla sla);
         public Task<Sla> GetLastSLA();

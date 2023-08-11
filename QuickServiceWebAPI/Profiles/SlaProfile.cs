@@ -8,8 +8,15 @@ namespace QuickServiceWebAPI.Profiles
     {
         public SlaProfile()
         {
-            CreateMap<Sla, SlaDTO>();
-            CreateMap<CreateUpdateSlaDTO, Sla>();
+            CreateMap<Sla, SlaDTO>()
+                .ForMember(dest => dest.Slametrics,
+                 opt => opt.MapFrom(src => src.Slametrics.ToList())); 
+            CreateMap<CreateSlaDTO, Sla>()
+                .ForMember(dest => dest.Slametrics,
+                 opt => opt.MapFrom(src => src.SlametricsDetails));
+            CreateMap<UpdateSlaDTO, Sla>()
+                .ForMember(dest => dest.Slametrics,
+                 opt => opt.MapFrom(src => src.SlametricsDetails)); 
         }
     }
 }

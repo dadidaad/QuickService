@@ -21,16 +21,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 _context.RequestTickets.Add(requestTicket);
                 await _context.SaveChangesAsync();
                 var entry = _context.Entry(requestTicket);
-                if (entry.State == EntityState.Added)
-                {
-                    // The request ticket was inserted successfully
-                    return requestTicket;
-                }
-                else
-                {
-                    // An error occurred during insertion
-                    return null;
-                }
+                return requestTicket;
             }
             catch (Exception ex)
             {

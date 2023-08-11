@@ -1,14 +1,19 @@
 ﻿using QuickServiceWebAPI.DTOs.BusinessHour;
 using QuickServiceWebAPI.DTOs.Sla;
+using QuickServiceWebAPI.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.SLAMetric
 {
-    public class SlametricDTO
+    public class UpdateSlametricsDTO
     {
+        [Required]
+        [MaxLength(10)]
         public string SlametricId { get; set; } = null!;
 
-        public string Piority { get; set; } = null!;
-
+        [EnumDataType(typeof(PriorityEnum))]
+        public string Priority { get; set; } = null!;   
+        
         public long ResponseTime { get; set; }
 
         public long ResolutionTime { get; set; }
@@ -16,8 +21,6 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
         public string? EscalationPolicy { get; set; }
 
         public string? NotificationRules { get; set; }
-
-        public string BusinessHourId { get; set; } = null!;
 
     }
 }

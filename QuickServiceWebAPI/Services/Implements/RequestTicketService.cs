@@ -39,7 +39,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _workflowAssignmentService = workflowAssignmentService;
         }
 
-        public async Task<string> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
+        public async Task<RequestTicketDTO> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
             var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.RequesterEmail);
             if (requester == null)
@@ -75,7 +75,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     await _workflowAssignmentService.AssignWorkflow(sourcesWorkflowTasks, requestTicketAdded);
                 }
                 transactionScope.Complete();
-                return requestTicket.RequestTicketId; 
+                return _mapper.Map<RequestTicketDTO>(requestTicketAdded); 
             }
         }
 
