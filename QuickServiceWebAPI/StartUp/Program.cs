@@ -120,6 +120,9 @@ builder.Services.AddScoped<IRequestTicketExtService, RequestTicketExtService>();
 builder.Services.AddScoped<IRequestTicketHistoryRepository, RequestTicketHistoryRepository>();
 builder.Services.AddScoped<IChangeRepository, ChangeRepository>();
 builder.Services.AddScoped<IChangeService, ChangeService>();
+
+builder.Services.AddScoped<IProblemRepository, ProblemRepository>();
+builder.Services.AddScoped<IProblemService, ProblemService>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IQueryRepository, QueryRepository>();
