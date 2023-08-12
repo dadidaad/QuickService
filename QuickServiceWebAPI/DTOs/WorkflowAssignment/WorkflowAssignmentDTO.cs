@@ -11,7 +11,7 @@ namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 
         public string ReferenceId { get; set; } = null!;
 
-        public string CurrentStepId { get; set; } = null!;
+        public string CurrentTaskId { get; set; } = null!;
 
         public bool IsCompleted { get; set; }
 
@@ -27,7 +27,7 @@ namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 
         public virtual AttachmentDTO? Attachment { get; set; }
 
-        public virtual WorkflowTaskDTO CurrentStep { get; set; } = null!;
+        public virtual WorkflowTaskDTO CurrentTask { get; set; } = null!;
 
 
     }

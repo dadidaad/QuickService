@@ -11,7 +11,7 @@ namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 
         [Required(AllowEmptyStrings = false)]
         [MaxLength(10)]
-        public string CurrentStepId { get; set; } = null!;
+        public string CurrentTaskId { get; set; } = null!;
 
         public bool IsCompleted { get; set; }
 
