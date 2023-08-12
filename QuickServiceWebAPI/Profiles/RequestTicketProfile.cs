@@ -25,7 +25,10 @@ namespace QuickServiceWebAPI.Profiles
                 opt => opt.MapFrom(src => CalculateDatetime(src, false)))
                 .AfterMap((src, dest) =>
                 {
-                    dest.ServiceItemEntity.ServiceCategoryEntity.ServiceItemEntities.Clear();
+                    if(dest.ServiceItemEntity != null)
+                    {
+                        dest.ServiceItemEntity.ServiceCategoryEntity.ServiceItemEntities.Clear();
+                    }
                 });
             CreateMap<CreateRequestTicketDTO, RequestTicket>().ForMember(dest => dest.Attachment, opt => opt.Ignore()).IgnoreAllNonExisting();
             CreateMap<RequestTicket, RequestTicketForRequesterDTO>()

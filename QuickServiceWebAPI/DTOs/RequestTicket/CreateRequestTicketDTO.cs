@@ -8,8 +8,8 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
         public bool IsIncident { get; set; }
 
         [MaxLength(500)]
-        [CustomValidatorForIncident("IsIncident")]
-        public string? Title { get; set; }
+        [Required]
+        public string Title { get; set; } = null!;
 
         [MaxLength(1000)]
         [CustomValidatorForIncident("IsIncident")]
