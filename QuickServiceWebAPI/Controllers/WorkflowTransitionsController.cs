@@ -27,9 +27,9 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteWorkflowTransition(DeleteWorkflowTransitionDTO deleteWorkflowTransitionDTO)
+        public async Task<IActionResult> DeleteWorkflowTransition(string fromWorkflowTaskId, string toWorkflowTaskId)
         {
-            await _workflowTransitionService.DeleteWorkflowTransition(deleteWorkflowTransitionDTO);
+            await _workflowTransitionService.DeleteWorkflowTransition(fromWorkflowTaskId, toWorkflowTaskId);
             return Ok(new { message = "Delete successfully" });
         }
 

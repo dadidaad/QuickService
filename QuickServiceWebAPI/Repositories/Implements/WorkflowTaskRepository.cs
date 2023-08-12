@@ -14,12 +14,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _context = context;
             _logger = logger;
         }
-        public async Task AddWorkflowTask(WorkflowTask workflowTask)
+        public async Task<WorkflowTask?> AddWorkflowTask(WorkflowTask workflowTask)
         {
             try
             {
                 _context.WorkflowTasks.Add(workflowTask);
                 await _context.SaveChangesAsync();
+                return workflowTask;
             }
             catch (Exception ex)
             {

@@ -36,8 +36,7 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO)
         {
-            await _workflowTaskService.CreateWorkflowTask(createUpdateWorkflowTaskDTO);
-            return Ok(new { message = "Create successfully" });
+            return Ok(new { message = "Create successfully", workflowTaskId = (await _workflowTaskService.CreateWorkflowTask(createUpdateWorkflowTaskDTO)).WorkflowTaskId });
         }
         [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpPut("update")]

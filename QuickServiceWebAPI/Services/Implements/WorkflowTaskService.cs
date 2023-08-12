@@ -48,7 +48,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<WorkflowTaskDTO>(workflowTask);
         }
 
-        public async Task CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledTask)
+        public async Task<WorkflowTaskDTO?> CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledTask)
         {
             var workflow = await _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId);
             if (workflow == null)
@@ -63,7 +63,8 @@ namespace QuickServiceWebAPI.Services.Implements
             var workflowTask = _mapper.Map<WorkflowTask>(createUpdateWorkflowTaskDTO);
             workflowTask.WorkflowTaskId = await GetNextId();
             workflowTask.CreatedDate = DateTime.Now;
-            await _repository.AddWorkflowTask(workflowTask);
+            var workflowTaskAdded = await _repository.AddWorkflowTask(workflowTask);
+            return workflowTaskAdded != null ? _mapper.Map<WorkflowTaskDTO>(workflowTaskAdded) : null;
         }
 
         public async Task UpdateWorkflowTask(string workflowTaskId, CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO)

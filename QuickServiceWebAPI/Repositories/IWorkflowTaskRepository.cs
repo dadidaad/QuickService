@@ -6,7 +6,7 @@ namespace QuickServiceWebAPI.Repositories
     {
         public List<WorkflowTask> GetWorkflowTasks();
         public Task<WorkflowTask> GetWorkflowTaskById(string workflowTaskId);
-        public Task AddWorkflowTask(WorkflowTask workflowTask);
+        public Task<WorkflowTask?> AddWorkflowTask(WorkflowTask workflowTask);
         public Task UpdateWorkflowTask(WorkflowTask workflowTask);
         public Task DeleteWorkflowTask(WorkflowTask workflowTask);
         public Task<WorkflowTask> GetLastWorkflowTask();
