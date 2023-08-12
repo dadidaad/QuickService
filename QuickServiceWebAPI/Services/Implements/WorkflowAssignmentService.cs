@@ -237,7 +237,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return await _repository.CheckExistingRequestTicket(requestTicketId);
         }
 
-        private bool CheckStatusRequestTicketInStatusMapping(StatusEnum statusEnum)
+        public bool CheckStatusRequestTicketInStatusMapping(StatusEnum statusEnum)
         {
             return StatusMapping.ContainsKey(statusEnum);
         }
@@ -282,7 +282,7 @@ namespace QuickServiceWebAPI.Services.Implements
         }
 
 
-        private async Task DeleteListWorkflowAssignment(List<WorkflowAssignment> workflowAssignments)
+        public async Task DeleteListWorkflowAssignment(List<WorkflowAssignment> workflowAssignments)
         {
             foreach (var workflowAssignment in workflowAssignments)
             {
