@@ -44,7 +44,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{slaId}")]
         public async Task<IActionResult> DeleteSLA(string slaId)
         {
             await _slaService.DeleteSLA(slaId);
