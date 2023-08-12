@@ -38,7 +38,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(u => u.AssignedToNavigation)
                     .Include(a => a.Attachment)
                     .Include(r => r.Requester)
-                    .Include(s => s.ServiceItem)
+                    .Include(s => s.ServiceItem).ThenInclude(si => si.ServiceCategory)
                     .Include(r => r.Workflow)
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
