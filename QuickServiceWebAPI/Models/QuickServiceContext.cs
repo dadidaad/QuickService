@@ -1137,20 +1137,13 @@ public partial class QuickServiceContext : DbContext
 
         modelBuilder.Entity<WorkflowAssignment>(entity =>
         {
-            entity.HasKey(e => new { e.ReferenceId, e.CurrentStepId });
-
             entity.ToTable("WorkflowAssignments", "QuickServices");
 
-            entity.Property(e => e.ReferenceId)
+            entity.Property(e => e.WorkflowAssignmentId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
-                .HasColumnName("ReferenceID");
-            entity.Property(e => e.CurrentStepId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("CurrentStepID");
+                .HasColumnName("WorkflowAssignmentID");
             entity.Property(e => e.AttachmentId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -1158,7 +1151,21 @@ public partial class QuickServiceContext : DbContext
                 .HasColumnName("AttachmentID");
             entity.Property(e => e.CompleteMessage).HasMaxLength(255);
             entity.Property(e => e.CompletedTime).HasColumnType("datetime");
+            entity.Property(e => e.CurrentTaskId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("CurrentTaskID");
             entity.Property(e => e.DueDate).HasColumnType("datetime");
+            entity.Property(e => e.ReferenceId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("ReferenceID");
+            entity.Property(e => e.RejectBy)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength();
             entity.Property(e => e.RejectReason).HasMaxLength(255);
 
             entity.HasOne(d => d.Attachment).WithMany(p => p.WorkflowAssignments)
@@ -1166,25 +1173,19 @@ public partial class QuickServiceContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_WorkflowAssignments_Attachments");
 
-            entity.HasOne(d => d.CurrentStep).WithMany(p => p.WorkflowAssignments)
-                .HasForeignKey(d => d.CurrentStepId)
+            entity.HasOne(d => d.CurrentTask).WithMany(p => p.WorkflowAssignments)
+                .HasForeignKey(d => d.CurrentTaskId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WorkflowA__Curre__603D47BB");
+                .HasConstraintName("FK__WorkflowA__Curre__7073AF84");
 
             entity.HasOne(d => d.Reference).WithMany(p => p.WorkflowAssignments)
                 .HasForeignKey(d => d.ReferenceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_WorkflowAssignments_Changes");
+                .HasConstraintName("FK__WorkflowA__Refer__7167D3BD");
 
-            entity.HasOne(d => d.ReferenceNavigation).WithMany(p => p.WorkflowAssignments)
-                .HasForeignKey(d => d.ReferenceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_WorkflowAssignments_Problems");
-
-            entity.HasOne(d => d.Reference1).WithMany(p => p.WorkflowAssignments)
-                .HasForeignKey(d => d.ReferenceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WorkflowA__Refer__5C6CB6D7");
+            entity.HasOne(d => d.RejectByNavigation).WithMany(p => p.WorkflowAssignments)
+                .HasForeignKey(d => d.RejectBy)
+                .HasConstraintName("FK_WorkflowAssignments_Users");
         });
 
         modelBuilder.Entity<WorkflowTask>(entity =>

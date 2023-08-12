@@ -63,6 +63,8 @@ public partial class User
 
     public virtual ICollection<Service> ServiceManagedByNavigations { get; set; } = new List<Service>();
 
+    public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();
+
     public virtual ICollection<WorkflowTask> WorkflowTasks { get; set; } = new List<WorkflowTask>();
 
     public virtual ICollection<Workflow> Workflows { get; set; } = new List<Workflow>();
