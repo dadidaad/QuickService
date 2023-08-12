@@ -207,7 +207,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 List<WorkflowAssignment> workflowAssignments = await _context.WorkflowAssignments
                                                         .Include(wa => wa.Attachment)
                                                         .Include(a => a.CurrentTask).ThenInclude(c => c.Assigner)
-                                                        .Include(a => a.CurrentTask).ThenInclude(c => c.Group)// Include the CurrentTask navigation property
+                                                        .Include(a => a.CurrentTask).ThenInclude(c => c.Group)
+                                                        .Include(a => a.CurrentTask).ThenInclude(c => c.WorkflowTransitionFromWorkflowTaskNavigations)// Include the CurrentTask navigation property
                                                         .Where(s => s.ReferenceId == requestTicketId)// Include the Reference1 navigation property
                                                         .ToListAsync();
                 //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);

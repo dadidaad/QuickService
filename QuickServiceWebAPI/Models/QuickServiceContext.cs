@@ -495,6 +495,9 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.QueryStatement)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.QueryType)
+                .HasMaxLength(100)
+                .IsUnicode(false);
             entity.Property(e => e.UserId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -1149,7 +1152,6 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("AttachmentID");
-            entity.Property(e => e.CompleteMessage).HasMaxLength(255);
             entity.Property(e => e.CompletedTime).HasColumnType("datetime");
             entity.Property(e => e.CurrentTaskId)
                 .HasMaxLength(10)
@@ -1157,16 +1159,16 @@ public partial class QuickServiceContext : DbContext
                 .IsFixedLength()
                 .HasColumnName("CurrentTaskID");
             entity.Property(e => e.DueDate).HasColumnType("datetime");
+            entity.Property(e => e.FinisherId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength();
+            entity.Property(e => e.Message).HasMaxLength(255);
             entity.Property(e => e.ReferenceId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("ReferenceID");
-            entity.Property(e => e.RejectBy)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength();
-            entity.Property(e => e.RejectReason).HasMaxLength(255);
 
             entity.HasOne(d => d.Attachment).WithMany(p => p.WorkflowAssignments)
                 .HasForeignKey(d => d.AttachmentId)
@@ -1178,14 +1180,14 @@ public partial class QuickServiceContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__WorkflowA__Curre__7073AF84");
 
+            entity.HasOne(d => d.Finisher).WithMany(p => p.WorkflowAssignments)
+                .HasForeignKey(d => d.FinisherId)
+                .HasConstraintName("FK_WorkflowAssignments_User");
+
             entity.HasOne(d => d.Reference).WithMany(p => p.WorkflowAssignments)
                 .HasForeignKey(d => d.ReferenceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__WorkflowA__Refer__7167D3BD");
-
-            entity.HasOne(d => d.RejectByNavigation).WithMany(p => p.WorkflowAssignments)
-                .HasForeignKey(d => d.RejectBy)
-                .HasConstraintName("FK_WorkflowAssignments_Users");
         });
 
         modelBuilder.Entity<WorkflowTask>(entity =>

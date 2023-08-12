@@ -67,18 +67,23 @@ namespace QuickServiceWebAPI.Services.Implements
             var addedWorkflow = await _repository.AddWorkflow(workflow);
             if(addedWorkflow != null)
             {
-                CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO = new()
-                {
-                    WorkflowTaskName = "Resolved Step",
-                    Status = StatusWorkflowTaskEnum.Resolved.ToString(),
-                    Description = "Resolved all task in workflow",
-                    WorkflowId = workflow.WorkflowId
-                };
-                await _WorkflowTaskService.CreateWorkflowTask(createUpdateWorkflowTaskDTO, true);
+                await CreateOpenTaskForWorkflow(StatusWorkflowTaskEnum.Open, workflow.WorkflowId);
+                await CreateOpenTaskForWorkflow(StatusWorkflowTaskEnum.Resolved, workflow.WorkflowId);
             }
             return _mapper.Map<WorkflowDTO>(addedWorkflow);
         }
 
+        private async Task CreateOpenTaskForWorkflow(StatusWorkflowTaskEnum statusWorkflowTaskEnum, string workflowId)
+        {
+            CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskResolvedDTO = new()
+            {
+                WorkflowTaskName = $"{statusWorkflowTaskEnum} task",
+                Status = statusWorkflowTaskEnum.ToString(),
+                Description = $"{statusWorkflowTaskEnum} task in workflow",
+                WorkflowId = workflowId
+            };
+            await _WorkflowTaskService.CreateWorkflowTask(createUpdateWorkflowTaskResolvedDTO, true);
+        }
         public async Task UpdateWorkflow(string workflowId, CreateUpdateWorkflowDTO createUpdateWorkflowDTO)
         {
             var workflow = await _repository.GetWorkflowById(workflowId);

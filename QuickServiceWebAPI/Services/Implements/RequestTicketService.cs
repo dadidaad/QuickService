@@ -71,8 +71,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
                 if(requestTicketAdded != null && hasWorkflow)
                 {
-                    List<string> sourcesWorkflowTasks = await _workflowAssignmentService.GetSourcesTasks(requestTicket.WorkflowId);
-                    await _workflowAssignmentService.AssignWorkflow(sourcesWorkflowTasks, requestTicketAdded);
+                    await _workflowAssignmentService.AssignWorkflow(requestTicketAdded, null);
                 }
                 transactionScope.Complete();
                 return _mapper.Map<RequestTicketDTO>(requestTicketAdded); 

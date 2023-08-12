@@ -48,16 +48,18 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<WorkflowTaskDTO>(workflowTask);
         }
 
-        public async Task<WorkflowTaskDTO?> CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledTask)
+        public async Task<WorkflowTaskDTO?> CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledAndOpenTask)
         {
             var workflow = await _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId);
             if (workflow == null)
             {
                 throw new AppException($"Workflow with id {createUpdateWorkflowTaskDTO.WorkflowId} not found");
             }
-            if (createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString() && !AcceptResovledTask)
+            if ((createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString() 
+                || createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Open.ToString()) 
+                && !AcceptResovledAndOpenTask)
             {
-                throw new AppException($"Workflow already have resolved Task");
+                throw new AppException($"Workflow already have resolved and open Task");
             }
             await ValidationUserGroup(createUpdateWorkflowTaskDTO);
             var workflowTask = _mapper.Map<WorkflowTask>(createUpdateWorkflowTaskDTO);
@@ -78,9 +80,12 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Workflow with id " + createUpdateWorkflowTaskDTO.WorkflowId + " not found");
             }
-            if (createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString())
+            if(workflowTask.Status == StatusWorkflowTaskEnum.Open.ToString() || workflowTask.Status == StatusWorkflowTaskEnum.Resolved.ToString())
             {
-                throw new AppException($"Workflow already have resolved Task");
+                if (createUpdateWorkflowTaskDTO.Status != workflowTask.Status)
+                {
+                    throw new AppException($"Can not update link status for open and resoveled workflow task");
+                }
             }
             await ValidationUserGroup(createUpdateWorkflowTaskDTO);
             workflowTask = _mapper.Map(createUpdateWorkflowTaskDTO, workflowTask);

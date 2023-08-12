@@ -6,7 +6,7 @@ namespace QuickServiceWebAPI.Services
     {
         public Task<List<WorkflowTaskDTO>> GetWorkflowsTaskByWorkflow(string workflowId);
         public Task<WorkflowTaskDTO> GetWorkflowTaskById(string workflowTaskId);
-        public Task<WorkflowTaskDTO?> CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledTask = false);
+        public Task<WorkflowTaskDTO?> CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledAndOpenTask = false);
         public Task UpdateWorkflowTask(string workflowTaskId, CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO);
         public Task DeleteWorkflowTask(string workflowTaskId);
     }

@@ -15,7 +15,6 @@ namespace QuickServiceWebAPI.Profiles
                 .ForMember(dest => dest.Attachment,
                 opt => opt.MapFrom(src => src.Attachment));
             CreateMap<CheckWorkflowAssignmentDTO, WorkflowAssignment>().IgnoreAllNonExisting();
-            CreateMap<RejectWorkflowTaskDTO, WorkflowAssignment>().IgnoreAllNonExisting();
         }
     }
 }

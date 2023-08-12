@@ -13,25 +13,21 @@ public partial class WorkflowAssignment
 
     public bool IsCompleted { get; set; }
 
-    public bool IsReject { get; set; }
-
-    public string? RejectReason { get; set; }
+    public string? Message { get; set; }
 
     public DateTime? CompletedTime { get; set; }
-
-    public string? CompleteMessage { get; set; }
 
     public string? AttachmentId { get; set; }
 
     public DateTime? DueDate { get; set; }
 
-    public string? RejectBy { get; set; }
+    public string? FinisherId { get; set; }
 
     public virtual Attachment? Attachment { get; set; }
 
     public virtual WorkflowTask CurrentTask { get; set; } = null!;
 
-    public virtual RequestTicket Reference { get; set; } = null!;
+    public virtual User? Finisher { get; set; }
 
-    public virtual User? RejectByNavigation { get; set; }
+    public virtual RequestTicket Reference { get; set; } = null!;
 }

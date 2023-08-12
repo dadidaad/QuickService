@@ -27,14 +27,6 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
         }
 
-        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
-        [HttpPost("reject")]
-        public async Task<IActionResult> RejectWorkflowTask(RejectWorkflowTaskDTO rejectWorkflowTaskDTO)
-        {
-            await _workflowAssignmentService.RejectWorkflowTask(rejectWorkflowTaskDTO);
-            return Ok(new { message = "Update successfully" });
-        }
-
         [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
         [HttpGet("get")]
         public async Task<IActionResult> GetWorkflowTaskForRequestTicket(string requestTicketId)

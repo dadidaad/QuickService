@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using System.Data;
 
 namespace QuickServiceWebAPI.Repositories.Implements
@@ -110,6 +111,23 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(wt => wt.Group)
                     .Include(wt => wt.WorkflowTransitionFromWorkflowTaskNavigations).ThenInclude(wtf => wtf.ToWorkflowTaskNavigation)
                     .Where(u => u.WorkflowId == workflowId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
+        public async Task<WorkflowTask> GetOpenTaskOfWorkflow(string workflowId)
+        {
+            try
+            {
+                return await _context.WorkflowTasks
+                    .Include(wt => wt.Assigner)
+                    .Include(wt => wt.Group)
+                    .Include(wt => wt.WorkflowTransitionFromWorkflowTaskNavigations).ThenInclude(wtf => wtf.ToWorkflowTaskNavigation)
+                    .Where(u => u.WorkflowId == workflowId && u.Status == StatusWorkflowTaskEnum.Open.ToString()).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
