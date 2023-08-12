@@ -83,15 +83,14 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<WorkflowAssignment> GetWorkflowAssignmentByCompositeKey(string referenceId, string CurrentTaskId)
+        public async Task<WorkflowAssignment> GetWorkflowAssignmentByWorkflowAssignmentId(string workflowAssignmentId)
         {
             try
             {
                 WorkflowAssignment workflowAssignment = await _context.WorkflowAssignments
                                                         .Include(a => a.CurrentTask) // Include the CurrentTask navigation property
                                                         .Include(a => a.Reference) // Include the Reference1 navigation property
-                                                        .SingleOrDefaultAsync(a => a.ReferenceId == referenceId
-                                                                           && a.CurrentTaskId == CurrentTaskId);
+                                                        .FirstOrDefaultAsync(wa => wa.WorkflowAssignmentId == workflowAssignmentId);
                 //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
                 return workflowAssignment;
             }
@@ -213,6 +212,22 @@ namespace QuickServiceWebAPI.Repositories.Implements
                                                         .ToListAsync();
                 //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
                 return workflowAssignments;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task<WorkflowAssignment?> GetLastWorkflowAssignment()
+        {
+            try
+            {
+                WorkflowAssignment workflowAssignment = await _context.WorkflowAssignments.OrderByDescending(wa => wa.WorkflowAssignmentId)
+                                                        .FirstOrDefaultAsync();
+                //.AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowAssignmentId == workflowAssignmentId);
+                return workflowAssignment;
             }
             catch (Exception ex)
             {

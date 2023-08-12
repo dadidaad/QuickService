@@ -12,12 +12,13 @@ namespace QuickServiceWebAPI.Services.Implements
     {
         private readonly IWorkflowAssignmentRepository _repository;
         private readonly IWorkflowRepository _workflowRepository;
-        private readonly IWorkflowTaskRepository _WorkflowTaskRepository;
+        private readonly IWorkflowTaskRepository _workflowTaskRepository;
         private readonly IRequestTicketRepository _requestTicketRepository;
         private readonly IWorkflowTransitionRepository _workflowTransitionRepository;
         private readonly IAttachmentService _attachmentService;
         private readonly ISlaRepository _slaRepository;
         private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
         public WorkflowAssignmentService(IWorkflowAssignmentRepository repository
             , IWorkflowRepository workflowRepository
             , IRequestTicketRepository requestTicketRepository
@@ -25,16 +26,18 @@ namespace QuickServiceWebAPI.Services.Implements
             , IAttachmentService attachmentService
             , IMapper mapper
             , IWorkflowTransitionRepository workflowTransitionRepository
-            , ISlaRepository slaRepository)
+            , ISlaRepository slaRepository
+            , IUserRepository userRepository)
         {
             _repository = repository;
             _workflowRepository = workflowRepository;
             _requestTicketRepository = requestTicketRepository;
-            _WorkflowTaskRepository = WorkflowTaskRepository;
+            _workflowTaskRepository = WorkflowTaskRepository;
             _attachmentService = attachmentService;
             _mapper = mapper;
             _workflowTransitionRepository = workflowTransitionRepository;
             _slaRepository = slaRepository;
+            _userRepository = userRepository;
         }
 
         private static readonly Dictionary<StatusEnum, StatusWorkflowTaskEnum> StatusMapping = new Dictionary<StatusEnum, StatusWorkflowTaskEnum>
@@ -63,17 +66,33 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 if (workflowTasks.Count > 1)
                 {
-                    var listWorkflowAssignments = new List<WorkflowAssignment>();
-                    foreach (var workflowTaskId in workflowTasks)
+                    using (var workflowTaskEnumerator = workflowTasks.GetEnumerator())
                     {
-                        var workflowAssignmentClone = workflowAssignment.DeepCopy();
-                        workflowAssignmentClone.CurrentTaskId = workflowTaskId;
-                        listWorkflowAssignments.Add(workflowAssignmentClone);
+                        var listWorkflowAssignments = new List<WorkflowAssignment>();
+                        string currentId = await GetNextId();
+                        if (workflowTaskEnumerator.MoveNext())
+                        {
+                            var workflowAssignmentClone = workflowAssignment.DeepCopy();
+                            workflowAssignmentClone.WorkflowAssignmentId = currentId;
+                            workflowAssignmentClone.CurrentTaskId = workflowTaskEnumerator.Current;
+                        }
+                        while (workflowTaskEnumerator.MoveNext())
+                        {
+                            var workflowAssignmentClone = workflowAssignment.DeepCopy();
+                            var nextId = GenerateNextIdForWorkflowAssignment(currentId);
+                            var workflowTask = workflowTaskEnumerator.Current;
+                            workflowAssignmentClone.WorkflowAssignmentId = nextId;
+                            workflowAssignmentClone.CurrentTaskId = workflowTask;
+                            currentId = nextId;
+                            listWorkflowAssignments.Add(workflowAssignmentClone);
+
+                        }
+                        await _repository.AddRangeWorkflowAssignment(listWorkflowAssignments);
                     }
-                    await _repository.AddRangeWorkflowAssignment(listWorkflowAssignments);
                 }
                 else
                 {
+                    workflowAssignment.WorkflowAssignmentId = await GetNextId();
                     workflowAssignment.CurrentTaskId = workflowTasks.FirstOrDefault();
                     await _repository.AddWorkflowAssignment(workflowAssignment);
                 }
@@ -85,17 +104,33 @@ namespace QuickServiceWebAPI.Services.Implements
             List<WorkflowTask> workflowTasks = workflow.WorkflowTasks.ToList();
             if (workflowTasks.Count > 1)
             {
-                var listWorkflowAssignments = new List<WorkflowAssignment>();
-                foreach (var workflowTask in workflowTasks)
+                using (var workflowTaskEnumerator = workflowTasks.GetEnumerator())
                 {
-                    var workflowAssignmentClone = workflowAssignment.DeepCopy();
-                    workflowAssignmentClone.CurrentTaskId = workflowTask.WorkflowTaskId;
-                    listWorkflowAssignments.Add(workflowAssignmentClone);
+                    var listWorkflowAssignments = new List<WorkflowAssignment>();
+                    string currentId = await GetNextId();
+                    if (workflowTaskEnumerator.MoveNext())
+                    {
+                        var workflowAssignmentClone = workflowAssignment.DeepCopy();
+                        workflowAssignmentClone.WorkflowAssignmentId = currentId;
+                        workflowAssignmentClone.CurrentTaskId = workflowTaskEnumerator.Current.WorkflowTaskId;
+                    }
+                    while (workflowTaskEnumerator.MoveNext())
+                    {
+                        var workflowAssignmentClone = workflowAssignment.DeepCopy();
+                        var nextId = GenerateNextIdForWorkflowAssignment(currentId);
+                        var workflowTask = workflowTaskEnumerator.Current;
+                        workflowAssignmentClone.WorkflowAssignmentId = nextId;
+                        workflowAssignmentClone.CurrentTaskId = workflowTask.WorkflowTaskId;
+                        currentId = nextId;
+                        listWorkflowAssignments.Add(workflowAssignmentClone);
+
+                    }
+                    await _repository.AddRangeWorkflowAssignment(listWorkflowAssignments);
                 }
-                await _repository.AddRangeWorkflowAssignment(listWorkflowAssignments);
             }
             else
             {
+                workflowAssignment.WorkflowAssignmentId = await GetNextId();
                 workflowAssignment.CurrentTaskId = workflowTasks.FirstOrDefault().WorkflowTaskId;
                 await _repository.AddWorkflowAssignment(workflowAssignment);
             }
@@ -109,28 +144,29 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task CompleteWorkflowTask(CheckWorkflowAssignmentDTO checkWorkflowAssignmentDTO)
         {
-            var requestTicket = await _requestTicketRepository.GetRequestTicketById(checkWorkflowAssignmentDTO.ReferenceId);
-            if (requestTicket == null)
+            var workflowAssignment = await _repository
+                .GetWorkflowAssignmentByWorkflowAssignmentId(checkWorkflowAssignmentDTO.WorkflowAssignmentId);
+            if (workflowAssignment == null)
             {
-                throw new AppException($"Ticket with id {checkWorkflowAssignmentDTO.ReferenceId} not found");
+                throw new AppException($"Workflow assignment with id {checkWorkflowAssignmentDTO.WorkflowAssignmentId} not found");
             }
-            var currentWorkflowTask = await _WorkflowTaskRepository.GetWorkflowTaskById(checkWorkflowAssignmentDTO.CurrentTaskId);
-            if (currentWorkflowTask == null || currentWorkflowTask.WorkflowId != requestTicket.WorkflowId)
-            {
-                throw new AppException($"Workflow step with id {checkWorkflowAssignmentDTO.CurrentTaskId} not found" +
-                    $" or not in workflow");
-            }
+            var requestTicket = await _requestTicketRepository.GetRequestTicketById(workflowAssignment.ReferenceId);
+
+            var currentWorkflowTask = await _workflowTaskRepository.GetWorkflowTaskById(workflowAssignment.CurrentTaskId);
+
             if (currentWorkflowTask.AssignerId == null)
             {
-                throw new AppException($"Workflow step not yet assign to any agent!");
+                throw new AppException($"Workflow task not yet assign to any agent!");
+            }
+            var user = await _userRepository.GetUserDetails(checkWorkflowAssignmentDTO.ReceiverId);
+            if(user == null)
+            {
+                throw new AppException($"User with id {checkWorkflowAssignmentDTO.ReceiverId} not found");
             }
             if (checkWorkflowAssignmentDTO.ReceiverId != currentWorkflowTask.AssignerId)
             {
-                throw new AppException($"Workflow step not assign to user have id {checkWorkflowAssignmentDTO.ReceiverId}!");
+                throw new AppException($"Workflow task not assign to user have id {checkWorkflowAssignmentDTO.ReceiverId}!");
             }
-            var workflowAssignment = await _repository
-                .GetWorkflowAssignmentByCompositeKey(checkWorkflowAssignmentDTO.ReferenceId,
-                checkWorkflowAssignmentDTO.CurrentTaskId);
             if (checkWorkflowAssignmentDTO.IsCompleted)
             {
                 List<string> allPreviousTask = await GetAllPreviousTasks(currentWorkflowTask);
@@ -152,6 +188,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 }
                 await _repository.UpdateWorkflowAssignment(updateWorkflowAssignment);
                 requestTicket.Status = MappingWorkflowTaskStatusToRequestTicketStatus(currentWorkflowTask.Status.ToEnum(StatusWorkflowTaskEnum.Open)).ToString();
+                requestTicket.AssignedTo = checkWorkflowAssignmentDTO.ReceiverId;
                 await _requestTicketRepository.UpdateRequestTicket(requestTicket);
                 var nextWorkflowTasks = await GetNextWorkflowTasks(currentWorkflowTask);
                 var workflowAssignments = await _repository.GetWorkflowAssignmentsByRequestTicket(requestTicket.RequestTicketId);
@@ -200,33 +237,26 @@ namespace QuickServiceWebAPI.Services.Implements
             return await _repository.CheckExistingRequestTicket(requestTicketId);
         }
 
-        public bool CheckStatusRequestTicketInStatusMapping(StatusEnum statusEnum)
+        private bool CheckStatusRequestTicketInStatusMapping(StatusEnum statusEnum)
         {
             return StatusMapping.ContainsKey(statusEnum);
         }
 
-        public StatusEnum MappingWorkflowTaskStatusToRequestTicketStatus(StatusWorkflowTaskEnum statusWorkflowTaskEnum)
+        private StatusEnum MappingWorkflowTaskStatusToRequestTicketStatus(StatusWorkflowTaskEnum statusWorkflowTaskEnum)
         {
             return StatusMapping.Where(s => s.Value == statusWorkflowTaskEnum).FirstOrDefault().Key;
         }
 
         public async Task RejectWorkflowTask(RejectWorkflowTaskDTO rejectWorkflowTaskDTO)
         {
-            var requestTicket = await _requestTicketRepository.GetRequestTicketById(rejectWorkflowTaskDTO.ReferenceId);
-            if (requestTicket == null)
-            {
-                throw new AppException($"Ticket with id {rejectWorkflowTaskDTO.ReferenceId} not found");
-            }
-            var currentWorkflowTask = await _WorkflowTaskRepository.GetWorkflowTaskById(rejectWorkflowTaskDTO.CurrentTaskId);
-            if (currentWorkflowTask == null || currentWorkflowTask.WorkflowId != requestTicket.WorkflowId)
-            {
-                throw new AppException($"Workflow step with id {rejectWorkflowTaskDTO.CurrentTaskId} not found" +
-                    $" or not in workflow");
-            }
             var workflowAssignment = await _repository
-                .GetWorkflowAssignmentByCompositeKey(rejectWorkflowTaskDTO.ReferenceId,
-                rejectWorkflowTaskDTO.CurrentTaskId);
-
+                .GetWorkflowAssignmentByWorkflowAssignmentId(rejectWorkflowTaskDTO.WorkflowAssignmentId);
+            if (workflowAssignment == null)
+            {
+                throw new AppException($"Workflow assignment with id {rejectWorkflowTaskDTO.WorkflowAssignmentId} not found");
+            }
+            var requestTicket = await _requestTicketRepository.GetRequestTicketById(workflowAssignment.ReferenceId);
+            var currentWorkflowTask = await _workflowTaskRepository.GetWorkflowTaskById(workflowAssignment.CurrentTaskId);
             if (rejectWorkflowTaskDTO.IsReject)
             {
                 var updateWorkflowAssignment = _mapper.Map(rejectWorkflowTaskDTO, workflowAssignment);
@@ -245,15 +275,14 @@ namespace QuickServiceWebAPI.Services.Implements
         private async Task HandleRejectAction(WorkflowTask currentWorkflowTask, RequestTicket requestTicket)
         {
             var allNextWorkflowTasks = await GetNextWorkflowTasks(currentWorkflowTask);
-            var listWorkflowAssignment = await _repository.GetAllCurrentWorkflowAssignments(allNextWorkflowTasks, requestTicket);
-            await DeleteListWorkflowAssignment(listWorkflowAssignment);
+            await AssignWorkflow(allNextWorkflowTasks, requestTicket);
             requestTicket.Status = MappingWorkflowTaskStatusToRequestTicketStatus(currentWorkflowTask.Status.ToEnum(StatusWorkflowTaskEnum.Open)).ToString();
             await _requestTicketRepository.UpdateRequestTicket(requestTicket);
 
         }
 
 
-        public async Task DeleteListWorkflowAssignment(List<WorkflowAssignment> workflowAssignments)
+        private async Task DeleteListWorkflowAssignment(List<WorkflowAssignment> workflowAssignments)
         {
             foreach (var workflowAssignment in workflowAssignments)
             {
@@ -274,6 +303,29 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             var workflowAssignments = await _repository.GetWorkflowAssignmentsByRequestTicket(requestTicketId);
             return workflowAssignments.Select(wa => _mapper.Map<WorkflowAssignmentDTO>(wa)).ToList();
+        }
+
+        private string GenerateNextIdForWorkflowAssignment(string currentId)
+        {
+            int id = IDGenerator.ExtractNumberFromId(currentId) + 1;
+            string workflowAssignmentId = IDGenerator.GenerateWorkflowAssignmentId(id);
+            return workflowAssignmentId;
+        }
+
+        private async Task<string> GetNextId()
+        {
+            WorkflowAssignment lastWorkflowAssignment = await _repository.GetLastWorkflowAssignment();
+            int id;
+            if (lastWorkflowAssignment == null)
+            {
+                id = 1;
+            }
+            else
+            {
+                id = IDGenerator.ExtractNumberFromId(lastWorkflowAssignment.WorkflowAssignmentId) + 1;
+            }
+            string workflowAssignmentId = IDGenerator.GenerateWorkflowAssignmentId(id);
+            return workflowAssignmentId;
         }
     }
 }

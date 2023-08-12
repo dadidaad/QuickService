@@ -5,14 +5,10 @@ namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 {
     public class CheckWorkflowAssignmentDTO
     {
-        [Required(AllowEmptyStrings = false)]
         [MaxLength(10)]
-        public string ReferenceId { get; set; } = null!;
-
-        [Required(AllowEmptyStrings = false)]
-        [MaxLength(10)]
-        public string CurrentTaskId { get; set; } = null!;
-
+        [Required]
+        public string WorkflowAssignmentId { get; set; } = null!;
+        
         public bool IsCompleted { get; set; }
 
         [Required]

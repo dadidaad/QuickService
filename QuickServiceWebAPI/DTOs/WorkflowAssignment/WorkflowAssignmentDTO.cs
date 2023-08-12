@@ -3,15 +3,13 @@ using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.Workflow;
 using QuickServiceWebAPI.DTOs.WorkflowTask;
 using QuickServiceWebAPI.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 {
     public class WorkflowAssignmentDTO
     {
-
-        public string ReferenceId { get; set; } = null!;
-
-        public string CurrentTaskId { get; set; } = null!;
+        public string WorkflowAssignmentId { get; set; } = null!;
 
         public bool IsCompleted { get; set; }
 
