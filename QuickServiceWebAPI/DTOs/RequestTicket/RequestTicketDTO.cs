@@ -42,7 +42,8 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
         public string? AssignedTo { get; set; }
 
         public string Title { get; set; } = null!;
-        //public virtual SlaDTO? Sla { get; set; }
+        
+        public virtual SlaDTO? Sla { get; set; }
 
         public virtual UserDTO? AssignedToUserEntity { get; set; }
 
