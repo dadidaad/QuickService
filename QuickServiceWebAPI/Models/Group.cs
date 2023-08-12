@@ -17,9 +17,9 @@ public partial class Group
 
     public string GroupLeader { get; set; } = null!;
 
-    public string BusinessHourId { get; set; } = null!;
+    public string? BusinessHourId { get; set; }
 
-    public virtual BusinessHour BusinessHour { get; set; } = null!;
+    public virtual BusinessHour? BusinessHour { get; set; }
 
     public virtual ICollection<Change> Changes { get; set; } = new List<Change>();
 

@@ -32,12 +32,6 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Assign successfully" });
         }
 
-        [HttpGet("get/{roleType:int}")]
-        public async Task<IActionResult> GetPermissionByRoleType(RoleType roleType)
-        {
-            return Ok(await _permissionService.GetPermissionsByRoleType(roleType));
-        }
-
         [HttpPut("update")]
         public async Task<IActionResult> UpdatePermissionForRole(UpdatePermissionsDTO updatePermissionsDTO)
         {

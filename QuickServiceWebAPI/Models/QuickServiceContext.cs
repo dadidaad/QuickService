@@ -393,8 +393,7 @@ public partial class QuickServiceContext : DbContext
 
             entity.HasOne(d => d.BusinessHour).WithMany(p => p.Groups)
                 .HasForeignKey(d => d.BusinessHourId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Groups__Business__02084FDA");
+                .HasConstraintName("FK__Groups__Business__74444068");
 
             entity.HasOne(d => d.GroupLeaderNavigation).WithMany(p => p.Groups)
                 .HasForeignKey(d => d.GroupLeader)

@@ -55,11 +55,6 @@ namespace QuickServiceWebAPI.Services.Implements
             return permissions;
         }
 
-        public async Task<List<Permission>> GetPermissionsByRoleType(RoleType roleType)
-        {
-            return await _repository.GetPermissionsForRoleType(roleType);
-        }
-
         public async Task<PermissionForRoleResponseDTO> GetPermissionsForRoleWithDTO(string roleId)
         {
             var existingRole = await _roleRepository.GetRoleById(roleId);
@@ -68,20 +63,20 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("Role not found");
             }
             List<Permission> permissionsForRole = await _repository.GetPermissionsByRole(roleId);
-            List<Permission> permissionsFromDb = await GetPermissionsByRoleType(existingRole.RoleType.ToEnum(RoleType.Agent));
-            Dictionary<string, bool> permissions = new Dictionary<string, bool>();
-            foreach (var permission in permissionsFromDb)
+            List<Permission> permissions = await _repository.GetPermissions();
+            Dictionary<string, bool> permissionsToDic = new Dictionary<string, bool>();
+            foreach (var permission in permissions)
             {
                 if (permissionsForRole.Any(p => p.PermissionId == permission.PermissionId))
                 {
-                    permissions.Add(permission.PermissionId, true);
+                    permissionsToDic.Add(permission.PermissionId, true);
                 }
                 else
                 {
-                    permissions.Add(permission.PermissionId, false);
+                    permissionsToDic.Add(permission.PermissionId, false);
                 }
             }
-            return new PermissionForRoleResponseDTO { RoleId = roleId, Permissions = permissions };
+            return new PermissionForRoleResponseDTO { RoleId = roleId, Permissions = permissionsToDic };
         }
 
         public async Task UpdatePermissionsToRole(UpdatePermissionsDTO updatePermissionsDTO)
@@ -91,7 +86,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Role not found");
             }
-            List<Permission> permissionsFromDb = await GetPermissionsByRoleType(existingRole.RoleType.ToEnum(RoleType.Agent));
+            List<Permission> permissionsFromDb = await _repository.GetPermissions();
             var updateRole = _mapper.Map<Role>(existingRole);
             foreach (KeyValuePair<string, bool> entry in updatePermissionsDTO.Permissions)
             {
