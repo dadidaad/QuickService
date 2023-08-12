@@ -2,6 +2,7 @@
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Utilities;
+using System.Reflection.Metadata.Ecma335;
 
 namespace QuickServiceWebAPI.Profiles
 {
@@ -21,7 +22,11 @@ namespace QuickServiceWebAPI.Profiles
                 .ForMember(dest => dest.FirstResponseDue,
                 opt => opt.MapFrom(src => CalculateDatetime(src, true)))
                 .ForMember(dest => dest.FirstResolutionDue,
-                opt => opt.MapFrom(src => CalculateDatetime(src, false)));
+                opt => opt.MapFrom(src => CalculateDatetime(src, false)))
+                .AfterMap((src, dest) =>
+                {
+                    dest.ServiceItemEntity.ServiceCategoryEntity.ServiceItemEntities.Clear();
+                });
             CreateMap<CreateRequestTicketDTO, RequestTicket>().ForMember(dest => dest.Attachment, opt => opt.Ignore()).IgnoreAllNonExisting();
             CreateMap<RequestTicket, RequestTicketForRequesterDTO>()
                 .ForMember(dest => dest.AssignedToUserEntity,
