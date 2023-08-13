@@ -282,17 +282,26 @@ namespace QuickServiceWebAPI.Services.Implements
                 existingRequestTicket.Priority = CalculatePriority(updateRequestTicketDTO.Impact.ToEnum(ImpactEnum.Low)
                     , updateRequestTicketDTO.Urgency.ToEnum(UrgencyEnum.Low)).ToString();
             }
-            var updateTicket = _mapper.Map(updateRequestTicketDTO, existingRequestTicket);
-            updateTicket.LastUpdateAt = DateTime.Now;
+
+            if (existingRequestTicket.Status != updateRequestTicketDTO.Status)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Status to {updateRequestTicketDTO.Status}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingRequestTicket.AssignedTo;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
 
             if (existingRequestTicket.Impact != updateRequestTicketDTO.Impact)
             {
                 var history = new RequestTicketHistory();
                 history.Content = $"Change Impact to {updateRequestTicketDTO.Impact}";
                 history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
-                history.RequestTicketId = updateTicket.RequestTicketId;
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
                 history.LastUpdate = DateTime.Now;
-                history.UserId = updateTicket.RequesterId;
+                history.UserId = existingRequestTicket.RequesterId;
                 await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
             }
 
@@ -301,26 +310,15 @@ namespace QuickServiceWebAPI.Services.Implements
                 var history = new RequestTicketHistory();
                 history.Content = $"Change Urgency to {updateRequestTicketDTO.Urgency}";
                 history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
-                history.RequestTicketId = updateTicket.RequestTicketId;
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
                 history.LastUpdate = DateTime.Now;
-                history.UserId = updateTicket.RequesterId;
+                history.UserId = existingRequestTicket.RequesterId;
                 await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
             }
 
-            if (existingRequestTicket.AssignedTo != updateRequestTicketDTO.AssignedTo)
-            {
-                var history = new RequestTicketHistory();
-                history.Content = $"Assignee to {existingRequestTicket.AssignedToNavigation.FirstName} + {existingRequestTicket.AssignedToNavigation.LastName}";
-                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
-                history.RequestTicketId = updateTicket.RequestTicketId;
-                history.LastUpdate = DateTime.Now;
-                history.UserId = updateTicket.RequesterId;
-                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
-            }
-
-            await _requestTicketRepository.UpdateRequestTicket(updateTicket);
-
-            
+            var updateTicket = _mapper.Map(updateRequestTicketDTO, existingRequestTicket);
+            updateTicket.LastUpdateAt = DateTime.Now;           
+            await _requestTicketRepository.UpdateRequestTicket(updateTicket);       
         }
 
         public Task DeleteRequestTicket(string requestTicketId)

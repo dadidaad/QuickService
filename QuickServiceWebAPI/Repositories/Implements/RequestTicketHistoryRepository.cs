@@ -28,12 +28,12 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<RequestTicketHistory> GetRequestTicketHistoryByRequestTicketId(string requestTicketId)
+        public async Task<List<RequestTicketHistory>> GetRequestTicketHistoryByRequestTicketId(string requestTicketId)
         {
             try
             {
                 return await _context.RequestTicketHistories.Include(r => r.RequestTicket).Include(u => u.User)
-                    .AsNoTracking().FirstOrDefaultAsync(r => r.RequestTicketId == requestTicketId);
+                    .AsNoTracking().Where(r => r.RequestTicketId == requestTicketId).ToListAsync();
             }
             catch (Exception ex)
             {

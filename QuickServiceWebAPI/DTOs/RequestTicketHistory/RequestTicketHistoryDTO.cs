@@ -13,8 +13,6 @@ namespace QuickServiceWebAPI.DTOs.RequestTicketHistory
 
         public string UserId { get; set; } = null!;
 
-        public virtual RequestTicketDTO RequestTicketEntity { get; set; } = null!;
-
         public virtual UserDTO UserEntity { get; set; } = null!;
     }
 }

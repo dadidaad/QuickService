@@ -5,9 +5,7 @@ namespace QuickServiceWebAPI.Services
 {
     public interface IRequestTicketHistoryService
     {
-        public Task CreateRequestTicketHistoryFirst(CreateRequestTicketHistoryDTO createRequestTicketHistoryDTO, RequestTicket requestTicket);
-
-        public Task CreateRequestTicketHistoryUpdate(CreateRequestTicketHistoryDTO createRequestTicketHistoryDTO);
+        public Task<List<RequestTicketHistoryDTO>> GetRequestTicketHistoryByRequestTicketId(string requestTicketId);
 
         public Task<string> GetNextIdRequestTicketHistory();
     }
