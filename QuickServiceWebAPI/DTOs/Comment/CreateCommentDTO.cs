@@ -13,6 +13,9 @@ namespace QuickServiceWebAPI.DTOs.Comment
         public string CommentBy { get; set; } = null!;
 
         [Required]
+        public bool IsInternal { get; set; }
+
+        [Required]
         [MaxLength(10)]
         public string RequestTicketId { get; set; } = null!;
 

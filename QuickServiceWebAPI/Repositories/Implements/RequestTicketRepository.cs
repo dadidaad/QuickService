@@ -58,7 +58,21 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 return _context.RequestTickets.Include(u => u.AssignedToNavigation).Include(s => s.ServiceItem)
                                               .Include(a => a.Attachment).Include(u => u.Requester)
-                                              .Include(s => s.Sla).ThenInclude(s => s.Slametrics).ToList();
+                                              .Include(s => s.Sla).ThenInclude(s => s.Slametrics).Take(1000).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+        public List<RequestTicket> GetRequestTicketsCustom()
+        {
+            try
+            {
+                return _context.RequestTickets.Include(u => u.AssignedToNavigation).Include(s => s.ServiceItem).ThenInclude(se=>se.ServiceCategory)
+                                              .Include(a => a.Attachment).Include(u => u.Requester)
+                                              .Include(s => s.Sla).ThenInclude(s => s.Slametrics).Take(1000).ToList();
             }
             catch (Exception ex)
             {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Comment;
+using QuickServiceWebAPI.DTOs.ServiceCategory;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
@@ -19,9 +20,9 @@ namespace QuickServiceWebAPI.Services.Implements
             _mapper = mapper;
         }
 
-        public List<CommentDTO> GetCommentByUser(string commentId)
+        public List<CommentDTO> GetCommentByUser(string userId)
         {
-            var comments = _repository.GetCommentByUser(commentId);
+            var comments = _repository.GetCommentByUser(userId);
             return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
         }
 
@@ -37,23 +38,16 @@ namespace QuickServiceWebAPI.Services.Implements
             return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
         }
 
-        public async Task<string> CreateComment(CreateCommentDTO createCommentDTO)
+        public async Task<CommentDTO> CreateComment(CreateCommentDTO createCommentDTO)
         {
 
             var comment = _mapper.Map<Comment>(createCommentDTO);
-            User user = await _userRepository.GetUserDetails(comment.CommentBy);
-            if (user.Role?.RoleType.ToEnum(RoleType.Agent) == RoleType.Agent)
-            {
-                comment.IsInternal = false;
-            }
-            else
-            {
-                comment.IsInternal = true;
-            }
             comment.CommentId = await GetNextId();
             comment.CommentTime = DateTime.Now;
             await _repository.AddComment(comment);
-            return comment.CommentId;
+
+            var createdCommentDTO = await _repository.GetCommentById(comment.CommentId);
+            return _mapper.Map<CommentDTO>(createdCommentDTO); ;
         }
 
         public async Task UpdateComment(UpdateCommentDTO updateCommentDTO)

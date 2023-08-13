@@ -5,6 +5,7 @@ namespace QuickServiceWebAPI.Repositories
     public interface IRequestTicketRepository
     {
         public List<RequestTicket> GetRequestTickets();
+        public List<RequestTicket> GetRequestTicketsCustom();
         public Task<RequestTicket> GetRequestTicketById(string requestTicketId);
         public Task<RequestTicket?> AddRequestTicket(RequestTicket requestTicket);
         public Task UpdateRequestTicket(RequestTicket requestTicket);
