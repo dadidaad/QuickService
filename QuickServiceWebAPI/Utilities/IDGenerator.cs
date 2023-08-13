@@ -30,6 +30,12 @@ namespace QuickServiceWebAPI.Utilities
             string formattedId = $"SECA{serviceCategoryId.ToString("D6")}";
             return formattedId;
         }
+
+        public static string GenerateRequestTicketHistoryId(int requestTicketHistoryId)
+        {
+            string formattedId = $"RETH{requestTicketHistoryId.ToString("D6")}";
+            return formattedId;
+        }
         public static string GenerateServiceItemId(int serviceItemId)
         {
             string formattedId = $"SEIT{serviceItemId.ToString("D6")}";

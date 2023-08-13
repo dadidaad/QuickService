@@ -42,14 +42,23 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task CreateServiceItem(CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
         {
-            if (_serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId) == null)
+            try
             {
-                throw new AppException("Service category with id " + createUpdateServiceItemDTO.ServiceCategoryId + " not found");
-            }
+                if (await _serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId) == null)
+                {
+                    throw new AppException("Service category with id " + createUpdateServiceItemDTO.ServiceCategoryId + " not found");
+                }
 
-            var serviceItem = _mapper.Map<ServiceItem>(createUpdateServiceItemDTO);
-            serviceItem.ServiceItemId = await GetNextId();
-            await _repository.AddServiceItem(serviceItem);
+                var serviceItem = _mapper.Map<ServiceItem>(createUpdateServiceItemDTO);
+                serviceItem.ServiceItemId = await GetNextId();
+                await _repository.AddServiceItem(serviceItem);
+            }
+            catch (Exception e)
+            {
+
+                throw new AppException("Service item with id " + e.Message); ;
+            }
+            
         }
 
         public async Task UpdateServiceItem(string serviceItemId, CreateUpdateServiceItemDTO createUpdateServiceItemDTO)

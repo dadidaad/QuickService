@@ -118,6 +118,7 @@ builder.Services.AddScoped<IRequestTicketService, RequestTicketService>();
 builder.Services.AddScoped<IRequestTicketExtRepository, RequestTicketExtRepository>();
 builder.Services.AddScoped<IRequestTicketExtService, RequestTicketExtService>();
 builder.Services.AddScoped<IRequestTicketHistoryRepository, RequestTicketHistoryRepository>();
+builder.Services.AddScoped<IRequestTicketHistoryService, RequestTicketHistoryService>();
 builder.Services.AddScoped<IChangeRepository, ChangeRepository>();
 builder.Services.AddScoped<IChangeService, ChangeService>();
 

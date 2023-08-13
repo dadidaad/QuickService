@@ -23,11 +23,15 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IAttachmentService _attachmentService;
         private readonly ISlaRepository _slaRepository;
         private readonly IWorkflowAssignmentService _workflowAssignmentService;
+        private readonly IRequestTicketHistoryService _requestTicketHistoryService;
+        private readonly IRequestTicketHistoryRepository _requestTicketHistoryRepository;
         public RequestTicketService(IRequestTicketRepository requestTicketRepository,
             ILogger<RequestTicketService> logger, IMapper mapper,
             IUserRepository userRepository,
             IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService,
-            ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService)
+            ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService
+            , IRequestTicketHistoryService requestTicketHistoryService
+            , IRequestTicketHistoryRepository requestTicketHistoryRepository)
         {
             _requestTicketRepository = requestTicketRepository;
             _logger = logger;
@@ -37,6 +41,8 @@ namespace QuickServiceWebAPI.Services.Implements
             _attachmentService = attachmentService;
             _slaRepository = slaRepository;
             _workflowAssignmentService = workflowAssignmentService;
+            _requestTicketHistoryService = requestTicketHistoryService;
+            _requestTicketHistoryRepository = requestTicketHistoryRepository;
         }
 
         public async Task<RequestTicketDTO> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
@@ -69,6 +75,18 @@ namespace QuickServiceWebAPI.Services.Implements
                 }
                 requestTicket.Sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
                 var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
+
+                var history = new RequestTicketHistory
+                {
+                    
+                    RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
+                    RequestTicketId = requestTicket.RequestTicketId,
+                    Content = $"Create request",
+                    LastUpdate = requestTicket.CreatedAt,
+                    UserId = requestTicket.RequesterId
+                };
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+
                 if (requestTicketAdded != null && hasWorkflow)
                 {
                     await _workflowAssignmentService.AssignWorkflow(requestTicketAdded, null);
@@ -264,6 +282,40 @@ namespace QuickServiceWebAPI.Services.Implements
                 existingRequestTicket.Priority = CalculatePriority(updateRequestTicketDTO.Impact.ToEnum(ImpactEnum.Low)
                     , updateRequestTicketDTO.Urgency.ToEnum(UrgencyEnum.Low)).ToString();
             }
+
+            if (existingRequestTicket.Status != updateRequestTicketDTO.Status)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Status to {updateRequestTicketDTO.Status}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingRequestTicket.AssignedTo;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            if (existingRequestTicket.Impact != updateRequestTicketDTO.Impact)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Impact to {updateRequestTicketDTO.Impact}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingRequestTicket.RequesterId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            if (existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Urgency to {updateRequestTicketDTO.Urgency}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingRequestTicket.RequesterId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
             var updateTicket = _mapper.Map(updateRequestTicketDTO, existingRequestTicket);
             updateTicket.LastUpdateAt = DateTime.Now;
             if (updateTicket.Status == StatusEnum.Resolved.ToString())

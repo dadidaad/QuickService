@@ -23,5 +23,6 @@ namespace QuickServiceWebAPI.DTOs.ServiceItem
 
         [MaxLength(100)]
         public string? IconDisplay { get; set; }
+        public string? WorkflowId { get; set; }
     }
 }

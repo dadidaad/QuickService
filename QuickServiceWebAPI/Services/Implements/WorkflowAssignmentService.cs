@@ -4,6 +4,7 @@ using QuickServiceWebAPI.DTOs.WorkflowAssignment;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
+using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -19,6 +20,8 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly ISlaRepository _slaRepository;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
+        private readonly IRequestTicketHistoryService _requestTicketHistoryService;
+        private readonly IRequestTicketHistoryRepository _requestTicketHistoryRepository;
         public WorkflowAssignmentService(IWorkflowAssignmentRepository repository
             , IWorkflowRepository workflowRepository
             , IRequestTicketRepository requestTicketRepository
@@ -27,7 +30,9 @@ namespace QuickServiceWebAPI.Services.Implements
             , IMapper mapper
             , IWorkflowTransitionRepository workflowTransitionRepository
             , ISlaRepository slaRepository
-            , IUserRepository userRepository)
+            , IUserRepository userRepository
+            , IRequestTicketHistoryService requestTicketHistoryService
+            , IRequestTicketHistoryRepository requestTicketHistoryRepository)
         {
             _repository = repository;
             _workflowRepository = workflowRepository;
@@ -38,6 +43,8 @@ namespace QuickServiceWebAPI.Services.Implements
             _workflowTransitionRepository = workflowTransitionRepository;
             _slaRepository = slaRepository;
             _userRepository = userRepository;
+            _requestTicketHistoryService = requestTicketHistoryService;
+            _requestTicketHistoryRepository = requestTicketHistoryRepository;
         }
 
         private static readonly Dictionary<StatusEnum, StatusWorkflowTaskEnum> StatusMapping = new Dictionary<StatusEnum, StatusWorkflowTaskEnum>
@@ -134,6 +141,19 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.Status = MappingWorkflowTaskStatusToRequestTicketStatus(currentWorkTask.Status.ToEnum(StatusWorkflowTaskEnum.Open)).ToString();
             requestTicket.AssignedToGroup = currentWorkTask.GroupId;
             requestTicket.AssignedTo = workflowAssignment.AssigneeId;
+
+            var history = new RequestTicketHistory
+            {
+                Content = $"Assigned to",
+                RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
+                RequestTicketId = requestTicket.RequestTicketId,
+                LastUpdate = DateTime.Now,
+                UserId = requestTicket.AssignedTo
+            };
+                
+            
+            await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+
             if(requestTicket.Status == StatusEnum.Resolved.ToString())
             {
                 requestTicket.ResolvedTime = DateTime.Now;
