@@ -6,6 +6,8 @@ namespace QuickServiceWebAPI.Services
 {
     public interface IWorkflowAssignmentService
     {
+        public Task AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO);
+
         public Task AssignWorkflow(RequestTicket requestTicket, string? currentTaskId);
 
         public Task CompleteWorkflowTask(CheckWorkflowAssignmentDTO checkWorkflowAssignmentDTO);

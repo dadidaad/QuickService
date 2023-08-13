@@ -21,13 +21,13 @@ public partial class WorkflowAssignment
 
     public DateTime? DueDate { get; set; }
 
-    public string? FinisherId { get; set; }
+    public string? AssigneeId { get; set; }
+
+    public virtual User? Assignee { get; set; }
 
     public virtual Attachment? Attachment { get; set; }
 
     public virtual WorkflowTask CurrentTask { get; set; } = null!;
-
-    public virtual User? Finisher { get; set; }
 
     public virtual RequestTicket Reference { get; set; } = null!;
 }

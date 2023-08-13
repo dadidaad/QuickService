@@ -58,7 +58,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
             workflowAssignment.DueDate = DateTime.Now
                 + TimeSpan.FromTicks(sla.Slametrics.FirstOrDefault(sm => sm.Priority == requestTicket.Priority).ResolutionTime);
-            WorkflowTask workflowTask = null;
+            WorkflowTask? workflowTask = null;
             if (currentTaskId == null)
             {
                 workflowTask = await _workflowTaskRepository.GetOpenTaskOfWorkflow(workflow.WorkflowId);
@@ -66,15 +66,15 @@ namespace QuickServiceWebAPI.Services.Implements
             else
             {
                 workflowTask = await _workflowTaskRepository.GetWorkflowTaskById(currentTaskId);
-                if(workflowTask == null)
+                if (workflowTask == null)
                 {
                     throw new AppException($"Workflow task with id {currentTaskId} not found");
                 }
             }
+            workflowAssignment.AssigneeId = workflowTask.AssignerId;
             workflowAssignment.CurrentTaskId = workflowTask.WorkflowTaskId;
             workflowAssignment.WorkflowAssignmentId = await GetNextId();
             await _repository.AddWorkflowAssignment(workflowAssignment);
-            
         }
 
         public async Task CompleteWorkflowTask(CheckWorkflowAssignmentDTO checkWorkflowAssignmentDTO)
@@ -89,23 +89,29 @@ namespace QuickServiceWebAPI.Services.Implements
 
             var currentWorkflowTask = await _workflowTaskRepository.GetWorkflowTaskById(workflowAssignment.CurrentTaskId);
 
-            if (currentWorkflowTask.AssignerId == null)
+            if (workflowAssignment.AssigneeId == null)
             {
-                throw new AppException($"Workflow task not yet assign to any agent!");
+                throw new AppException($"Workflow task not yet assign to any agent or group!");
             }
             var user = await _userRepository.GetUserDetails(checkWorkflowAssignmentDTO.FinisherId);
-            if(user == null)
+            if (user == null)
             {
                 throw new AppException($"User with id {checkWorkflowAssignmentDTO.FinisherId} not found");
             }
-            if (checkWorkflowAssignmentDTO.FinisherId != currentWorkflowTask.AssignerId 
-                && (currentWorkflowTask.Status != StatusWorkflowTaskEnum.Open.ToString() 
-                || currentWorkflowTask.Status != StatusWorkflowTaskEnum.Resolved.ToString()))
+            if (currentWorkflowTask.GroupId != null)
+            {
+                if (!user.Groups.Any(g => g.GroupId == currentWorkflowTask.GroupId))
+                {
+                    throw new AppException($"User with id {checkWorkflowAssignmentDTO.FinisherId} not in group assign");
+                }
+            }
+            if (checkWorkflowAssignmentDTO.FinisherId != workflowAssignment.AssigneeId
+                && currentWorkflowTask.Status != StatusWorkflowTaskEnum.Open.ToString())
             {
                 throw new AppException($"Workflow task not assign to user have id {checkWorkflowAssignmentDTO.FinisherId}!");
             }
             var workflowTransitionForCurrentTask = await _workflowTransitionRepository.GetWorkflowTransitionById(workflowAssignment.CurrentTaskId, checkWorkflowAssignmentDTO.ToWorkFlowTask);
-            if(workflowTransitionForCurrentTask == null)
+            if (workflowTransitionForCurrentTask == null)
             {
                 throw new AppException($"Workflow transition for next task not found");
             }
@@ -119,15 +125,15 @@ namespace QuickServiceWebAPI.Services.Implements
                 updateWorkflowAssignment.CompletedTime = DateTime.Now;
                 await _repository.UpdateWorkflowAssignment(updateWorkflowAssignment);
                 var nextWorkflowTask = await _workflowTaskRepository.GetWorkflowTaskById(checkWorkflowAssignmentDTO.ToWorkFlowTask);
-                await HandleRequestTicketForCurrentTask(requestTicket, nextWorkflowTask);
                 await AssignWorkflow(requestTicket, nextWorkflowTask.WorkflowTaskId);
             }
         }
 
-        private async Task HandleRequestTicketForCurrentTask(RequestTicket requestTicket, WorkflowTask currentWorkTask)
+        private async Task HandleRequestTicketForCurrentTask(RequestTicket requestTicket, WorkflowTask currentWorkTask, WorkflowAssignment workflowAssignment)
         {
             requestTicket.Status = MappingWorkflowTaskStatusToRequestTicketStatus(currentWorkTask.Status.ToEnum(StatusWorkflowTaskEnum.Open)).ToString();
-            requestTicket.AssignedTo = currentWorkTask.AssignerId;
+            requestTicket.AssignedToGroup = currentWorkTask.GroupId;
+            requestTicket.AssignedTo = workflowAssignment.AssigneeId;
             await _requestTicketRepository.UpdateRequestTicket(requestTicket);
         }
 
@@ -185,5 +191,30 @@ namespace QuickServiceWebAPI.Services.Implements
             return StatusMapping.ContainsKey(statusEnum);
         }
 
+        public async Task AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO)
+        {
+            var workflowAssignment = await _repository.GetWorkflowAssignmentByWorkflowAssignmentId(assignTaskToAgentDTO.WorkflowAssignmentId);
+            if (workflowAssignment == null)
+            {
+                throw new AppException($"Workflow assignment with id {assignTaskToAgentDTO.WorkflowAssignmentId} not found");
+            }
+            var user = await _userRepository.GetUserDetails(assignTaskToAgentDTO.AssigneeId);
+            if(user == null)
+            {
+                throw new AppException($"User with id {assignTaskToAgentDTO.AssigneeId} not found");
+            }
+            var currentWorkflowTask = await _workflowTaskRepository.GetWorkflowTaskById(workflowAssignment.CurrentTaskId);
+            if (currentWorkflowTask.GroupId != null)
+            {
+                if (!user.Groups.Any(g => g.GroupId == currentWorkflowTask.GroupId))
+                {
+                    throw new AppException($"User with id {assignTaskToAgentDTO.AssigneeId} not in group assign");
+                }
+            }
+            var updateWorkflowAssignment = _mapper.Map(assignTaskToAgentDTO, workflowAssignment);
+            await _repository.UpdateWorkflowAssignment(updateWorkflowAssignment);
+            var requestTicket = await _requestTicketRepository.GetRequestTicketById(workflowAssignment.ReferenceId);
+            await HandleRequestTicketForCurrentTask(requestTicket, currentWorkflowTask, workflowAssignment);
+        }
     }
 }

@@ -94,7 +94,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         private async Task ValidationUserGroup(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO)
         {
-            if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
+            if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId) && string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId))
             {
                 var user = await _userRepository.GetUserDetails(createUpdateWorkflowTaskDTO.AssignerId);
                 if (user == null)
@@ -102,21 +102,17 @@ namespace QuickServiceWebAPI.Services.Implements
                     throw new AppException($"User with id {createUpdateWorkflowTaskDTO.AssignerId} not found");
                 }
             }
-            if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId))
+            else if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId) && string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
             {
                 var group = await _groupRepository.GetGroupById(createUpdateWorkflowTaskDTO.GroupId);
                 if (group == null)
                 {
                     throw new AppException($"Group with id {createUpdateWorkflowTaskDTO.GroupId} not found");
                 }
-                if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
-                {
-                    var userInGroup = group.Users.FirstOrDefault(u => u.UserId == createUpdateWorkflowTaskDTO.AssignerId);
-                    if (userInGroup == null)
-                    {
-                        throw new AppException($"User with id {createUpdateWorkflowTaskDTO.AssignerId} not in group");
-                    }
-                }
+            }
+            else
+            {
+                throw new AppException($"Only accept group or assignee");
             }
 
         }

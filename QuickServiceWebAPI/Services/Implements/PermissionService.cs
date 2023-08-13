@@ -44,6 +44,11 @@ namespace QuickServiceWebAPI.Services.Implements
             await _roleRepository.UpdateRole(existingRole, updateRole);
         }
 
+        public async Task<List<Permission>> GetPermissions()
+        {
+            return await _repository.GetPermissions();
+        }
+
         public async Task<List<Permission>> GetPermissionsByRole(string roleId)
         {
             var existingRole = await _roleRepository.GetRoleById(roleId);
