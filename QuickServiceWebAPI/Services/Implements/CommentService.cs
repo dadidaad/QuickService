@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Comment;
+using QuickServiceWebAPI.DTOs.ServiceCategory;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
@@ -19,9 +20,9 @@ namespace QuickServiceWebAPI.Services.Implements
             _mapper = mapper;
         }
 
-        public List<CommentDTO> GetCommentByUser(string commentId)
+        public List<CommentDTO> GetCommentByUser(string userId)
         {
-            var comments = _repository.GetCommentByUser(commentId);
+            var comments = _repository.GetCommentByUser(userId);
             return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
         }
 
@@ -45,8 +46,8 @@ namespace QuickServiceWebAPI.Services.Implements
             comment.CommentTime = DateTime.Now;
             await _repository.AddComment(comment);
 
-            var createdCommentDTO = _mapper.Map<CommentDTO>(comment);
-            return createdCommentDTO;
+            var createdCommentDTO = await _repository.GetCommentById(comment.CommentId);
+            return _mapper.Map<CommentDTO>(createdCommentDTO); ;
         }
 
         public async Task UpdateComment(UpdateCommentDTO updateCommentDTO)

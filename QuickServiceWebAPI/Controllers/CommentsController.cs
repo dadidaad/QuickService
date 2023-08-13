@@ -7,7 +7,7 @@ using QuickServiceWebAPI.Services;
 namespace QuickServiceWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class CommentsController : ControllerBase
     {

@@ -22,10 +22,6 @@ namespace QuickServiceWebAPI.DTOs.Comment
 
         public DateTime LastModified { get; set; }
 
-        public virtual AttachmentDTO? AttachmentEntity { get; set; }
-
         public virtual UserDTO CommentByUserEntity { get; set; } = null!;
-
-        public virtual RequestTicketDTO RequestTicketEntity { get; set; } = null!;
     }
 }
