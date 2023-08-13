@@ -44,7 +44,7 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             try
             {
-                if (_serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId) == null)
+                if (await _serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId) == null)
                 {
                     throw new AppException("Service category with id " + createUpdateServiceItemDTO.ServiceCategoryId + " not found");
                 }
