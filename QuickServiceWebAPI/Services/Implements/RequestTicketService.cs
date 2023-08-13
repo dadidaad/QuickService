@@ -266,6 +266,10 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             var updateTicket = _mapper.Map(updateRequestTicketDTO, existingRequestTicket);
             updateTicket.LastUpdateAt = DateTime.Now;
+            if (updateTicket.Status == StatusEnum.Resolved.ToString())
+            {
+                updateTicket.ResolvedTime = DateTime.Now;
+            }
             await _requestTicketRepository.UpdateRequestTicket(updateTicket);
         }
 

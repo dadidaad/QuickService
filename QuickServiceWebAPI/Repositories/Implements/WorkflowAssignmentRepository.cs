@@ -69,20 +69,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task AddRangeWorkflowAssignment(List<WorkflowAssignment> workflowAssignments)
-        {
-            try
-            {
-                _context.WorkflowAssignments.AddRangeAsync(workflowAssignments);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw;
-            }
-        }
-
         public async Task<WorkflowAssignment> GetWorkflowAssignmentByWorkflowAssignmentId(string workflowAssignmentId)
         {
             try

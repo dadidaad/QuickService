@@ -23,6 +23,8 @@ public partial class WorkflowAssignment
 
     public string? AssigneeId { get; set; }
 
+    public DateTime? HandleTime { get; set; }
+
     public virtual User? Assignee { get; set; }
 
     public virtual Attachment? Attachment { get; set; }

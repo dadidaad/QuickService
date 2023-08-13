@@ -34,5 +34,17 @@ namespace QuickServiceWebAPI.Utilities
             stream.Close();
             return result;
         }
+
+        public static void RemoveAll<T>(this ICollection<T> source,
+                                    Func<T, bool> predicate)
+        {
+            if (source == null)
+                throw new ArgumentNullException("source", "source is null.");
+
+            if (predicate == null)
+                throw new ArgumentNullException("predicate", "predicate is null.");
+
+            source.Where(predicate).ToList().ForEach(e => source.Remove(e));
+        }
     }
 }

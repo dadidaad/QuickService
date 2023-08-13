@@ -38,9 +38,9 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<List<WorkflowDTO>> GetWorkflows()
         {
             var workflows = await _repository.GetWorkflows();
-            //workflows.ForEach(async w => await HandleStatusInWorkflow(w));
             return workflows.Select(workflow => _mapper.Map<WorkflowDTO>(workflow)).ToList();
         }
+
 
         public async Task<WorkflowDTO> GetWorkflowById(string workflowId)
         {
@@ -62,7 +62,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             var workflow = _mapper.Map<Workflow>(createUpdateWorkflowDTO);
             workflow.WorkflowId = await GetNextId();
-            workflow.Status = StatusWorkflowEnum.Active.ToString();
+            workflow.Status = StatusWorkflowEnum.InActive.ToString();
             workflow.CreatedAt = DateTime.Now;
             var addedWorkflow = await _repository.AddWorkflow(workflow);
             if(addedWorkflow != null)
@@ -157,6 +157,8 @@ namespace QuickServiceWebAPI.Services.Implements
                 requestTicket.WorkflowId = workflow.WorkflowId;
                 await _requestTicketRepository.UpdateRequestTicket(requestTicket);
             }
+            workflow.Status = StatusWorkflowEnum.Active.ToString();
+            await _repository.UpdateWorkflow(workflow);
         }
 
         private void HandleWorkflowTaskInWorkflow(Workflow workflow)
@@ -166,6 +168,27 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Workflow don't have any steps!!");
             }
+        }
+
+        public async Task RemoveWorkflowFromServiceItem(RemoveWorkflowFromServiceItemDTO removeWorkflowFromServiceItemDTO)
+        {
+            var workflow = await _repository.GetWorkflowById(removeWorkflowFromServiceItemDTO.WorkflowId);
+            if (workflow == null)
+            {
+                throw new AppException("Workflow not found");
+            }
+            if(removeWorkflowFromServiceItemDTO.ServiceItemIdList.Except(workflow.ServiceItems.Select(u => u.ServiceItemId).ToList()).Any())
+            {
+                throw new AppException("Some service item that not assign to workflow");
+            }
+            var listServiceItemId = removeWorkflowFromServiceItemDTO.ServiceItemIdList;
+            var removeServiceItemList = workflow.ServiceItems.Where(si => listServiceItemId.Any(siId => siId == si.ServiceItemId)).ToList();
+            workflow.ServiceItems.RemoveAll(si => removeServiceItemList.Contains(si));
+            if(workflow.ServiceItems.Count == 0)
+            {
+                workflow.Status = StatusWorkflowEnum.InActive.ToString();
+            }
+            await _repository.UpdateWorkflow(workflow);
         }
     }
 }

@@ -77,7 +77,7 @@ public partial class QuickServiceContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=tcp:quick-service.database.windows.net,1433; database=Quick service; user=quickservice; password=admin123!");
+        => optionsBuilder.UseSqlServer("server=tcp:quick-service.database.windows.net,1433; database=Quick Service;uid=quickservice;pwd=admin123!;TrustServerCertificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1168,6 +1168,7 @@ public partial class QuickServiceContext : DbContext
                 .IsFixedLength()
                 .HasColumnName("CurrentTaskID");
             entity.Property(e => e.DueDate).HasColumnType("datetime");
+            entity.Property(e => e.HandleTime).HasColumnType("datetime");
             entity.Property(e => e.Message).HasMaxLength(255);
             entity.Property(e => e.ReferenceId)
                 .HasMaxLength(10)

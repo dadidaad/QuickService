@@ -61,5 +61,13 @@ namespace QuickServiceWebAPI.Controllers
             await _workflowService.AssignWorkflow(assignWorkflowDTO);
             return Ok(new { message = "Assign successfully" });
         }
+
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        [HttpPut("remove")]
+        public async Task<IActionResult> RemoveWorkflowFromServiceItem(RemoveWorkflowFromServiceItemDTO removeWorkflowFromServiceItemDTO)
+        {
+            await _workflowService.RemoveWorkflowFromServiceItem(removeWorkflowFromServiceItemDTO);
+            return Ok(new { message = "Remove successfully" });
+        }
     }
 }

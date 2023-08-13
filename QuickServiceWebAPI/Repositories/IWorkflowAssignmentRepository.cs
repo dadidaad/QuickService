@@ -11,7 +11,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByWorkflowTaskId(string workflowTaskId);
         public Task<List<WorkflowAssignment>> GetWorkflowAssignmentsByWorkflowId(string workflowId);
         public Task AddWorkflowAssignment(WorkflowAssignment workflowAssignment);
-        public Task AddRangeWorkflowAssignment(List<WorkflowAssignment> workflowAssignments);
         public Task UpdateWorkflowAssignment(WorkflowAssignment workflowAssignment);
         public Task DeleteRangeWorkflowAssignment(List<WorkflowAssignment> workflowAssignments);
         public Task DeleteWorkflowAssignment(WorkflowAssignment workflowAssignment);

@@ -134,6 +134,10 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.Status = MappingWorkflowTaskStatusToRequestTicketStatus(currentWorkTask.Status.ToEnum(StatusWorkflowTaskEnum.Open)).ToString();
             requestTicket.AssignedToGroup = currentWorkTask.GroupId;
             requestTicket.AssignedTo = workflowAssignment.AssigneeId;
+            if(requestTicket.Status == StatusEnum.Resolved.ToString())
+            {
+                requestTicket.ResolvedTime = DateTime.Now;
+            }
             await _requestTicketRepository.UpdateRequestTicket(requestTicket);
         }
 
@@ -212,6 +216,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 }
             }
             var updateWorkflowAssignment = _mapper.Map(assignTaskToAgentDTO, workflowAssignment);
+            updateWorkflowAssignment.HandleTime = DateTime.Now;
             await _repository.UpdateWorkflowAssignment(updateWorkflowAssignment);
             var requestTicket = await _requestTicketRepository.GetRequestTicketById(workflowAssignment.ReferenceId);
             await HandleRequestTicketForCurrentTask(requestTicket, currentWorkflowTask, workflowAssignment);
