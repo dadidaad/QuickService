@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.Comment;
+using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
@@ -40,8 +41,8 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateComment(CreateCommentDTO createCommentDTO)
         {
-            var cmtId = await _commentService.CreateComment(createCommentDTO);
-            return Ok(new { message = "Create successfully", commentId = cmtId });
+            var createdComment = await _commentService.CreateComment(createCommentDTO);
+            return Ok(createdComment);
         }
 
         [HttpPut("update")]
