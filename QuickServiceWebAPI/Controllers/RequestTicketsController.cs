@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class RequestTicketsController : ControllerBase
     {
         private readonly IRequestTicketService _requestTicketService;
@@ -35,6 +35,13 @@ namespace QuickServiceWebAPI.Controllers
         public async Task<IActionResult> GetAllTickets()
         {
             return Ok(await _requestTicketService.GetAllListRequestTicket());
+        }
+        [Route("getticketsadmin/{ticketType?}/{queryId?}")]
+        [HttpGet]
+        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        public async Task<IActionResult> GetTicketForAdmin(string ticketType, string queryId)
+        {
+            return Ok(await _requestTicketService.GetRequestTicketsAdmin(ticketType, queryId));
         }
 
         [HttpGet("get/{requestTicketId}")]

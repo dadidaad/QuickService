@@ -62,19 +62,19 @@ namespace QuickServiceWebAPI.Services.Implements
                 else
                 {
                     await HandleServiceRequestTicket(requestTicket, createRequestTicketDTO);
-                    if(requestTicket.WorkflowId != null)
+                    if (requestTicket.WorkflowId != null)
                     {
                         hasWorkflow = true;
                     }
                 }
                 requestTicket.Sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
                 var requestTicketAdded = await _requestTicketRepository.AddRequestTicket(requestTicket);
-                if(requestTicketAdded != null && hasWorkflow)
+                if (requestTicketAdded != null && hasWorkflow)
                 {
                     await _workflowAssignmentService.AssignWorkflow(requestTicketAdded, null);
                 }
                 transactionScope.Complete();
-                return _mapper.Map<RequestTicketDTO>(requestTicketAdded); 
+                return _mapper.Map<RequestTicketDTO>(requestTicketAdded);
             }
         }
 
@@ -152,6 +152,32 @@ namespace QuickServiceWebAPI.Services.Implements
 
         }
 
+        public Task<List<RequestTicketAdminDTO>> GetRequestTicketsAdmin(string ticketType, string queryId)
+        {
+            List<RequestTicket> requestTickets = new();
+            
+            if(ticketType== "all" && queryId=="none") requestTickets = _requestTicketRepository.GetRequestTicketsCustom();
+
+
+            return Task.FromResult(requestTickets.Select(requestTicket => new RequestTicketAdminDTO
+            {
+                IsIncident = requestTicket.IsIncident,
+                RequestTicketId = requestTicket.RequestTicketId,
+                Title = requestTicket.Title,
+                RequesterUserEntity = _mapper.Map<UserDTO>(requestTicket.Requester),
+                Status = requestTicket.Status,
+                Description = requestTicket.Description,
+                Priority = requestTicket.Priority,
+                CreatedAt = requestTicket.CreatedAt,
+                AssignedToUserEntity = _mapper.Map<UserDTO>(requestTicket.AssignedToNavigation),
+                ServiceItemEntity = _mapper.Map<ServiceItemDTO>(requestTicket.ServiceItem),
+                //ServiceItemEntity.ServiceItemId = requestTicket.ServiceItem.ServiceItemId,
+                //ServiceItemName = requestTicket.ServiceItem.ServiceItemName,
+                //ServiceItemCategoryId = requestTicket.ServiceItem.ServiceCategory.ServiceCategoryId,
+                //ServiceItemCategoryName = requestTicket.ServiceItem.ServiceCategory.ServiceCategoryName,
+            }).OrderByDescending(x => x.CreatedAt).ToList());
+        }
+
         public Task<List<RequestTicketDTO>> GetAllListRequestTicket()
         {
             var requestTickets = _requestTicketRepository.GetRequestTickets();
@@ -166,6 +192,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 Priority = requestTicket.Priority,
                 CreatedAt = requestTicket.CreatedAt,
                 AssignedToUserEntity = _mapper.Map<UserDTO>(requestTicket.AssignedToNavigation),
+                ServiceItemEntity = _mapper.Map<ServiceItemDTO>(requestTicket.ServiceItem)
             }).OrderByDescending(x => x.CreatedAt).ToList());
         }
 
@@ -186,7 +213,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 CreatedAt = requestTicket.CreatedAt,
                 AssignedToUserEntity = _mapper.Map<UserDTO>(requestTicket.AssignedToNavigation),
                 ServiceItemEntity = _mapper.Map<ServiceItemDTO>(requestTicket.ServiceItem),
-            }).OrderByDescending(x=>x.CreatedAt).ToList();
+            }).OrderByDescending(x => x.CreatedAt).ToList();
         }
 
         public async Task<RequestTicketDTO> GetDetailsRequestTicket(string requestTicketId)
