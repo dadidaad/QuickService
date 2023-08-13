@@ -206,6 +206,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 List<WorkflowAssignment> workflowAssignments = await _context.WorkflowAssignments
                                                         .Include(wa => wa.Attachment)
+                                                        .Include(wa => wa.Assignee).ThenInclude(a => a.Groups)
                                                         .Include(a => a.CurrentTask).ThenInclude(c => c.Assigner)
                                                         .Include(a => a.CurrentTask).ThenInclude(c => c.Group)
                                                         .Include(a => a.CurrentTask).ThenInclude(c => c.WorkflowTransitionFromWorkflowTaskNavigations)// Include the CurrentTask navigation property
