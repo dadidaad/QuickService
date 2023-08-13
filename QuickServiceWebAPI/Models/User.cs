@@ -55,6 +55,8 @@ public partial class User
 
     public virtual ICollection<RequestTicket> RequestTicketAssignedToNavigations { get; set; } = new List<RequestTicket>();
 
+    public virtual ICollection<RequestTicketHistory> RequestTicketHistories { get; set; } = new List<RequestTicketHistory>();
+
     public virtual ICollection<RequestTicket> RequestTicketRequesters { get; set; } = new List<RequestTicket>();
 
     public virtual Role? Role { get; set; }

@@ -13,6 +13,8 @@ public partial class RequestTicketHistory
 
     public string UserId { get; set; } = null!;
 
+    public string RequestTicketHistoryId { get; set; } = null!;
+
     public virtual RequestTicket RequestTicket { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
