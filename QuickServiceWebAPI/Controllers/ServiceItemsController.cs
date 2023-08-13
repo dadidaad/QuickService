@@ -7,7 +7,7 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
+    //[HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceItemsController : ControllerBase
