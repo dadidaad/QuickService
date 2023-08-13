@@ -232,10 +232,9 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException($"Request ticket with id {updateRequestTicketDTO.RequestTicketId} already assign to a workflow and cannot update status");
             }
             if ((existingRequestTicket.Impact != updateRequestTicketDTO.Impact
-                || existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency)
-                && existingRequestTicket.Priority == updateRequestTicketDTO.Priority)
+                || existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency))
             {
-                updateRequestTicketDTO.Priority = CalculatePriority(updateRequestTicketDTO.Impact.ToEnum(ImpactEnum.Low)
+                existingRequestTicket.Priority = CalculatePriority(updateRequestTicketDTO.Impact.ToEnum(ImpactEnum.Low)
                     , updateRequestTicketDTO.Urgency.ToEnum(UrgencyEnum.Low)).ToString();
             }
             var updateTicket = _mapper.Map(updateRequestTicketDTO, existingRequestTicket);

@@ -664,10 +664,15 @@ public partial class QuickServiceContext : DbContext
 
         modelBuilder.Entity<RequestTicketHistory>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("RequestTicketHistories", "QuickServices");
+            entity.HasKey(e => e.RequestTicketHistoryId).HasName("PK__RequestT__58D8082550D4C07F");
 
+            entity.ToTable("RequestTicketHistories", "QuickServices");
+
+            entity.Property(e => e.RequestTicketHistoryId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("RequestTicketHistoryID");
             entity.Property(e => e.Content)
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -683,12 +688,12 @@ public partial class QuickServiceContext : DbContext
                 .IsFixedLength()
                 .HasColumnName("UserID");
 
-            entity.HasOne(d => d.RequestTicket).WithMany()
+            entity.HasOne(d => d.RequestTicket).WithMany(p => p.RequestTicketHistories)
                 .HasForeignKey(d => d.RequestTicketId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__RequestTi__Reque__3A179ED3");
 
-            entity.HasOne(d => d.User).WithMany()
+            entity.HasOne(d => d.User).WithMany(p => p.RequestTicketHistories)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__RequestTi__UserI__3B0BC30C");
@@ -1146,6 +1151,11 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("WorkflowAssignmentID");
+            entity.Property(e => e.AssigneeId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("AssigneeID");
             entity.Property(e => e.AttachmentId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -1158,16 +1168,16 @@ public partial class QuickServiceContext : DbContext
                 .IsFixedLength()
                 .HasColumnName("CurrentTaskID");
             entity.Property(e => e.DueDate).HasColumnType("datetime");
-            entity.Property(e => e.FinisherId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength();
             entity.Property(e => e.Message).HasMaxLength(255);
             entity.Property(e => e.ReferenceId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("ReferenceID");
+
+            entity.HasOne(d => d.Assignee).WithMany(p => p.WorkflowAssignments)
+                .HasForeignKey(d => d.AssigneeId)
+                .HasConstraintName("FK_WorkflowAssignments_User");
 
             entity.HasOne(d => d.Attachment).WithMany(p => p.WorkflowAssignments)
                 .HasForeignKey(d => d.AttachmentId)
@@ -1178,10 +1188,6 @@ public partial class QuickServiceContext : DbContext
                 .HasForeignKey(d => d.CurrentTaskId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__WorkflowA__Curre__7073AF84");
-
-            entity.HasOne(d => d.Finisher).WithMany(p => p.WorkflowAssignments)
-                .HasForeignKey(d => d.FinisherId)
-                .HasConstraintName("FK_WorkflowAssignments_User");
 
             entity.HasOne(d => d.Reference).WithMany(p => p.WorkflowAssignments)
                 .HasForeignKey(d => d.ReferenceId)

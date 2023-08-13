@@ -19,6 +19,12 @@ namespace QuickServiceWebAPI.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> GetPermissions()
+        {
+            return Ok(await _permissionService.GetPermissions());
+        }
+
         [HttpGet("get/{roleId}")]
         public async Task<IActionResult> GetPermissionByRole(string roleId)
         {

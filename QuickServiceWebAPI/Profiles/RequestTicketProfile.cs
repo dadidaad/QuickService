@@ -38,6 +38,8 @@ namespace QuickServiceWebAPI.Profiles
                 opt => opt.MapFrom(src => src.Attachment))
                 .ForMember(dest => dest.ServiceItemEntity,
                 opt => opt.MapFrom(src => src.ServiceItem));
+            CreateMap<UpdateRequestTicketDTO, RequestTicket>();
+            CreateMap<RequesterResquestDTO, RequestTicket>();
         }
 
         private DateTime CalculateDatetime(RequestTicket requestTicket, bool isResponseDue)
