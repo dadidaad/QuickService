@@ -54,5 +54,18 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw;
             }
         }
+
+        public async Task<RequestTicketHistory> GetLastRequestTicketHistory()
+        {
+            try
+            {
+                return await _context.RequestTicketHistories.OrderByDescending(u => u.RequestTicketHistoryId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
     }
 }

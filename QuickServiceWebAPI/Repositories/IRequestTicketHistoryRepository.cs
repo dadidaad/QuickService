@@ -7,5 +7,7 @@ namespace QuickServiceWebAPI.Repositories
         public Task<List<RequestTicketHistory>> GetRequestTicketHistories();
         public Task<RequestTicketHistory> GetRequestTicketHistoryByRequestTicketId(string requestTicketId);
         public Task AddRequestTicketHistory(RequestTicketHistory requestTicketHistory);
+
+        public Task<RequestTicketHistory> GetLastRequestTicketHistory();
     }
 }
