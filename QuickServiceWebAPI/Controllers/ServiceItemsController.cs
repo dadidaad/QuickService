@@ -37,8 +37,8 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateServiceItem(CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
         {
-            await _serviceItemService.CreateServiceItem(createUpdateServiceItemDTO);
-            return Ok(new { message = "Create successfully" });
+            var serviceItemDto = await _serviceItemService.CreateServiceItem(createUpdateServiceItemDTO);
+            return Ok(new { message = "Create successfully", ServiceItemDTO = serviceItemDto });
         }
 
         [HttpPut("update")]

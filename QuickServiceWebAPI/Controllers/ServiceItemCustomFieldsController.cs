@@ -20,9 +20,9 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpPost("assign")]
-        public async Task<IActionResult> AssignServiceItemCustomField(CreateUpdateServiceItemCustomFieldDTO createUpdateServiceItemCustomFieldDTO)
+        public async Task<IActionResult> AssignServiceItemCustomField(List<CreateUpdateServiceItemCustomFieldDTO> createUpdateServiceItemCustomFieldDTOs)
         {
-            await _serviceItemCustomFieldService.AssignServiceItemCustomField(createUpdateServiceItemCustomFieldDTO);
+            await _serviceItemCustomFieldService.AssignServiceItemCustomField(createUpdateServiceItemCustomFieldDTOs);
             return Ok(new { message = "Assign successfully" });
         }
 
