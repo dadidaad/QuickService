@@ -66,6 +66,82 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw;
             }
         }
+        public async Task<Dictionary<string, int>> GetRequestTicketByProblemStatusCount()
+        {
+            try
+            {
+                var statusValues = Enum.GetValues(typeof(StatusEnum)).Cast<StatusEnum>().Select(s => s.ToString());
+
+                var query = from status in statusValues
+                            join problem in _context.Problems on status equals problem.Status into problemGroup
+                            join requestTicket in _context.RequestTickets on problemGroup.FirstOrDefault()?.ProblemId equals requestTicket.ProblemId into tickets
+                            group tickets by status into ticketGroup
+                            select new
+                            {
+                                Status = ticketGroup.Key,
+                                TotalTickets = ticketGroup.SelectMany(t => t).Count()
+                            };
+                var resultDictionary = query.ToDictionary(s => s.Status, r => r.TotalTickets);
+                return resultDictionary;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task<Dictionary<string, int>> GetRequestTicketByProblemPriorityCount()
+        {
+            try
+            {
+                var priorityValues = Enum.GetValues(typeof(PriorityEnum)).Cast<PriorityEnum>().Select(s => s.ToString());
+
+                var query = from priority in priorityValues
+                            join problem in _context.Problems on priority equals problem.Priority into problemGroup
+                            join requestTicket in _context.RequestTickets on problemGroup.FirstOrDefault()?.ProblemId equals requestTicket.ProblemId into tickets
+                            group tickets by priority into ticketGroup
+                            select new
+                            {
+                                Priority = ticketGroup.Key,
+                                TotalTickets = ticketGroup.SelectMany(t => t).Count()
+                            };
+                var resultDictionary = query.ToDictionary(s => s.Priority, r => r.TotalTickets);
+                return resultDictionary;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task<Dictionary<string, int>> GetRequestTicketByProblemImpactCount()
+        {
+            try
+            {
+                var impactValues = Enum.GetValues(typeof(ImpactEnum)).Cast<ImpactEnum>().Select(i => i.ToString());
+
+                var query = from impact in impactValues
+                            join problem in _context.Problems on impact equals problem.Impact into problemGroup
+                            join requestTicket in _context.RequestTickets on problemGroup.FirstOrDefault()?.ProblemId equals requestTicket.ProblemId into tickets
+                            group tickets by impact into ticketGroup
+                            select new
+                            {
+                                Impact = ticketGroup.Key,
+                                TotalTickets = ticketGroup.SelectMany(t => t).Count()
+                            };
+                var resultDictionary = query.ToDictionary(s => s.Impact, r => r.TotalTickets);
+                return resultDictionary;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+
         public async Task<Dictionary<string, int>> GetRequestTicketByChangeStatusCount()
         {
             try
