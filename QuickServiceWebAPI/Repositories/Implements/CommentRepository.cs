@@ -62,7 +62,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 return _context.Comments.AsQueryable().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
                                  .Include(r => r.RequestTicket).ThenInclude(sla => sla.Sla).ThenInclude(slm => slm.Slametrics)
-                                 .Where(x => x.RequestTicketId == requestTicketId).ToList();
+                                 .Where(x => x.RequestTicketId == requestTicketId).OrderByDescending(x=>x.CommentTime).ToList();
             }
             catch (Exception ex)
             {

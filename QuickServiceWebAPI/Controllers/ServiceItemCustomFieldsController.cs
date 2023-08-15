@@ -38,5 +38,12 @@ namespace QuickServiceWebAPI.Controllers
         {
             return Ok(await _serviceItemCustomFieldService.GetCustomFieldByServiceItem(serviceItemId));
         }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateServiceItem(List<CreateUpdateServiceItemCustomFieldDTO> createUpdateServiceItemCustomFieldDTOs)
+        {
+            await _serviceItemCustomFieldService.UpdateServiceItemCustomField(createUpdateServiceItemCustomFieldDTOs);
+            return Ok(new { message = "Update successfully" });
+        }
     }
 }
