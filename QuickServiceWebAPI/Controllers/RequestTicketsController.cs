@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class RequestTicketsController : ControllerBase
     {
         private readonly IRequestTicketService _requestTicketService;

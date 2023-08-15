@@ -81,7 +81,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     
                     RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
                     RequestTicketId = requestTicket.RequestTicketId,
-                    Content = $"Create request",
+                    Content = $"{requestTicket.Requester.FirstName} Create request",
                     LastUpdate = requestTicket.CreatedAt,
                     UserId = requestTicket.RequesterId
                 };
@@ -283,10 +283,21 @@ namespace QuickServiceWebAPI.Services.Implements
                     , updateRequestTicketDTO.Urgency.ToEnum(UrgencyEnum.Low)).ToString();
             }
 
-            if (existingRequestTicket.Status != updateRequestTicketDTO.Status)
+            if (updateRequestTicketDTO.Status == StatusEnum.Resolved.ToString())
             {
                 var history = new RequestTicketHistory();
-                history.Content = $"Change Status to {updateRequestTicketDTO.Status}";
+                history.Content = $"Ticket is Completed";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingRequestTicket.AssignedTo;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            if (existingRequestTicket.Status != updateRequestTicketDTO.Status && updateRequestTicketDTO.Status != StatusEnum.Resolved.ToString())
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"{existingRequestTicket.AssignedToNavigation.FirstName} Change Status to {updateRequestTicketDTO.Status}";
                 history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
                 history.RequestTicketId = existingRequestTicket.RequestTicketId;
                 history.LastUpdate = DateTime.Now;
@@ -297,22 +308,22 @@ namespace QuickServiceWebAPI.Services.Implements
             if (existingRequestTicket.Impact != updateRequestTicketDTO.Impact)
             {
                 var history = new RequestTicketHistory();
-                history.Content = $"Change Impact to {updateRequestTicketDTO.Impact}";
+                history.Content = $"{existingRequestTicket.AssignedToNavigation.FirstName} Change Impact to {updateRequestTicketDTO.Impact}";
                 history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
                 history.RequestTicketId = existingRequestTicket.RequestTicketId;
                 history.LastUpdate = DateTime.Now;
-                history.UserId = existingRequestTicket.RequesterId;
+                history.UserId = existingRequestTicket.AssignedTo;
                 await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
             }
 
             if (existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency)
             {
                 var history = new RequestTicketHistory();
-                history.Content = $"Change Urgency to {updateRequestTicketDTO.Urgency}";
+                history.Content = $"{existingRequestTicket.AssignedToNavigation.FirstName} Change Urgency to {updateRequestTicketDTO.Urgency}";
                 history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
                 history.RequestTicketId = existingRequestTicket.RequestTicketId;
                 history.LastUpdate = DateTime.Now;
-                history.UserId = existingRequestTicket.RequesterId;
+                history.UserId = existingRequestTicket.AssignedTo;
                 await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
             }
 

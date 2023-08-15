@@ -34,7 +34,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(await _workflowAssignmentService.GetWorkflowAssignmentsForTicket(requestTicketId));
         }
 
-        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
         [HttpPost("assign")]
         public async Task<IActionResult> AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO)
         {
