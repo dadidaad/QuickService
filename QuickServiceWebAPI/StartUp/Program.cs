@@ -1,5 +1,8 @@
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using QuickServiceWebAPI.Middlewares;
@@ -11,6 +14,7 @@ using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Services.Authentication;
 using QuickServiceWebAPI.Services.Implements;
 using QuickServiceWebAPI.Utilities;
+using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
 //Get connection string from appsettings
@@ -26,10 +30,12 @@ else
 }
 
 
+
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers().AddNewtonsoftJson(
-          options => {
+          options =>
+          {
               options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
           });
 builder.Services.AddCors();
@@ -136,6 +142,20 @@ builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddDbContext<QuickServiceContext>(options =>
     options.UseSqlServer(connection));
 
+//Background jobs configuration
+builder.Services.AddHangfire(configuration => configuration
+       .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+       .UseSimpleAssemblyNameTypeSerializer()
+       .UseRecommendedSerializerSettings()
+       .UseSqlServerStorage(connection, new SqlServerStorageOptions
+       {
+           CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+           SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+           QueuePollInterval = TimeSpan.Zero,
+           UseRecommendedIsolationLevel = true,
+           DisableGlobalLocks = true
+       }));
+builder.Services.AddHangfireServer();
 
 //Add authen and author
 builder.Services.AddAuthentication(UserAuthenticationHandler.Schema)
@@ -152,6 +172,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHangfireDashboard("/hangfire");
 }
 
 app.UseHttpsRedirection();
@@ -169,6 +190,13 @@ app.UseCors(x => x
         .AllowAnyHeader()
         .AllowCredentials()
            .SetIsOriginAllowed(origin => true));
+
+
+//Do background jobs
+var crons = "0 */12 * * *";
+RecurringJob
+    .AddOrUpdate<IRequestTicketService>("ticket-job", 
+    job =>  job.UpdateTicketStateJobAsync(), crons);
 
 //Seed database
 SeedDatabase();

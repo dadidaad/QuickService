@@ -70,7 +70,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.RequestTickets.Include(u => u.AssignedToNavigation).Include(s => s.ServiceItem).ThenInclude(se=>se.ServiceCategory)
+                return _context.RequestTickets.Include(u => u.AssignedToNavigation).Include(s => s.ServiceItem).ThenInclude(se => se.ServiceCategory)
                                               .Include(a => a.Attachment).Include(u => u.Requester)
                                               .Include(s => s.Sla).ThenInclude(s => s.Slametrics).Take(1000).ToList();
             }
@@ -136,6 +136,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 _logger.LogError(ex, "An error occurred");
                 throw;
             }
-        }      
+        }
     }
 }

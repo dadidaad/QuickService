@@ -64,7 +64,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var workflow = await _workflowRepository.GetWorkflowById(requestTicket.WorkflowId);
             var sla = await _slaRepository.GetSlaForRequestTicket(requestTicket);
             workflowAssignment.DueDate = DateTime.Now
-                + TimeSpan.FromTicks(sla.Slametrics.FirstOrDefault(sm => sm.Priority == requestTicket.Priority).ResolutionTime);
+                + TimeSpan.FromTicks((sla.Slametrics.FirstOrDefault(sm => sm.Priority == requestTicket.Priority).ResolutionTime) / 8);
             WorkflowTask? workflowTask = null;
             if (currentTaskId == null)
             {
@@ -93,6 +93,11 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException($"Workflow assignment with id {checkWorkflowAssignmentDTO.WorkflowAssignmentId} not found");
             }
             var requestTicket = await _requestTicketRepository.GetRequestTicketById(workflowAssignment.ReferenceId);
+
+            if(requestTicket.Status == StatusEnum.Canceled.ToString())
+            {
+                throw new AppException($"Request ticket with id {requestTicket.RequestTicketId} canceled");
+            }
 
             var currentWorkflowTask = await _workflowTaskRepository.GetWorkflowTaskById(workflowAssignment.CurrentTaskId);
 
@@ -141,7 +146,7 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.Status = MappingWorkflowTaskStatusToRequestTicketStatus(currentWorkTask.Status.ToEnum(StatusWorkflowTaskEnum.Open)).ToString();
             requestTicket.AssignedToGroup = currentWorkTask.GroupId;
             requestTicket.AssignedTo = workflowAssignment.AssigneeId;
-
+            requestTicket.LastUpdateAt = DateTime.Now;
             var history = new RequestTicketHistory
             {
                 Content = $"Assigned to",

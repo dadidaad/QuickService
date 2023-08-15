@@ -1,8 +1,12 @@
-﻿namespace QuickServiceWebAPI.Models.Enums
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace QuickServiceWebAPI.Models.Enums
 {
     public enum StateEnum
     {
         New,
-        Normal
+        Normal,
+        OverdueResponseTime,
+        OverdueResolutionTime
     }
 }

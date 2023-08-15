@@ -1,4 +1,5 @@
 ﻿using QuickServiceWebAPI.DTOs.RequestTicket;
+using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Services
 {
@@ -12,5 +13,7 @@ namespace QuickServiceWebAPI.Services
         public Task<RequestTicketForRequesterDTO> GetDetailsRequestTicketForRequester(RequesterResquestDTO requesterResquestDTO);
         public Task UpdateRequestTicket(UpdateRequestTicketDTO updateRequestTicketDTO);
         public Task DeleteRequestTicket(string requestTicketId);
+        public Task CancelRequestTicket(string requestTicketId);
+        public Task UpdateTicketStateJobAsync();
     }
 }

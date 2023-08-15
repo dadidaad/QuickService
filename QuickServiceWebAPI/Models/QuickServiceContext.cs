@@ -569,7 +569,7 @@ public partial class QuickServiceContext : DbContext
                 .IsFixedLength()
                 .HasColumnName("SLAID");
             entity.Property(e => e.State)
-                .HasMaxLength(10)
+                .HasMaxLength(30)
                 .IsUnicode(false);
             entity.Property(e => e.Status)
                 .HasMaxLength(10)

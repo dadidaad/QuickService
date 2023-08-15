@@ -78,5 +78,13 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
 
         }
+
+        [HttpPut("cancel")]
+        public async Task<IActionResult> CancelRequestTicketForRequester(string requestTicketId)
+        {
+            await _requestTicketService.CancelRequestTicket(requestTicketId);
+            return Ok(new { message = "Canceled successfully" });
+        }
+
     }
 }
