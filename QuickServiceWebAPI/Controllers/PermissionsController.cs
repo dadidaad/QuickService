@@ -18,25 +18,12 @@ namespace QuickServiceWebAPI.Controllers
             _permissionService = permissionService;
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> GetPermissions()
-        {
-            return Ok(await _permissionService.GetPermissions());
-        }
-
         [HttpGet("get/{roleId}")]
         public async Task<IActionResult> GetPermissionByRole(string roleId)
         {
             return Ok(await _permissionService.GetPermissionsForRoleWithDTO(roleId));
         }
 
-        [HttpPost("assign")]
-        public async Task<IActionResult> AssignPermissions(AssignPermissionsDTO assignPermissionsDTO)
-        {
-            await _permissionService.AssignPermissionsToRole(assignPermissionsDTO);
-            return Ok(new { message = "Assign successfully" });
-        }
 
         [HttpPut("update")]
         public async Task<IActionResult> UpdatePermissionForRole(UpdatePermissionsDTO updatePermissionsDTO)

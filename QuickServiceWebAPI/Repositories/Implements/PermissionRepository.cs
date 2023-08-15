@@ -81,7 +81,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.Permissions.FindAsync(permissionId);
+                return await _context.Permissions.FirstOrDefaultAsync(p => p.PermissionId == permissionId);
             }
             catch (Exception ex)
             {
