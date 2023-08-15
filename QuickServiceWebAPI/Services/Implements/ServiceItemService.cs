@@ -40,7 +40,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<ServiceItemDTO>(serviceItem);
         }
 
-        public async Task CreateServiceItem(CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
+        public async Task<ServiceItemDTO> CreateServiceItem(CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
         {
             try
             {
@@ -52,6 +52,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 var serviceItem = _mapper.Map<ServiceItem>(createUpdateServiceItemDTO);
                 serviceItem.ServiceItemId = await GetNextId();
                 await _repository.AddServiceItem(serviceItem);
+                return _mapper.Map<ServiceItemDTO>(serviceItem);
             }
             catch (Exception e)
             {

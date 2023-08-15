@@ -13,12 +13,14 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _context = context;
             _logger = logger;
         }
-        public async Task AddServiceItem(ServiceItem serviceItem)
+        public async Task<ServiceItem> AddServiceItem(ServiceItem serviceItem)
         {
             try
             {
                 _context.ServiceItems.Add(serviceItem);
                 await _context.SaveChangesAsync();
+                var entry = _context.Entry(serviceItem);
+                return serviceItem;
             }
             catch (Exception ex)
             {
