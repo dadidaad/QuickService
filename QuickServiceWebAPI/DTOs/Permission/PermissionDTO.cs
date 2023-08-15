@@ -4,7 +4,7 @@
     {
         public string PermissionId { get; set; } = null!;
 
-        public string PermissionName { get; set; } = null!;
+        public string? PermissionName { get; set; }
 
         public bool IsGranted { get; set; }
     }
