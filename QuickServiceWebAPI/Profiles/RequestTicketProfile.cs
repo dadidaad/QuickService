@@ -26,7 +26,7 @@ namespace QuickServiceWebAPI.Profiles
                 opt => opt.MapFrom(src => CalculateDatetime(src, false)))
                 .AfterMap((src, dest) =>
                 {
-                    if(dest.ServiceItemEntity != null)
+                    if(dest.ServiceItemEntity != null && dest.ServiceItemEntity.ServiceCategoryEntity != null )
                     {
                         dest.ServiceItemEntity.ServiceCategoryEntity.ServiceItemEntities.Clear();
                     }
