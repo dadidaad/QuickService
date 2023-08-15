@@ -4,6 +4,6 @@
     {
         public string? RoleId { get; set; }
 
-        public Dictionary<string, bool>? Permissions { get; set; }
+        public List<PermissionDTO> Permissions { get; set; } = new List<PermissionDTO>();
     }
 }

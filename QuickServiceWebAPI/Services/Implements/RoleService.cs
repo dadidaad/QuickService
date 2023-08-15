@@ -78,8 +78,8 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Role not found");
             }
-            var updateRole = _mapper.Map<UpdateDTO, Role>(updateDTO, existingRole);
-            await _repository.UpdateRole(existingRole, updateRole);
+            var updateRole = _mapper.Map(updateDTO, existingRole);
+            await _repository.UpdateRole(updateRole);
         }
         private async Task<string> GetNextId()
         {

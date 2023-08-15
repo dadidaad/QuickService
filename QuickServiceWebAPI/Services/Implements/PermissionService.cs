@@ -18,36 +18,6 @@ namespace QuickServiceWebAPI.Services.Implements
             _mapper = mapper;
             _roleRepository = roleRepository;
         }
-        public async Task AssignPermissionsToRole(AssignPermissionsDTO assignPermissionsDTO)
-        {
-            var existingRole = await _roleRepository.GetRoleById(assignPermissionsDTO.RoleId);
-            if (existingRole == null)
-            {
-                throw new AppException("Role not found");
-            }
-            if (EnumerableUtils.IsAny(existingRole.Permissions))
-            {
-                throw new AppException("Role already has permissions!!");
-            }
-            ICollection<Permission> permissions = new List<Permission>();
-            var updateRole = _mapper.Map<Role>(existingRole);
-            foreach (var permissionId in assignPermissionsDTO.PermissionIdList)
-            {
-                var permission = await _repository.GetPermission(permissionId);
-                if (permission == null)
-                {
-                    throw new AppException($"Permission with id: {permissionId} not found");
-                }
-                permissions.Add(permission);
-            }
-            updateRole.Permissions = permissions;
-            await _roleRepository.UpdateRole(existingRole, updateRole);
-        }
-
-        public async Task<List<Permission>> GetPermissions()
-        {
-            return await _repository.GetPermissions();
-        }
 
         public async Task<List<Permission>> GetPermissionsByRole(string roleId)
         {
@@ -69,19 +39,21 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             List<Permission> permissionsForRole = await _repository.GetPermissionsByRole(roleId);
             List<Permission> permissions = await _repository.GetPermissions();
-            Dictionary<string, bool> permissionsToDic = new Dictionary<string, bool>();
+            List<PermissionDTO> permissionDTOs = new List<PermissionDTO>();
             foreach (var permission in permissions)
             {
+                var permissionDTO = _mapper.Map<PermissionDTO>(permission);
                 if (permissionsForRole.Any(p => p.PermissionId == permission.PermissionId))
                 {
-                    permissionsToDic.Add(permission.PermissionId, true);
+                    permissionDTO.IsGranted = true;
                 }
                 else
                 {
-                    permissionsToDic.Add(permission.PermissionId, false);
+                    permissionDTO.IsGranted = false;
                 }
+                permissionDTOs.Add(permissionDTO);
             }
-            return new PermissionForRoleResponseDTO { RoleId = roleId, Permissions = permissionsToDic };
+            return new PermissionForRoleResponseDTO { RoleId = roleId, Permissions = permissionDTOs };
         }
 
         public async Task UpdatePermissionsToRole(UpdatePermissionsDTO updatePermissionsDTO)
@@ -91,26 +63,24 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Role not found");
             }
-            List<Permission> permissionsFromDb = await _repository.GetPermissions();
             var updateRole = _mapper.Map<Role>(existingRole);
-            foreach (KeyValuePair<string, bool> entry in updatePermissionsDTO.Permissions)
+            foreach (var permissionDTO in updatePermissionsDTO.Permissions)
             {
-                if (!permissionsFromDb.Any(p => p.PermissionId == entry.Key))
+                var permission = await _repository.GetPermission(permissionDTO.PermissionId);
+                if (permission == null)
                 {
-                    throw new AppException($"Permission with id: {entry.Key} not found");
+                    throw new AppException($"Permission with id: {permissionDTO.PermissionId} not found");
                 }
-                if (entry.Value && !existingRole.Permissions.Any(p => p.PermissionId == entry.Key))
+                if (permissionDTO.IsGranted && !existingRole.Permissions.Any(p => p.PermissionId == permissionDTO.PermissionId))
                 {
-                    var permission = await _repository.GetPermission(entry.Key);
                     updateRole.Permissions.Add(permission);
                 }
-                if (!entry.Value && existingRole.Permissions.Any(p => p.PermissionId == entry.Key))
+                if (!permissionDTO.IsGranted && existingRole.Permissions.Any(p => p.PermissionId == permissionDTO.PermissionId))
                 {
-                    var permission = await _repository.GetPermission(entry.Key);
                     updateRole.Permissions.Remove(permission);
                 }
             }
-            await _roleRepository.UpdateRole(existingRole, updateRole);
+            await _roleRepository.UpdateRole(updateRole);
         }
     }
 }
