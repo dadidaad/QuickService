@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.Models.Enums;
@@ -17,6 +18,7 @@ namespace QuickServiceWebAPI.Controllers
             _groupService = groupService;
         }
 
+        [Authorize]
         [HttpGet("getall")]
         public IActionResult GetAllGroup()
         {
@@ -24,6 +26,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(groups);
         }
 
+        [Authorize]
         [HttpGet("{groupId}")]
         public async Task<IActionResult> GetGroupById(string groupId)
         {
@@ -31,6 +34,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(group);
         }
 
+        [HasPermission(PermissionEnum.ManageGroups, RoleType.Admin)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateGroup(CreateUpdateGroupDTO createUpdateGroupDTO)
         {
@@ -38,6 +42,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Create successfully" });
         }
 
+        [HasPermission(PermissionEnum.ManageGroups, RoleType.Admin)]
         [HttpPost("add/{userId}/{groupId}")]
         public async Task<IActionResult> AddUserToGroup(string userId, string groupId)
         {
@@ -45,6 +50,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Add successfully" });
         }
 
+        [HasPermission(PermissionEnum.ManageGroups, RoleType.Admin)]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateGroup(string groupId, CreateUpdateGroupDTO createUpdateGroupDTO)
         {

@@ -37,6 +37,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<GroupDTO> GetGroupById(string groupId)
         {
             var group = await _repository.GetGroupById(groupId);
+            if (group == null)
+            {
+                throw new AppException("Group not found");
+            }
             return _mapper.Map<GroupDTO>(group);
         }
 
@@ -47,14 +51,14 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Group not found");
             }
-            if (_userRepository.GetUserDetails(createUpdateGroupDTO.GroupLeader) == null)
+            if (await _userRepository.GetUserDetails(createUpdateGroupDTO.GroupLeader) == null)
             {
                 throw new AppException("Group leader with id " + createUpdateGroupDTO.GroupLeader + " not found");
             }
-            if (_businessHourRepository.GetBusinessHourById(createUpdateGroupDTO.BusinessHourId) == null)
-            {
-                throw new AppException("Business hour with id " + createUpdateGroupDTO.BusinessHourId + " not found");
-            }
+            //if (await _businessHourRepository.GetBusinessHourById(createUpdateGroupDTO.BusinessHourId) == null)
+            //{
+            //    throw new AppException("Business hour with id " + createUpdateGroupDTO.BusinessHourId + " not found");
+            //}
             group = _mapper.Map(createUpdateGroupDTO, group);
             await _repository.UpdateGroup(group);
         }

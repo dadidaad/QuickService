@@ -15,8 +15,5 @@ namespace QuickServiceWebAPI.DTOs.Group
         [MaxLength(10)]
         public string GroupLeader { get; set; } = null!;
 
-        [Required]
-        [MaxLength(10)]
-        public string BusinessHourId { get; set; } = null!;
     }
 }

@@ -5,11 +5,13 @@ namespace QuickServiceWebAPI.Repositories
     public interface IWorkflowTaskRepository
     {
         public List<WorkflowTask> GetWorkflowTasks();
-        public Task<WorkflowTask> GetWorkflowTaskById(string WorkflowTaskId);
-        public Task AddWorkflowTask(WorkflowTask WorkflowTask);
-        public Task UpdateWorkflowTask(WorkflowTask WorkflowTask);
-        public Task DeleteWorkflowTask(WorkflowTask WorkflowTask);
+        public Task<WorkflowTask> GetWorkflowTaskById(string workflowTaskId);
+        public Task<WorkflowTask> GetOpenTaskOfWorkflow(string workflowId);
+        public Task<WorkflowTask?> AddWorkflowTask(WorkflowTask workflowTask);
+        public Task UpdateWorkflowTask(WorkflowTask workflowTask);
+        public Task DeleteWorkflowTask(WorkflowTask workflowTask);
         public Task<WorkflowTask> GetLastWorkflowTask();
+        public Task<List<WorkflowTask>> GetWorkflowTaskByWorkflow(string workflowId);
 
     }
 }

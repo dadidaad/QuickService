@@ -13,46 +13,69 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IMapper _mapper;
         private readonly IServiceItemRepository _serviceItemRepository;
         private readonly ICustomFieldRepository _customFieldRepository;
+        private readonly IServiceItemCustomFieldRepository _serviceItemCustomFieldRepository;
 
         public ServiceItemCustomFieldService(IServiceItemCustomFieldRepository repository,
             ILogger<ServiceItemCustomFieldService> logger, IMapper mapper,
             IServiceItemRepository serviceItemRepository,
-            ICustomFieldRepository customFieldRepository)
+            ICustomFieldRepository customFieldRepository,
+            IServiceItemCustomFieldRepository serviceItemCustomFieldRepository)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
             _serviceItemRepository = serviceItemRepository;
             _customFieldRepository = customFieldRepository;
+            _serviceItemCustomFieldRepository = serviceItemCustomFieldRepository;
         }
-        public async Task AssignServiceItemCustomField(CreateUpdateServiceItemCustomFieldDTO createUpdateServiceItemCustomFieldDTO)
+        public async Task AssignServiceItemCustomField(List<CreateUpdateServiceItemCustomFieldDTO> createUpdateServiceItemCustomFieldDTOs)
         {
-            var serviceItem = await _serviceItemRepository
-                .GetServiceItemById(createUpdateServiceItemCustomFieldDTO.ServiceItemId);
+            var serviceItemId = createUpdateServiceItemCustomFieldDTOs.FirstOrDefault()?.ServiceItemId;
+            ServiceItem serviceItem = null;
+            if(serviceItemId!=null) serviceItem = await _serviceItemRepository.GetServiceItemById(serviceItemId);
             if (serviceItem == null)
             {
-                throw new AppException("Service item with id {serviceItemId} not found",
-                    createUpdateServiceItemCustomFieldDTO.ServiceItemId);
+                throw new AppException("Service item with id {serviceItemId} not found");
             }
-            var customField = await _customFieldRepository
+            foreach(var createUpdateServiceItemCustomFieldDTO in createUpdateServiceItemCustomFieldDTOs)
+            {
+                var customField = await _customFieldRepository
                 .GetCustomFieldById(createUpdateServiceItemCustomFieldDTO.CustomFieldId);
-            if (customField == null)
-            {
-                throw new AppException("Custom field with id {customFieldId} not found",
-                    createUpdateServiceItemCustomFieldDTO.CustomFieldId);
+                if (customField == null) continue;
+
+                var serviceItemCustomField = _mapper.Map<ServiceItemCustomField>(createUpdateServiceItemCustomFieldDTO);
+                serviceItemCustomField.CreatedTime = DateTime.Now;
+                await _repository.AddServiceItemCustomField(serviceItemCustomField);
             }
-            var serviceItemCustomField = await _repository
-                .GetServiceItemCustomField(createUpdateServiceItemCustomFieldDTO.ServiceItemId,
-                createUpdateServiceItemCustomFieldDTO.CustomFieldId);
-            if (serviceItemCustomField != null)
+            
+        }
+        public async Task UpdateServiceItemCustomField(List<CreateUpdateServiceItemCustomFieldDTO> createUpdateServiceItemCustomFieldDTOs)
+        {
+            var serviceItemId = createUpdateServiceItemCustomFieldDTOs.FirstOrDefault()?.ServiceItemId;
+            ServiceItem serviceItem = null;
+            if (serviceItemId != null) serviceItem = await _serviceItemRepository.GetServiceItemById(serviceItemId);
+            if (serviceItem == null)
             {
-                throw new AppException("Service item custom field with id {serviceItemId} and {customFieldId} already existing",
-                    createUpdateServiceItemCustomFieldDTO.ServiceItemId,
-                    createUpdateServiceItemCustomFieldDTO.CustomFieldId);
+                throw new AppException("Service item with id {serviceItemId} not found");
             }
-            serviceItemCustomField = _mapper.Map<ServiceItemCustomField>(createUpdateServiceItemCustomFieldDTO);
-            serviceItemCustomField.CreatedTime = DateTime.Now;
-            await _repository.AddServiceItemCustomField(serviceItemCustomField);
+            List<ServiceItemCustomField> serviceItemCustomFields = await _repository.GetServiceItemCustomFieldsByServiceItem(serviceItemId);
+            var listFieldsIdExist = serviceItemCustomFields.Select(x=>x.CustomFieldId).ToList();
+            var listFieldsIdConfig = createUpdateServiceItemCustomFieldDTOs.Select(x=>x.CustomFieldId).ToList();
+            foreach(var serviceItemCustomField in serviceItemCustomFields)
+            {
+                if (!listFieldsIdConfig.Contains(serviceItemCustomField.CustomFieldId)) await _serviceItemCustomFieldRepository.DeleteServiceItemCustomField(serviceItemCustomField);
+            }
+            foreach (var createUpdateServiceItemCustomFieldDTO in createUpdateServiceItemCustomFieldDTOs)
+            {
+                //var customField = await _customFieldRepository
+                //.GetCustomFieldById(createUpdateServiceItemCustomFieldDTO.CustomFieldId);
+                //if (customField == null) continue;
+                if (listFieldsIdExist.Contains(createUpdateServiceItemCustomFieldDTO.CustomFieldId)) continue;
+
+                var serviceItemCustomField = _mapper.Map<ServiceItemCustomField>(createUpdateServiceItemCustomFieldDTO);
+                serviceItemCustomField.CreatedTime = DateTime.Now;
+                await _repository.AddServiceItemCustomField(serviceItemCustomField);
+            }
         }
 
         public async Task DeleteServiceItemCustomField(DeleteServiceItemCustomFieldDTO deleteServiceItemCustomFieldDTO)
@@ -89,11 +112,10 @@ namespace QuickServiceWebAPI.Services.Implements
                 .GetServiceItemById(serviceItemId);
             if (serviceItem == null)
             {
-                throw new AppException("Service item with id {serviceItemId} not found",
-                    serviceItemId);
+                throw new AppException("Service item with id {serviceItemId} not found", serviceItemId);
             }
             List<ServiceItemCustomField> serviceItemCustomFields = await _repository.GetServiceItemCustomFieldsByServiceItem(serviceItemId);
             return _mapper.Map<List<ServiceItemCustomFieldDTO>>(serviceItemCustomFields);
-        }
+        }     
     }
 }

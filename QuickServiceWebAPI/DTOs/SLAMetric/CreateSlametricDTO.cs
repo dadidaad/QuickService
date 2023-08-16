@@ -25,7 +25,7 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
         [MaxLength(255)]
         public string? NotificationRules { get; set; }
 
-        public string WorkflowId { get; set; } = null!;
+        public string SlaId { get; set; } = null!;
 
     }
 }

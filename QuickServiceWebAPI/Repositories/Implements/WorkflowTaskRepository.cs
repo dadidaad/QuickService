@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using System.Data;
 
 namespace QuickServiceWebAPI.Repositories.Implements
@@ -14,12 +15,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
             _context = context;
             _logger = logger;
         }
-        public async Task AddWorkflowTask(WorkflowTask workflowTask)
+        public async Task<WorkflowTask?> AddWorkflowTask(WorkflowTask workflowTask)
         {
             try
             {
                 _context.WorkflowTasks.Add(workflowTask);
                 await _context.SaveChangesAsync();
+                return workflowTask;
             }
             catch (Exception ex)
             {
@@ -32,7 +34,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                WorkflowTask workflowTask = await _context.WorkflowTasks.Include(w => w.Workflow).AsNoTracking().FirstOrDefaultAsync(x => x.WorkflowTaskId == workflowTaskId);
+                WorkflowTask workflowTask = await _context.WorkflowTasks.Include(w => w.Workflow).FirstOrDefaultAsync(x => x.WorkflowTaskId == workflowTaskId);
                 return workflowTask;
             }
             catch (Exception ex)
@@ -92,6 +94,40 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 return await _context.WorkflowTasks.OrderByDescending(u => u.WorkflowTaskId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
+        public async Task<List<WorkflowTask>> GetWorkflowTaskByWorkflow(string workflowId)
+        {
+            try
+            {
+                return await _context.WorkflowTasks
+                    .Include(wt => wt.Assigner)
+                    .Include(wt => wt.Group)
+                    .Include(wt => wt.WorkflowTransitionFromWorkflowTaskNavigations).ThenInclude(wtf => wtf.ToWorkflowTaskNavigation)
+                    .Where(u => u.WorkflowId == workflowId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
+        public async Task<WorkflowTask> GetOpenTaskOfWorkflow(string workflowId)
+        {
+            try
+            {
+                return await _context.WorkflowTasks
+                    .Include(wt => wt.Assigner)
+                    .Include(wt => wt.Group)
+                    .Include(wt => wt.WorkflowTransitionFromWorkflowTaskNavigations).ThenInclude(wtf => wtf.ToWorkflowTaskNavigation)
+                    .Where(u => u.WorkflowId == workflowId && u.Status == StatusWorkflowTaskEnum.Open.ToString()).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

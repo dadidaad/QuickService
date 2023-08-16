@@ -21,6 +21,10 @@ public partial class WorkflowTask
 
     public DateTime CreatedDate { get; set; }
 
+    public virtual User? Assigner { get; set; }
+
+    public virtual Group? Group { get; set; }
+
     public virtual Workflow Workflow { get; set; } = null!;
 
     public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();

@@ -45,6 +45,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<CustomFieldDTO> GetCustomField(string customFieldID)
         {
             var customfield = await _repository.GetCustomFieldById(customFieldID);
+            if (customfield == null)
+            {
+                throw new AppException("Can not found custom field with ID: {customFieldID}", customFieldID);
+            }
             return _mapper.Map<CustomFieldDTO>(customfield);
         }
 

@@ -4,7 +4,7 @@ namespace QuickServiceWebAPI.Repositories
 {
     public interface IWorkflowTransitionRepository
     {
-        public Task<List<WorkflowTransition>> GetWorkflowTransitionsByWorkflow(Workflow workflow);
+        public Task<List<WorkflowTransition>> GetWorkflowTransitionsByWorkflow(string workflowId);
         public Task<List<WorkflowTransition>> GetWorkflowTransitionsByFromWorkflowTask(string fromWorkflowTask);
         public Task<WorkflowTransition> GetWorkflowTransitionById(string fromWorkflowTask, string toWorkflowTask);
         public Task<WorkflowTransition?> AddWorkflowTransition(WorkflowTransition workflowTransititon);

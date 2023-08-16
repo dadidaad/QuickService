@@ -10,10 +10,8 @@ namespace QuickServiceWebAPI.Profiles
         public RequestTicketHistoryProfile()
         {
             CreateMap<RequestTicketHistory, RequestTicketHistoryDTO>()
-                .ForMember(dest => dest.RequestTicketEntity,
-                opt => opt.MapFrom(src => src.RequestTicket))
                 .ForMember(dest => dest.UserEntity,
-                opt => opt.MapFrom(src => src.UserId));
+                opt => opt.MapFrom(src => src.User));
             CreateMap<CreateRequestTicketHistoryDTO, RequestTicketHistory>();
         }
     }

@@ -55,6 +55,8 @@ public partial class User
 
     public virtual ICollection<RequestTicket> RequestTicketAssignedToNavigations { get; set; } = new List<RequestTicket>();
 
+    public virtual ICollection<RequestTicketHistory> RequestTicketHistories { get; set; } = new List<RequestTicketHistory>();
+
     public virtual ICollection<RequestTicket> RequestTicketRequesters { get; set; } = new List<RequestTicket>();
 
     public virtual Role? Role { get; set; }
@@ -62,6 +64,10 @@ public partial class User
     public virtual ICollection<Service> ServiceCreatedByNavigations { get; set; } = new List<Service>();
 
     public virtual ICollection<Service> ServiceManagedByNavigations { get; set; } = new List<Service>();
+
+    public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();
+
+    public virtual ICollection<WorkflowTask> WorkflowTasks { get; set; } = new List<WorkflowTask>();
 
     public virtual ICollection<Workflow> Workflows { get; set; } = new List<Workflow>();
 

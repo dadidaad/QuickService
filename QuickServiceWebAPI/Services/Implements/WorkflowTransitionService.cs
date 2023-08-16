@@ -42,11 +42,10 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.AddWorkflowTransition(workflowTransition);
         }
 
-        public async Task DeleteWorkflowTransition(DeleteWorkflowTransitionDTO deleteWorkflowTransitionDTO)
+        public async Task DeleteWorkflowTransition(string fromWorkflowTaskId, string toWorkflowTaskId)
         {
             var workflowTransition = await _repository
-                .GetWorkflowTransitionById(deleteWorkflowTransitionDTO.FromWorkflowTask,
-                deleteWorkflowTransitionDTO.ToWorkflowTask);
+                .GetWorkflowTransitionById(fromWorkflowTaskId, toWorkflowTaskId);
             if(workflowTransition == null)
             {
                 throw new AppException($"Workflow transition not found");
@@ -72,7 +71,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Workflow with id {workflowId} not found");
             }
-            var workflowTransitions = await _repository.GetWorkflowTransitionsByWorkflow(workflow);
+            var workflowTransitions = await _repository.GetWorkflowTransitionsByWorkflow(workflow.WorkflowId);
             return workflowTransitions.Select(wt => _mapper.Map<WorkflowTransitionDTO>(wt)).ToList();
         }
     }

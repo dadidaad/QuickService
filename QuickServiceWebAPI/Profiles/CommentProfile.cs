@@ -9,12 +9,8 @@ namespace QuickServiceWebAPI.Profiles
         public CommentProfile()
         {
             CreateMap<Comment, CommentDTO>()
-                .ForMember(dest => dest.AttachmentEntity,
-                opt => opt.MapFrom(src => src.Attachment))
                 .ForMember(dest => dest.CommentByUserEntity,
-                opt => opt.MapFrom(src => src.CommentByNavigation))
-                .ForMember(dest => dest.RequestTicketEntity,
-                opt => opt.MapFrom(src => src.RequestTicket));
+                opt => opt.MapFrom(src => src.CommentByNavigation));
             CreateMap<CreateCommentDTO, Comment>();
             CreateMap<UpdateCommentDTO, Comment>();
         }

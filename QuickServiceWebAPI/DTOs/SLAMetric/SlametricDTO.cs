@@ -7,7 +7,7 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
     {
         public string SlametricId { get; set; } = null!;
 
-        public string Piority { get; set; } = null!;
+        public string Priority { get; set; } = null!;
 
         public long ResponseTime { get; set; }
 

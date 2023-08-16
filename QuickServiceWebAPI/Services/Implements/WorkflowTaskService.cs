@@ -31,9 +31,14 @@ namespace QuickServiceWebAPI.Services.Implements
             _workflowAssignmentService = workflowAssignmentService;
         }
 
-        public List<WorkflowTaskDTO> GetWorkflowsTask()
+        public async Task<List<WorkflowTaskDTO>> GetWorkflowsTaskByWorkflow(string workflowId)
         {
-            var workflowTasks = _repository.GetWorkflowTasks();
+            var workflow = await _workflowRepository.GetWorkflowById(workflowId);
+            if(workflow == null)
+            {
+                throw new AppException($"Workflow with id {workflowId} not found");
+            }
+            var workflowTasks = await _repository.GetWorkflowTaskByWorkflow(workflowId);
             return workflowTasks.Select(workflowTask => _mapper.Map<WorkflowTaskDTO>(workflowTask)).ToList();
         }
 
@@ -43,22 +48,25 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<WorkflowTaskDTO>(workflowTask);
         }
 
-        public async Task CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledTask)
+        public async Task<WorkflowTaskDTO?> CreateWorkflowTask(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO, bool AcceptResovledAndOpenTask)
         {
-            var workflow = _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId);
+            var workflow = await _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId);
             if (workflow == null)
             {
                 throw new AppException($"Workflow with id {createUpdateWorkflowTaskDTO.WorkflowId} not found");
             }
-            if (createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString() && !AcceptResovledTask)
+            if ((createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString() 
+                || createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Open.ToString()) 
+                && !AcceptResovledAndOpenTask)
             {
-                throw new AppException($"Workflow already have resolved Task");
+                throw new AppException($"Workflow already have resolved and open Task");
             }
             await ValidationUserGroup(createUpdateWorkflowTaskDTO);
             var workflowTask = _mapper.Map<WorkflowTask>(createUpdateWorkflowTaskDTO);
             workflowTask.WorkflowTaskId = await GetNextId();
             workflowTask.CreatedDate = DateTime.Now;
-            await _repository.AddWorkflowTask(workflowTask);
+            var workflowTaskAdded = await _repository.AddWorkflowTask(workflowTask);
+            return workflowTaskAdded != null ? _mapper.Map<WorkflowTaskDTO>(workflowTaskAdded) : null;
         }
 
         public async Task UpdateWorkflowTask(string workflowTaskId, CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO)
@@ -68,13 +76,16 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("WorkflowTask not found");
             }
-            if (_workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId) == null)
+            if (await _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId) == null)
             {
                 throw new AppException("Workflow with id " + createUpdateWorkflowTaskDTO.WorkflowId + " not found");
             }
-            if (createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString())
+            if(workflowTask.Status == StatusWorkflowTaskEnum.Open.ToString() || workflowTask.Status == StatusWorkflowTaskEnum.Resolved.ToString())
             {
-                throw new AppException($"Workflow already have resolved Task");
+                if (createUpdateWorkflowTaskDTO.Status != workflowTask.Status)
+                {
+                    throw new AppException($"Can not update link status for open and resoveled workflow task");
+                }
             }
             await ValidationUserGroup(createUpdateWorkflowTaskDTO);
             workflowTask = _mapper.Map(createUpdateWorkflowTaskDTO, workflowTask);
@@ -83,7 +94,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         private async Task ValidationUserGroup(CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO)
         {
-            if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
+            if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId) && string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId))
             {
                 var user = await _userRepository.GetUserDetails(createUpdateWorkflowTaskDTO.AssignerId);
                 if (user == null)
@@ -91,21 +102,17 @@ namespace QuickServiceWebAPI.Services.Implements
                     throw new AppException($"User with id {createUpdateWorkflowTaskDTO.AssignerId} not found");
                 }
             }
-            if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId))
+            else if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId) && string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
             {
                 var group = await _groupRepository.GetGroupById(createUpdateWorkflowTaskDTO.GroupId);
                 if (group == null)
                 {
                     throw new AppException($"Group with id {createUpdateWorkflowTaskDTO.GroupId} not found");
                 }
-                if (!string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
-                {
-                    var userInGroup = group.Users.FirstOrDefault(u => u.UserId == createUpdateWorkflowTaskDTO.AssignerId);
-                    if (userInGroup == null)
-                    {
-                        throw new AppException($"User with id {createUpdateWorkflowTaskDTO.AssignerId} not in group");
-                    }
-                }
+            }
+            else
+            {
+                throw new AppException($"Only accept group or assignee");
             }
 
         }

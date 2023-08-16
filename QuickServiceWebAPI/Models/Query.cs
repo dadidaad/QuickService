@@ -15,5 +15,7 @@ public partial class Query
 
     public string? UserId { get; set; }
 
+    public string? QueryType { get; set; }
+
     public virtual User? User { get; set; }
 }

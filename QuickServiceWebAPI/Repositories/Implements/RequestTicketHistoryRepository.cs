@@ -28,12 +28,12 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<RequestTicketHistory> GetRequestTicketHistoryByRequestTicketId(string requestTicketId)
+        public async Task<List<RequestTicketHistory>> GetRequestTicketHistoryByRequestTicketId(string requestTicketId)
         {
             try
             {
                 return await _context.RequestTicketHistories.Include(r => r.RequestTicket).Include(u => u.User)
-                    .AsNoTracking().FirstOrDefaultAsync(r => r.RequestTicketId == requestTicketId);
+                    .AsNoTracking().Where(r => r.RequestTicketId == requestTicketId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -52,6 +52,19 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 _logger.LogError(ex, "An error occurred");
                 throw;
+            }
+        }
+
+        public async Task<RequestTicketHistory> GetLastRequestTicketHistory()
+        {
+            try
+            {
+                return await _context.RequestTicketHistories.OrderByDescending(u => u.RequestTicketHistoryId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.WorkflowAssignment;
@@ -20,17 +21,9 @@ namespace QuickServiceWebAPI.Controllers
 
         [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
         [HttpPost("complete")]
-        public async Task<IActionResult> CompleteWorkflowTask(CheckWorkflowAssignmentDTO checkWorkflowAssignmentDTO)
+        public async Task<IActionResult> CompleteWorkflowTask([FromForm]CheckWorkflowAssignmentDTO checkWorkflowAssignmentDTO)
         {
             await _workflowAssignmentService.CompleteWorkflowTask(checkWorkflowAssignmentDTO);
-            return Ok(new { message = "Update successfully" });
-        }
-
-        [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
-        [HttpPost("reject")]
-        public async Task<IActionResult> RejectWorkflowTask(RejectWorkflowTaskDTO rejectWorkflowTaskDTO)
-        {
-            await _workflowAssignmentService.RejectWorkflowTask(rejectWorkflowTaskDTO);
             return Ok(new { message = "Update successfully" });
         }
 
@@ -39,6 +32,14 @@ namespace QuickServiceWebAPI.Controllers
         public async Task<IActionResult> GetWorkflowTaskForRequestTicket(string requestTicketId)
         {
             return Ok(await _workflowAssignmentService.GetWorkflowAssignmentsForTicket(requestTicketId));
+        }
+
+        [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        [HttpPost("assign")]
+        public async Task<IActionResult> AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO)
+        {
+            await _workflowAssignmentService.AssignTaskToAgent(assignTaskToAgentDTO);
+            return Ok(new { message = "Assign successfully" });
         }
     }
 }

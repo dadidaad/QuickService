@@ -12,8 +12,8 @@ namespace QuickServiceWebAPI.DTOs.WorkflowTransition
 
         public bool Condition { get; set; }
 
-        public virtual WorkflowTaskDTO FromWorkflowTaskNavigation { get; set; } = null!;
+        public virtual WorkflowTaskDTO? FromWorkflowTaskNavigation { get; set; } = null!;
 
-        public virtual WorkflowTaskDTO ToWorkflowTaskNavigation { get; set; } = null!;
+        public virtual WorkflowTaskDTO? ToWorkflowTaskNavigation { get; set; } = null!;
     }
 }

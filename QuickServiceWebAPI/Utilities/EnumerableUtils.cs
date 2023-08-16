@@ -16,7 +16,11 @@ namespace QuickServiceWebAPI.Utilities
 
         public static T DeepCopy<T>(this T self)
         {
-            var serialized = JsonConvert.SerializeObject(self);
+            var serialized = JsonConvert.SerializeObject(self, Formatting.Indented,
+            new JsonSerializerSettings
+            {
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            });
             return JsonConvert.DeserializeObject<T>(serialized);
         }
 
@@ -29,6 +33,18 @@ namespace QuickServiceWebAPI.Utilities
             T result = (T)formatter.Deserialize(stream);
             stream.Close();
             return result;
+        }
+
+        public static void RemoveAll<T>(this ICollection<T> source,
+                                    Func<T, bool> predicate)
+        {
+            if (source == null)
+                throw new ArgumentNullException("source", "source is null.");
+
+            if (predicate == null)
+                throw new ArgumentNullException("predicate", "predicate is null.");
+
+            source.Where(predicate).ToList().ForEach(e => source.Remove(e));
         }
     }
 }

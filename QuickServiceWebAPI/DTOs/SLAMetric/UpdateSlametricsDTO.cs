@@ -2,6 +2,7 @@
 using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.Models.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace QuickServiceWebAPI.DTOs.SLAMetric
 {
@@ -18,5 +19,6 @@ namespace QuickServiceWebAPI.DTOs.SLAMetric
 
         public long ResolutionTime { get; set; }
 
+        public string SlaId { get; set; } = null!;
     }
 }

@@ -2,6 +2,7 @@
 using QuickServiceWebAPI.DTOs.WorkflowAssignment;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Utilities;
+using System.Reflection;
 
 namespace QuickServiceWebAPI.Profiles
 {
@@ -10,14 +11,14 @@ namespace QuickServiceWebAPI.Profiles
         public WorkflowAssignmentProfile()
         {
             CreateMap<WorkflowAssignment, WorkflowAssignmentDTO>()
-                .ForMember(dest => dest.CurrentStep,
-                opt => opt.MapFrom(src => src.CurrentStep))
-                .ForMember(dest => dest.Reference1,
-                opt => opt.MapFrom(src => src.Reference1))
+                .ForMember(dest => dest.CurrentTask,
+                opt => opt.MapFrom(src => src.CurrentTask))
+                .ForMember(dest => dest.Assignee,
+                opt => opt.MapFrom(src => src.Assignee))
                 .ForMember(dest => dest.Attachment,
                 opt => opt.MapFrom(src => src.Attachment));
             CreateMap<CheckWorkflowAssignmentDTO, WorkflowAssignment>().IgnoreAllNonExisting();
-            CreateMap<RejectWorkflowTaskDTO, WorkflowAssignment>().IgnoreAllNonExisting();
+            CreateMap<AssignTaskToAgentDTO, WorkflowAssignment>();
         }
     }
 }

@@ -11,6 +11,8 @@ public partial class Workflow
 
     public string Status { get; set; } = null!;
 
+    public string Description { get; set; } = null!;
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime? LastUpdate { get; set; }
