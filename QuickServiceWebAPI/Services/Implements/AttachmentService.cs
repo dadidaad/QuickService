@@ -34,6 +34,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<AttachmentDTO> GetAttachmentById(string attachmentId)
         {
             var attachment = await _repository.GetAttachmentById(attachmentId);
+            if (attachment == null)
+            {
+                throw new AppException("Attachment not found");
+            }
             return _mapper.Map<AttachmentDTO>(attachment);
         }
 

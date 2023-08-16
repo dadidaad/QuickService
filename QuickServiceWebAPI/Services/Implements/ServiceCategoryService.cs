@@ -25,6 +25,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<ServiceCategoryDTO> GetServiceCategoryById(string serviceCategoryId)
         {
             var serviceCategory = await _repository.GetServiceCategoryById(serviceCategoryId);
+            if (serviceCategory == null)
+            {
+                throw new AppException("ServiceCategory not found");
+            }
             return _mapper.Map<ServiceCategoryDTO>(serviceCategory);
         }
 

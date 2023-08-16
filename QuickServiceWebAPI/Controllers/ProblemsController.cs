@@ -15,7 +15,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("getall")]
-        public IActionResult GetAllChange()
+        public IActionResult GetAllProblem()
         {
             var problems = _problemService.GetAllProblems();
             return Ok(problems);

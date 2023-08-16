@@ -45,7 +45,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("get/{requestTicketId}")]
-        [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
         public async Task<IActionResult> GetRequestTicket(string requestTicketId)
         {
             return Ok(await _requestTicketService.GetDetailsRequestTicket(requestTicketId));
