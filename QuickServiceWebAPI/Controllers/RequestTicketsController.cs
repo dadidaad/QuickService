@@ -36,13 +36,7 @@ namespace QuickServiceWebAPI.Controllers
         {
             return Ok(await _requestTicketService.GetAllListRequestTicket());
         }
-        [Route("getticketsadmin/{ticketType?}/{queryId?}")]
-        [HttpGet]
-        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
-        public async Task<IActionResult> GetTicketForAdmin(string ticketType, string queryId)
-        {
-            return Ok(await _requestTicketService.GetRequestTicketsAdmin(ticketType, queryId));
-        }
+
 
         [Route("getticketsadmin/{ticketType?}/{queryId?}")]
         [HttpGet]
