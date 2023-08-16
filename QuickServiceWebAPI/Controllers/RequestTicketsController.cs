@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class RequestTicketsController : ControllerBase
     {
         private readonly IRequestTicketService _requestTicketService;
@@ -36,9 +36,16 @@ namespace QuickServiceWebAPI.Controllers
         {
             return Ok(await _requestTicketService.GetAllListRequestTicket());
         }
+        [Route("getticketsadmin/{ticketType?}/{queryId?}")]
+        [HttpGet]
+        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        public async Task<IActionResult> GetTicketForAdmin(string ticketType, string queryId)
+        {
+            return Ok(await _requestTicketService.GetRequestTicketsAdmin(ticketType, queryId));
+        }
 
         [HttpGet("get/{requestTicketId}")]
-        [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
+        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
         public async Task<IActionResult> GetRequestTicket(string requestTicketId)
         {
             return Ok(await _requestTicketService.GetDetailsRequestTicket(requestTicketId));
@@ -71,5 +78,13 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
 
         }
+
+        [HttpPut("cancel")]
+        public async Task<IActionResult> CancelRequestTicketForRequester(string requestTicketId)
+        {
+            await _requestTicketService.CancelRequestTicket(requestTicketId);
+            return Ok(new { message = "Canceled successfully" });
+        }
+
     }
 }

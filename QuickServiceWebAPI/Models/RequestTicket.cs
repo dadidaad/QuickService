@@ -65,6 +65,8 @@ public partial class RequestTicket
 
     public virtual ICollection<RequestTicketExt> RequestTicketExts { get; set; } = new List<RequestTicketExt>();
 
+    public virtual ICollection<RequestTicketHistory> RequestTicketHistories { get; set; } = new List<RequestTicketHistory>();
+
     public virtual User Requester { get; set; } = null!;
 
     public virtual ServiceItem? ServiceItem { get; set; }

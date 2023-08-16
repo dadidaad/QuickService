@@ -29,6 +29,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<SlametricDTO> GetSLAmetricById(string slametricId)
         {
             var slametric = await _repository.GetSLAmetricById(slametricId);
+            if (slametric == null)
+            {
+                throw new AppException("Slametric not found");
+            }
             return _mapper.Map<SlametricDTO>(slametric);
         }
 

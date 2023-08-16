@@ -9,8 +9,6 @@ namespace QuickServiceWebAPI.Profiles
         public GroupProfile()
         {
             CreateMap<Group, GroupDTO>()
-                .ForMember(dest => dest.BusinessHourEntity,
-                opt => opt.MapFrom(src => src.BusinessHour))
                 .ForMember(dest => dest.UserEntity,
                 opt => opt.MapFrom(src => src.GroupLeaderNavigation));
             CreateMap<CreateUpdateGroupDTO, Group>();

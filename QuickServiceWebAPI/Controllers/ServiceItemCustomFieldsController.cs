@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ServiceItemCustomFieldsController : ControllerBase
     {
         private readonly IServiceItemCustomFieldService _serviceItemCustomFieldService;
@@ -20,9 +20,9 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpPost("assign")]
-        public async Task<IActionResult> AssignServiceItemCustomField(CreateUpdateServiceItemCustomFieldDTO createUpdateServiceItemCustomFieldDTO)
+        public async Task<IActionResult> AssignServiceItemCustomField(List<CreateUpdateServiceItemCustomFieldDTO> createUpdateServiceItemCustomFieldDTOs)
         {
-            await _serviceItemCustomFieldService.AssignServiceItemCustomField(createUpdateServiceItemCustomFieldDTO);
+            await _serviceItemCustomFieldService.AssignServiceItemCustomField(createUpdateServiceItemCustomFieldDTOs);
             return Ok(new { message = "Assign successfully" });
         }
 
@@ -37,6 +37,13 @@ namespace QuickServiceWebAPI.Controllers
         public async Task<IActionResult> GetServiceItemCustomFieldByServiceItem(string serviceItemId)
         {
             return Ok(await _serviceItemCustomFieldService.GetCustomFieldByServiceItem(serviceItemId));
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateServiceItem(List<CreateUpdateServiceItemCustomFieldDTO> createUpdateServiceItemCustomFieldDTOs)
+        {
+            await _serviceItemCustomFieldService.UpdateServiceItemCustomField(createUpdateServiceItemCustomFieldDTOs);
+            return Ok(new { message = "Update successfully" });
         }
     }
 }

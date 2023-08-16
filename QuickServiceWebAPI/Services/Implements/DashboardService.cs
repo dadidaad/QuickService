@@ -31,12 +31,57 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             return await _repository.GetRequestTicketCount();
         }
+        public async Task<Dictionary<string, int>> GetRequestTicketByStatusCount()
+        {
+            var requestTicketCounts = await _repository.GetRequestTicketByStatusCount();
+            return requestTicketCounts;
+        }
+
+        public async Task<Dictionary<string, int>> GetRequestTicketByPriorityCount()
+        {
+            var requestTicketCounts = await _repository.GetRequestTicketByPriorityCount();
+            return requestTicketCounts;
+        }
 
         public async Task<Dictionary<string, int>> GetRequestTicketByServiceCategoryCount()
         {
-            var requestTicketCounts = await _repository.GetRequestTicketByServiceCategoryCount();
+            var requestTicketCounts = await _repository.GetRequestTicketByServiceCategoryCount();                  
+            return requestTicketCounts;
+        }
 
-                    
+        public async Task<Dictionary<string, int>> GetRequestTicketByChangeStatusCount()
+        {
+            var requestTicketCounts = await _repository.GetRequestTicketByChangeStatusCount();
+            return requestTicketCounts;
+        }
+
+        public async Task<Dictionary<string, int>> GetRequestTicketByChangeChangeTypeCount()
+        {
+            var requestTicketCounts = await _repository.GetRequestTicketByChangeChangeTypeCount();
+            return requestTicketCounts;
+        }
+
+        public async Task<Dictionary<string, int>> GetRequestTicketByChangeImpactCount()
+        {
+            var requestTicketCounts = await _repository.GetRequestTicketByChangeImpactCount();
+            return requestTicketCounts;
+        }
+
+        public async Task<Dictionary<string, int>> GetRequestTicketByProblemStatusCount()
+        {
+            var requestTicketCounts = await _repository.GetRequestTicketByProblemStatusCount();
+            return requestTicketCounts;
+        }
+
+        public async Task<Dictionary<string, int>> GetRequestTicketByProblemPriorityCount()
+        {
+            var requestTicketCounts = await _repository.GetRequestTicketByProblemPriorityCount();
+            return requestTicketCounts;
+        }
+
+        public async Task<Dictionary<string, int>> GetRequestTicketByProblemImpactCount()
+        {
+            var requestTicketCounts = await _repository.GetRequestTicketByProblemImpactCount();
             return requestTicketCounts;
         }
     }

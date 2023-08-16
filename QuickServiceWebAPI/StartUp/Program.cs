@@ -1,6 +1,10 @@
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using QuickServiceWebAPI.Middlewares;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
@@ -10,6 +14,7 @@ using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Services.Authentication;
 using QuickServiceWebAPI.Services.Implements;
 using QuickServiceWebAPI.Utilities;
+using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
 //Get connection string from appsettings
@@ -25,9 +30,14 @@ else
 }
 
 
+
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(
+          options =>
+          {
+              options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+          });
 builder.Services.AddCors();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -114,8 +124,12 @@ builder.Services.AddScoped<IRequestTicketService, RequestTicketService>();
 builder.Services.AddScoped<IRequestTicketExtRepository, RequestTicketExtRepository>();
 builder.Services.AddScoped<IRequestTicketExtService, RequestTicketExtService>();
 builder.Services.AddScoped<IRequestTicketHistoryRepository, RequestTicketHistoryRepository>();
+builder.Services.AddScoped<IRequestTicketHistoryService, RequestTicketHistoryService>();
 builder.Services.AddScoped<IChangeRepository, ChangeRepository>();
 builder.Services.AddScoped<IChangeService, ChangeService>();
+
+builder.Services.AddScoped<IProblemRepository, ProblemRepository>();
+builder.Services.AddScoped<IProblemService, ProblemService>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IQueryRepository, QueryRepository>();
@@ -128,6 +142,20 @@ builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddDbContext<QuickServiceContext>(options =>
     options.UseSqlServer(connection));
 
+//Background jobs configuration
+builder.Services.AddHangfire(configuration => configuration
+       .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+       .UseSimpleAssemblyNameTypeSerializer()
+       .UseRecommendedSerializerSettings()
+       .UseSqlServerStorage(connection, new SqlServerStorageOptions
+       {
+           CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+           SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+           QueuePollInterval = TimeSpan.Zero,
+           UseRecommendedIsolationLevel = true,
+           DisableGlobalLocks = true
+       }));
+builder.Services.AddHangfireServer();
 
 //Add authen and author
 builder.Services.AddAuthentication(UserAuthenticationHandler.Schema)
@@ -144,6 +172,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHangfireDashboard("/hangfire");
 }
 
 app.UseHttpsRedirection();
@@ -161,6 +190,13 @@ app.UseCors(x => x
         .AllowAnyHeader()
         .AllowCredentials()
            .SetIsOriginAllowed(origin => true));
+
+
+//Do background jobs
+var crons = "0 */12 * * *";
+RecurringJob
+    .AddOrUpdate<IRequestTicketService>("ticket-job", 
+    job =>  job.UpdateTicketStateJobAsync(), crons);
 
 //Seed database
 SeedDatabase();

@@ -6,20 +6,18 @@ namespace QuickServiceWebAPI.Services
 {
     public interface IWorkflowAssignmentService
     {
-        public Task AssignWorkflow(List<string> workflowTasks, RequestTicket requestTicket);
+        public Task AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO);
+
+        public Task AssignWorkflow(RequestTicket requestTicket, string? currentTaskId);
 
         public Task CompleteWorkflowTask(CheckWorkflowAssignmentDTO checkWorkflowAssignmentDTO);
 
-        public Task<bool> CheckRequestTicketExists(string requestTicketId);
-        
-        public bool CheckStatusRequestTicketInStatusMapping(StatusEnum statusEnum);
-        
-        public Task RejectWorkflowTask(RejectWorkflowTaskDTO rejectWorkflowStepDTO);
-
         public Task DeleteListWorkflowAssignment(List<WorkflowAssignment> workflowAssignments);
 
-        public Task<List<string>> GetSourcesTasks(Workflow workflow);
-
         public Task<List<WorkflowAssignmentDTO>> GetWorkflowAssignmentsForTicket(string requestTicketId);
+
+        public Task<bool> CheckRequestTicketExists(string requestTicketId);
+
+        public bool CheckStatusRequestTicketInStatusMapping(StatusEnum statusEnum);
     }
 }

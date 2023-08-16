@@ -127,11 +127,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task UpdateRole(Role existingRole, Role updateRole)
+        public async Task UpdateRole(Role updateRole)
         {
             try
             {
-                _context.Entry(existingRole).CurrentValues.SetValues(updateRole);
+                _context.Roles.Update(updateRole);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

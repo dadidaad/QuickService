@@ -14,7 +14,7 @@ namespace QuickServiceWebAPI.Profiles
             CreateMap<CreateSlaDTO, Sla>();
             CreateMap<UpdateSlaDTO, Sla>()
                 .ForMember(dest => dest.Slametrics,
-                 opt => opt.MapFrom(src => src.SlametricsDetails)); 
+                 opt => opt.MapFrom(src => src.Slametrics));
         }
     }
 }

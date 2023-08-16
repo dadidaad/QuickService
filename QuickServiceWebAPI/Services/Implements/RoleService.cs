@@ -11,17 +11,24 @@ namespace QuickServiceWebAPI.Services.Implements
     {
         private readonly IRoleRepository _repository;
         private readonly IMapper _mapper;
-
-        public RoleService(IRoleRepository repository, IMapper mapper)
+        private readonly IPermissionRepository _permissionRepository;
+        public RoleService(IRoleRepository repository, IMapper mapper, IPermissionRepository permissionRepository)
         {
             _repository = repository;
             _mapper = mapper;
+            _permissionRepository = permissionRepository;
         }
+
+        private static readonly List<PermissionEnum> DefaultPermissionForRoles = new List<PermissionEnum>()
+        { PermissionEnum.ManageTickets, PermissionEnum.ManageChange, PermissionEnum.ManageProblems};
 
         public async Task CreateRole(CreateDTO createDTO)
         {
             var role = _mapper.Map<Role>(createDTO);
             role.RoleId = await GetNextId();
+            var permissionDefaults = (await _permissionRepository.GetPermissions())
+                .Where(p => DefaultPermissionForRoles.Any(pE => pE.GetDisplayName() == p.PermissionName)).ToList();
+            role.Permissions = permissionDefaults;
             await _repository.CreateRole(role);
         }
 
@@ -49,6 +56,10 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             //return await _repository.GetRoleById(roleId);
             var role = await _repository.GetRoleById(roleId);
+            if (role == null)
+            {
+                throw new AppException("Role not found");
+            }
             return _mapper.Map<RoleDTO>(role);
         }
 
@@ -71,8 +82,8 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Role not found");
             }
-            var updateRole = _mapper.Map<UpdateDTO, Role>(updateDTO, existingRole);
-            await _repository.UpdateRole(existingRole, updateRole);
+            var updateRole = _mapper.Map(updateDTO, existingRole);
+            await _repository.UpdateRole(updateRole);
         }
         private async Task<string> GetNextId()
         {

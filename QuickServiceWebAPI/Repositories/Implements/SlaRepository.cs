@@ -35,7 +35,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Sla sla = await _context.Slas.Include(s => s.Slametrics).FirstOrDefaultAsync(x => x.Slaid == slaId);
+                Sla sla = await _context.Slas.AsNoTracking().Include(s => s.Slametrics).FirstOrDefaultAsync(x => x.Slaid == slaId);
                 return sla;
             }
             catch (Exception ex)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
+using QuickServiceWebAPI.Utilities;
 using System.Data;
 
 namespace QuickServiceWebAPI.Repositories.Implements
@@ -32,21 +33,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
 
 
 
-        public async Task<List<Permission>> GetPermissionsForRoleType(RoleType roleType)
+        public async Task<List<Permission>> GetPermissions()
         {
             try
             {
                 IQueryable<Permission> permissionQuery = _context.Permissions;
-                if (roleType == RoleType.Admin)
-                {
-                    permissionQuery = permissionQuery
-                        .Where(p => !p.PermissionName.Contains("tickets"));
-                }
-                else
-                {
-                    permissionQuery = permissionQuery
-                        .Where(p => p.PermissionName.Contains("tickets"));
-                }
                 return await permissionQuery.ToListAsync();
             }
             catch (Exception ex)
@@ -90,7 +81,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.Permissions.FindAsync(permissionId);
+                return await _context.Permissions.FirstOrDefaultAsync(p => p.PermissionId == permissionId);
             }
             catch (Exception ex)
             {
@@ -98,5 +89,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw;
             }
         }
+
     }
 }
