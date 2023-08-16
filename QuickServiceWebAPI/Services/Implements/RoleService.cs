@@ -56,6 +56,10 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             //return await _repository.GetRoleById(roleId);
             var role = await _repository.GetRoleById(roleId);
+            if (role == null)
+            {
+                throw new AppException("Role not found");
+            }
             return _mapper.Map<RoleDTO>(role);
         }
 

@@ -112,8 +112,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 .GetServiceItemById(serviceItemId);
             if (serviceItem == null)
             {
-                throw new AppException("Service item with id {serviceItemId} not found",
-                    serviceItemId);
+                throw new AppException("Service item with id {serviceItemId} not found", serviceItemId);
             }
             List<ServiceItemCustomField> serviceItemCustomFields = await _repository.GetServiceItemCustomFieldsByServiceItem(serviceItemId);
             return _mapper.Map<List<ServiceItemCustomFieldDTO>>(serviceItemCustomFields);

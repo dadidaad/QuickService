@@ -40,6 +40,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<ServiceItemDTO> GetServiceItemById(string serviceItemId)
         {
             var serviceItem = await _repository.GetServiceItemById(serviceItemId);
+            if (serviceItem == null)
+            {
+                throw new AppException("Service item with id " + serviceItemId + " not found");
+            }
             return _mapper.Map<ServiceItemDTO>(serviceItem);
         }
 

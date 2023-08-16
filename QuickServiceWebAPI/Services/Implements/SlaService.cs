@@ -32,6 +32,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<SlaDTO> GetSlaById(string slaId)
         {
             var sla = await _repository.GetSLAById(slaId);
+            if (sla == null)
+            {
+                throw new AppException("Sla not found");
+            }
             return _mapper.Map<SlaDTO>(sla);
         }
 
