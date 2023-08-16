@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ServiceItemCustomFieldsController : ControllerBase
     {
         private readonly IServiceItemCustomFieldService _serviceItemCustomFieldService;
@@ -37,6 +37,13 @@ namespace QuickServiceWebAPI.Controllers
         public async Task<IActionResult> GetServiceItemCustomFieldByServiceItem(string serviceItemId)
         {
             return Ok(await _serviceItemCustomFieldService.GetCustomFieldByServiceItem(serviceItemId));
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateServiceItem(List<CreateUpdateServiceItemCustomFieldDTO> createUpdateServiceItemCustomFieldDTOs)
+        {
+            await _serviceItemCustomFieldService.UpdateServiceItemCustomField(createUpdateServiceItemCustomFieldDTOs);
+            return Ok(new { message = "Update successfully" });
         }
     }
 }

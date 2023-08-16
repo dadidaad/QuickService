@@ -22,7 +22,7 @@ namespace QuickServiceWebAPI.Controllers
 
         [HttpGet("countRequestTicketByProblemStatus")]
         [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
-        public async Task<IActionResult> GetRequestTicketByProblemtatusCount()
+        public async Task<IActionResult> GetRequestTicketByProblemStatusCount()
         {
             var requestTicket = await _dashboardService.GetRequestTicketByProblemStatusCount();
 

@@ -37,6 +37,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<GroupDTO> GetGroupById(string groupId)
         {
             var group = await _repository.GetGroupById(groupId);
+            if (group == null)
+            {
+                throw new AppException("Group not found");
+            }
             return _mapper.Map<GroupDTO>(group);
         }
 

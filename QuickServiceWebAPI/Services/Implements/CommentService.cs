@@ -5,6 +5,7 @@ using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
+using System.Net.Mail;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -23,18 +24,30 @@ namespace QuickServiceWebAPI.Services.Implements
         public List<CommentDTO> GetCommentByUser(string userId)
         {
             var comments = _repository.GetCommentByUser(userId);
+            if (comments == null)
+            {
+                throw new AppException($"user with Id {userId} not found");
+            }
             return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
         }
 
         public List<CommentDTO> GetCustomerCommentsByRequestTicket(string requestTicketId)
         {
             var comments = _repository.GetCustomerCommentsByRequestTicket(requestTicketId);
+            if (comments == null)
+            {
+                throw new AppException($"requestTicket with Id {requestTicketId} not found");
+            }
             return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
         }
 
         public List<CommentDTO> GetCommentsByRequestTicket(string requestTicketId)
         {
             var comments = _repository.GetCommentsByRequestTicket(requestTicketId);
+            if (comments == null)
+            {
+                throw new AppException($"requestTicket with Id {requestTicketId} not found");
+            }
             return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
         }
 

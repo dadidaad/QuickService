@@ -73,13 +73,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 var statusValues = Enum.GetValues(typeof(StatusEnum)).Cast<StatusEnum>().Select(s => s.ToString());
 
                 var query = from status in statusValues
-                            join problem in _context.Problems on status equals problem.Status into problemGroup
-                            join requestTicket in _context.RequestTickets on problemGroup.FirstOrDefault()?.ProblemId equals requestTicket.ProblemId into tickets
-                            group tickets by status into ticketGroup
+                            join problem in _context.Problems on status equals ((StatusEnum)Enum.Parse(typeof(StatusEnum), problem.Status.ToString())).ToString() into tickets
+                            from ticket in tickets.DefaultIfEmpty()
+                            group ticket by status into ticketGroup
                             select new
                             {
                                 Status = ticketGroup.Key,
-                                TotalTickets = ticketGroup.SelectMany(t => t).Count()
+                                TotalTickets = ticketGroup.Count(t => t != null)
                             };
                 var resultDictionary = query.ToDictionary(s => s.Status, r => r.TotalTickets);
                 return resultDictionary;
@@ -98,13 +98,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 var priorityValues = Enum.GetValues(typeof(PriorityEnum)).Cast<PriorityEnum>().Select(s => s.ToString());
 
                 var query = from priority in priorityValues
-                            join problem in _context.Problems on priority equals problem.Priority into problemGroup
-                            join requestTicket in _context.RequestTickets on problemGroup.FirstOrDefault()?.ProblemId equals requestTicket.ProblemId into tickets
-                            group tickets by priority into ticketGroup
+                            join problem in _context.Problems on priority equals ((PriorityEnum)Enum.Parse(typeof(PriorityEnum), problem.Priority.ToString())).ToString() into tickets
+                            from ticket in tickets.DefaultIfEmpty()
+                            group ticket by priority into ticketGroup
                             select new
                             {
                                 Priority = ticketGroup.Key,
-                                TotalTickets = ticketGroup.SelectMany(t => t).Count()
+                                TotalTickets = ticketGroup.Count(t => t != null)
                             };
                 var resultDictionary = query.ToDictionary(s => s.Priority, r => r.TotalTickets);
                 return resultDictionary;
@@ -123,13 +123,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 var impactValues = Enum.GetValues(typeof(ImpactEnum)).Cast<ImpactEnum>().Select(i => i.ToString());
 
                 var query = from impact in impactValues
-                            join problem in _context.Problems on impact equals problem.Impact into problemGroup
-                            join requestTicket in _context.RequestTickets on problemGroup.FirstOrDefault()?.ProblemId equals requestTicket.ProblemId into tickets
-                            group tickets by impact into ticketGroup
+                            join problem in _context.Problems on impact equals ((ImpactEnum)Enum.Parse(typeof(ImpactEnum), problem.Impact.ToString())).ToString() into tickets
+                            from ticket in tickets.DefaultIfEmpty()
+                            group ticket by impact into ticketGroup
                             select new
                             {
                                 Impact = ticketGroup.Key,
-                                TotalTickets = ticketGroup.SelectMany(t => t).Count()
+                                TotalTickets = ticketGroup.Count(t => t != null)
                             };
                 var resultDictionary = query.ToDictionary(s => s.Impact, r => r.TotalTickets);
                 return resultDictionary;
@@ -149,13 +149,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 var statusValues = Enum.GetValues(typeof(StatusEnum)).Cast<StatusEnum>().Select(s => s.ToString());
 
                 var query = from status in statusValues
-                            join change in _context.Changes on status equals ((StatusEnum)Enum.Parse(typeof(StatusEnum), change.Status.ToString())).ToString() into changeGroup
-                            join requestTicket in _context.RequestTickets on changeGroup.FirstOrDefault()?.ChangeId equals requestTicket.ChangeId into tickets
-                            group tickets by status into ticketGroup
+                            join change in _context.Changes on status equals ((StatusEnum)Enum.Parse(typeof(StatusEnum), change.Status.ToString())).ToString() into tickets
+                            from ticket in tickets.DefaultIfEmpty()
+                            group ticket by status into ticketGroup
                             select new
                             {
                                 Status = ticketGroup.Key,
-                                TotalTickets = ticketGroup.SelectMany(t => t).Count()
+                                TotalTickets = ticketGroup.Count(t => t != null)
                             };
                 var resultDictionary = query.ToDictionary(s => s.Status, r => r.TotalTickets);
                 return resultDictionary;
@@ -174,13 +174,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 var changeTypeValues = Enum.GetValues(typeof(ChangeTypeEnum)).Cast<ChangeTypeEnum>().Select(s => s.ToString());
 
                 var query = from changeType in changeTypeValues
-                            join change in _context.Changes on changeType equals ((ChangeTypeEnum)Enum.Parse(typeof(ChangeTypeEnum), change.ChangeType.ToString())).ToString() into changeGroup
-                            join requestTicket in _context.RequestTickets on changeGroup.FirstOrDefault()?.ChangeId equals requestTicket.ChangeId into tickets
-                            group tickets by changeType into ticketGroup
+                            join change in _context.Changes on changeType equals ((ChangeTypeEnum)Enum.Parse(typeof(ChangeTypeEnum), change.ChangeType.ToString())).ToString() into tickets
+                            from ticket in tickets.DefaultIfEmpty()
+                            group ticket by changeType into ticketGroup
                             select new
                             {
                                 ChangeType = ticketGroup.Key,
-                                TotalTickets = ticketGroup.SelectMany(t => t).Count()
+                                TotalTickets = ticketGroup.Count(t => t != null)
                             };
                 var resultDictionary = query.ToDictionary(s => s.ChangeType, r => r.TotalTickets);
                 return resultDictionary;
@@ -199,14 +199,15 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 var impactValues = Enum.GetValues(typeof(ImpactEnum)).Cast<ImpactEnum>().Select(i => i.ToString());
 
                 var query = from impact in impactValues
-                            join change in _context.Changes on impact equals ((ImpactEnum)Enum.Parse(typeof(ImpactEnum), change.Impact.ToString())).ToString() into changeGroup
-                            join requestTicket in _context.RequestTickets on changeGroup.FirstOrDefault()?.ChangeId equals requestTicket.ChangeId into tickets
-                            group tickets by impact into ticketGroup
+                            join change in _context.Changes on impact equals ((ImpactEnum)Enum.Parse(typeof(ImpactEnum), change.Impact.ToString())).ToString() into tickets
+                            from ticket in tickets.DefaultIfEmpty()
+                            group ticket by impact into ticketGroup
                             select new
                             {
                                 Impact = ticketGroup.Key,
-                                TotalTickets = ticketGroup.SelectMany(t => t).Count()
+                                TotalTickets = ticketGroup.Count(t => t != null)
                             };
+
                 var resultDictionary = query.ToDictionary(s => s.Impact, r => r.TotalTickets);
                 return resultDictionary;
             }

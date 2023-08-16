@@ -37,6 +37,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<List<RequestTicketHistoryDTO>> GetRequestTicketHistoryByRequestTicketId(string requestTicketId)
         {
             var requestTicketHistories = await _repository.GetRequestTicketHistoryByRequestTicketId(requestTicketId);
+            if (requestTicketHistories == null)
+            {
+                throw new AppException("Request ticket history not found");
+            }
             return requestTicketHistories.Select(requestTicketHistory => _mapper.Map<RequestTicketHistoryDTO>(requestTicketHistory)).ToList();
         }
     }
