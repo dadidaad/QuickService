@@ -29,7 +29,18 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw;
             }
         }
-
+        public List<Query> GetQueriesForUser(string userId)
+        {
+            try
+            {
+                return _context.Queries.Where(q=>q.UserId==userId).Include(u => u.User).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
         public async Task<Query> GetQueryById(string queryId)
         {
             try
@@ -44,7 +55,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<RequestTicket> GetQueryRequestTicket(QueryDTO query)
+        public List<RequestTicket> GetQueryRequestTicket(QueryConfigDTO query)
         {
             try
             {
@@ -57,8 +68,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
                     .Where(x => (query.Assignee.Contains(x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName) || query.Assignee == null) &&
-                        ((query.CreateFrom == null || x.CreatedAt >= query.CreateFrom)  && (query.CreateTo == null || x.CreatedAt <= query.CreateTo)) &&
-                        (query.Description == null || x.Description.Contains(query.Description)) &&
+                        ((query.CreatedFrom == null || x.CreatedAt >= query.CreatedFrom)  && (query.CreatedTo == null || x.CreatedAt <= query.CreatedTo)) &&
+                        (query.TitleSearch == null || x.Description.Contains(query.TitleSearch)) &&
                         (query.Group == null || query.Group.Contains(x.AssignedToGroupNavigation.GroupName)) &&
                         (query.Reporter == null || query.Reporter.Contains(x.Requester.FirstName + " " + x.Requester.LastName)) &&
                         (query.Service == null || query.Service.Contains(x.ServiceItem.ServiceCategory.ServiceCategoryName)) &&
@@ -127,5 +138,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw; // Rethrow the exception to propagate it up the call stack if necessary
             }
         }
+
+        
     }
 }
