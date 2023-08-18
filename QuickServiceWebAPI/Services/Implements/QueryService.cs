@@ -20,10 +20,15 @@ namespace QuickServiceWebAPI.Services.Implements
             _mapper = mapper;
         }
 
-        public async Task<List<QueryDTO>> GetQueryForUser(string userId)
+        public async Task<List<QueryDTO>> GetQueryForUser(string userId, string type)
         {
-            var queries = _repository.GetQueriesForUser(userId);
+            var queries = _repository.GetQueriesForUser(userId, type);
             return await Task.FromResult(queries.Select(q => _mapper.Map<QueryDTO>(q)).ToList());
+        }
+        public async Task<QueryDTO> GetQueryById(string Id)
+        {
+            var query = await _repository.GetQueryById(Id);
+            return await Task.FromResult(_mapper.Map<QueryDTO>(query));
         }
         public async Task<QueryDTO> CreateQuery(QueryDTO queryDTO)
         {
@@ -38,12 +43,30 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             catch (Exception e)
             {
-
-                throw;
+                throw new AppException(e.Message);
             }
             
         }
+        public async Task<QueryDTO> UpdateQuery(QueryDTO queryDTO)
+        {
+            try
+            {
+                Query queryCheck = await _repository.GetQueryById(queryDTO.QueryId);
+                if (queryCheck == null)
+                {
+                    throw new AppException("Query not found");
+                }
+                var query = _mapper.Map<Query>(queryDTO);
+                await _repository.UpdateQuery(query);
 
+                var updateQueryDTO = await _repository.GetQueryById(query.QueryId);
+                return _mapper.Map<QueryDTO>(updateQueryDTO); ;
+            }
+            catch (Exception e)
+            {
+                throw new AppException(e.Message);
+            }
+        }
         public Task DeleteQuery(string queryId)
         {
             throw new NotImplementedException();
@@ -61,7 +84,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 id = IDGenerator.ExtractNumberFromId(lastQuery.QueryId) + 1;
             }
-            string queryId = IDGenerator.GenerateCommentId(id);
+            string queryId = IDGenerator.GenerateQueryId(id);
             return queryId;
         }
 
@@ -78,14 +101,13 @@ namespace QuickServiceWebAPI.Services.Implements
             return requestTickets.Select(requestTicket => _mapper.Map<RequestTicketDTO>(requestTicket)).ToList();
         }
 
-        public Task UpdateQuery(QueryDTO queryDTO)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         Task<List<RequestTicketDTO>> IQueryService.GetQueryRequestTicket(QueryConfigDTO query)
         {
             throw new NotImplementedException();
         }
+
+       
     }
 }

@@ -29,11 +29,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw;
             }
         }
-        public List<Query> GetQueriesForUser(string userId)
+        public List<Query> GetQueriesForUser(string userId, string type)
         {
             try
             {
-                return _context.Queries.Where(q=>q.UserId==userId).Include(u => u.User).ToList();
+                return _context.Queries.Where(q=>q.UserId==userId && (type=="" || q.QueryType==type)).Include(u => u.User).ToList();
             }
             catch (Exception ex)
             {

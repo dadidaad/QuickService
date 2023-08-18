@@ -17,11 +17,21 @@ namespace QuickServiceWebAPI.Controllers
         {
             _queryService = queryService;
         }
-        
-        [HttpGet("getforuser/{userId}")]
-        public async Task<IActionResult> GetAllTicketsForRequester(string userIdd)
+        [HttpGet("getdetail/{Id}")]
+        public async Task<IActionResult> GetQueryById(string Id)
         {
-            return Ok(await _queryService.GetQueryForUser(userIdd));
+            return Ok(await _queryService.GetQueryById(Id));
+        }
+
+        [HttpGet("getforuser/{userId}/{type}")]
+        public async Task<IActionResult> GetQueryForUser(string userId, string type)
+        {
+            return Ok(await _queryService.GetQueryForUser(userId, type));
+        }
+        [HttpGet("getforuser/{userId}")]
+        public async Task<IActionResult> GetQueryForUser(string userId)
+        {
+            return Ok(await _queryService.GetQueryForUser(userId, ""));
         }
         [HttpGet("getall")]
         public IActionResult GetQueryRequestTicket([FromQuery] QueryConfigDTO query)
@@ -33,6 +43,11 @@ namespace QuickServiceWebAPI.Controllers
         public async Task<IActionResult> CreateQuery(QueryDTO queryDTO)
         {
             return Ok(new { message = "Send successfully", QueryDTO = await _queryService.CreateQuery(queryDTO) });
+        }
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateQuery(QueryDTO queryDTO)
+        {
+            return Ok(new { message = "Send successfully", QueryDTO = await _queryService.UpdateQuery(queryDTO) });
         }
     }
 }
