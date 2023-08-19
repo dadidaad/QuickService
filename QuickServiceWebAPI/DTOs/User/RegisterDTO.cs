@@ -6,6 +6,7 @@ namespace QuickServiceWebAPI.DTOs.User
     {
         [Required]
         [MaxLength(100)]
+        [EmailAddress]
         [DataType(DataType.EmailAddress)]
         public string? Email { get; set; }
 

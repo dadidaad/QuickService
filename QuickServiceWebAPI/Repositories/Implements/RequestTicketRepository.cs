@@ -1,5 +1,8 @@
 ﻿using Azure.Core;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using QuickServiceWebAPI.DTOs.Query;
+using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Repositories.Implements
@@ -56,9 +59,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.RequestTickets.Include(u => u.AssignedToNavigation).Include(s => s.ServiceItem)
-                                              .Include(a => a.Attachment).Include(u => u.Requester)
-                                              .Include(s => s.Sla).ThenInclude(s => s.Slametrics).Take(1000).ToList();
+                return _context.RequestTickets.Include(g => g.AssignedToGroupNavigation)
+                    .Include(u => u.AssignedToNavigation)
+                    .Include(a => a.Attachment)
+                    .Include(r => r.Requester)
+                    .Include(s => s.ServiceItem).ThenInclude(sc => sc.ServiceCategory)
+                    .Include(sl => sl.Sla)
+                    .ThenInclude(slm => slm.Slametrics).Take(1000).ToList();
             }
             catch (Exception ex)
             {
@@ -137,5 +144,107 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw;
             }
         }
+
+        public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
+        {
+            var listTickets = new List<RequestTicket>();
+            var hasQueryConfig = !string.IsNullOrEmpty(queryDto.QueryStatement);
+            if (!hasQueryConfig) listTickets = GetRequestTickets();
+            var queryConfig = new QueryConfigDTO();
+            if (hasQueryConfig) queryConfig = JsonConvert.DeserializeObject<QueryConfigDTO>(queryDto.QueryStatement);
+            var listTicketsDto = new List<TicketQueryAdminDTO>();
+
+            if (queryConfig == null) return Task.FromResult(listTicketsDto);
+
+            if(hasQueryConfig) listTickets = _context.RequestTickets.Include(g => g.AssignedToGroupNavigation)
+                    .Include(u => u.AssignedToNavigation)
+                    .Include(a => a.Attachment)
+                    .Include(r => r.Requester)
+                    .Include(s => s.ServiceItem).ThenInclude(sc=>sc.ServiceCategory)
+                    .Include(sl => sl.Sla)
+                    .ThenInclude(slm => slm.Slametrics)
+                    .Where(x =>
+                        (queryConfig.Priority == null || queryConfig.Priority.Length == 0 || queryConfig.Priority.Contains(x.Priority)) &&
+                        (queryConfig.TitleSearch == null || (x.Title != null && x.Title.Contains(queryConfig.TitleSearch))) &&
+                        (queryConfig.Assignee == null || queryConfig.Assignee.Length == 0 || (queryConfig.Assignee != null && x.AssignedToNavigation != null && queryConfig.Assignee.Contains(x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName))) &&
+                        (queryConfig.CreatedFrom == null || x.CreatedAt >= queryConfig.CreatedFrom) &&
+                        (queryConfig.CreatedTo == null || x.CreatedAt <= queryConfig.CreatedTo) &&
+                        (queryConfig.Group == null || queryConfig.Group.Length == 0 || (x.AssignedToGroupNavigation != null && queryConfig.Group.Contains(x.AssignedToGroupNavigation.GroupName))) &&
+                        (queryConfig.Reporter == null || queryConfig.Reporter.Length == 0 || queryConfig.Reporter.Contains(x.Requester.FirstName + " " + x.Requester.LastName)) &&
+                        (queryConfig.Service == null || queryConfig.Service.Length == 0 || (x.ServiceItem != null && queryConfig.Service.Contains(x.ServiceItem.ServiceCategory.ServiceCategoryName))) &&
+                        (queryConfig.RequestType == null || queryConfig.RequestType.Length == 0 || (x.ServiceItem != null && queryConfig.RequestType.Contains(x.ServiceItem.ServiceItemName))) &&
+                        (queryConfig.Status == null || queryConfig.Status.Length == 0 || queryConfig.Status.Contains(x.Status))
+                       ).Take(1000).ToList();
+
+            listTicketsDto = listTickets
+                    .Select(q => new TicketQueryAdminDTO()
+                    {
+                        TicketId = q.RequestTicketId,
+                        Title = q.Title,
+                        IsIncident = q.IsIncident,
+                        ServiceCategoryId = q.ServiceItem != null ? q.ServiceItem.ServiceCategory.ServiceCategoryId : null,
+                        ServiceCategoryName = q.ServiceItem != null ? q.ServiceItem.ServiceCategory.ServiceCategoryName : null,
+                        ServiceItemId = q.ServiceItem != null ? q.ServiceItem.ServiceItemId : null,
+                        ServiceItemName = q.ServiceItem != null ? q.ServiceItem.ServiceItemName : null,
+                        GroupId = q.AssignedToGroupNavigation != null ? q.AssignedToGroupNavigation.GroupId : null,
+                        GroupName = q.AssignedToGroupNavigation != null ? q.AssignedToGroupNavigation.GroupName : null,
+                        RequesterId = q.RequesterId,
+                        RequesterFullName = q.Requester.FirstName + q.Requester.MiddleName + q.Requester.LastName,
+                        AssigneeId = q.AssignedTo,
+                        AssigneeFullName = q.AssignedToNavigation != null ? $"{q.AssignedToNavigation.FirstName} {q.AssignedToNavigation.MiddleName} {q.AssignedToNavigation.LastName}" : null,
+                        Status = q.Status,
+                        CreatedAt = q.CreatedAt,
+                        Priority = q.Priority
+                    }).ToList();
+
+            if (hasQueryConfig && queryConfig.OrderASC == true && queryConfig.OrderyBy != null)
+            {
+                listTicketsDto.OrderBy(x => x.GetType().GetProperty(queryConfig.OrderyBy).GetValue(x, null));
+                return Task.FromResult(listTicketsDto);
+            }
+            if (queryConfig.OrderyBy != null) listTicketsDto.OrderByDescending(x => x.GetType().GetProperty(queryConfig.OrderyBy).GetValue(x, null));
+            return Task.FromResult(listTicketsDto);
+        }
+
+
+        //public string TicketId { get; set; } = null!;
+
+        //public string Title { get; set; } = null!;
+        //public string ServiceCategoryId { get; set; } = null!;
+
+        //public string ServiceCategoryName { get; set; } = null!;
+
+        //public string ServiceItemId { get; set; } = null!;
+
+        //public string ServiceItemName { get; set; } = null!;
+
+        //public string GroupId { get; set; } = null!;
+
+        //public string GroupName { get; set; } = null!;
+        //public string RequesterId { get; set; } = null!;
+
+        //public string? RequesterFullName { get; set; }
+
+        //public string AssigneeId { get; set; } = null!;
+
+        //public string? AssigneeFullName { get; set; }
+
+        //public string Status { get; set; } = null!;
+
+        //public DateTime CreatedAt { get; set; }
+        //public string Priority { get; set; } = null!;
+
+        //public string? OrderyBy { get; set; }
+        //public bool? OrderASC { get; set; }
+        //public string[]? Priority { get; set; }
+        //public string[]? Status { get; set; }
+        //public string[]? RequestType { get; set; }
+        //public string[]? Service { get; set; }
+        //public string[]? Assignee { get; set; }
+        //public string[]? Reporter { get; set; }
+        //public string[]? Group { get; set; }
+        //public string? TitleSearch { get; set; }
+        //public DateTime? CreatedTo { get; set; }
+        //public DateTime? CreatedFrom { get; set; }
     }
 }

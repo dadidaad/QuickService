@@ -215,3 +215,5 @@ void SeedDatabase() //can be placed at the very bottom under app.Run()
         dbInitializer.SeedSla();
     }
 }
+
+public partial class Program { }

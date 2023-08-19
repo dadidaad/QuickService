@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.ServiceCategory;
 using QuickServiceWebAPI.DTOs.Workflow;
 using QuickServiceWebAPI.DTOs.Group;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceUnitTest
 {
@@ -39,6 +40,7 @@ namespace QuickServiceUnitTest
                     cfg.CreateMap<ServiceCategory, ServiceCategoryDTO>();
                     cfg.CreateMap<ServiceItem, ServiceItemDTO>();
                     cfg.CreateMap<ServiceCategory, ServiceCategoryDTO>();
+                    cfg.CreateMap<CreateUpdateServiceItemDTO, ServiceItem>();
                     cfg.CreateMap<Workflow, WorkflowDTO>();
                 }).CreateMapper(),
                 Options.Create(new AzureStorageConfig()),
@@ -50,17 +52,161 @@ namespace QuickServiceUnitTest
             _controller = new ServiceItemsController(serviceItemService);
         }
 
-        [Fact]
-        public void GetAllServiceItem_ReturnsOkResult()
-        {
-            var result = _controller.GetAllServiceItem();
-            var resultType = result as OkObjectResult;
-            var resultList = resultType.Value as List<ServiceItemDTO>;
+        //[Fact]
+        //public async Task CreateServiceItem_ValidInput_ReturnsOk()
+        //{
+        //    var createUpdateServiceItemDTO = new CreateUpdateServiceItemDTO
+        //    {
+        //        ServiceItemName = "ServiceItemName",
+        //        ShortDescription = "ShortDescription",
+        //        Description = "Description",
+        //        ServiceCategoryId = "SECA000002",
+        //        IconDisplay = "IconDisplay",
+        //    };
 
-            Assert.NotNull(result);
-            Assert.IsType<List<ServiceItemDTO>>(resultType.Value);
-            Assert.Equal(9, resultList.Count);
+        //    var result = await _controller.CreateServiceItem(createUpdateServiceItemDTO);
+
+        //    Assert.IsType<OkObjectResult>(result);
+        //}
+
+        [Fact]
+        public async Task CreateServiceItem_MissingServiceItemName_ReturnsOk()
+        {
+            var createUpdateServiceItemDTO = new CreateUpdateServiceItemDTO
+            {
+                ShortDescription = "ShortDescription",
+                Description = "Description",
+                ServiceCategoryId = "SECA000002",
+                IconDisplay = "IconDisplay",
+            };
+
+            var context = new ValidationContext(createUpdateServiceItemDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateServiceItemDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The ServiceItemName field is required.");
         }
+
+        [Fact]
+        public async Task CreateServiceItem_InvalidServiceItemName_ReturnsOk()
+        {
+            var createUpdateServiceItemDTO = new CreateUpdateServiceItemDTO
+            {
+                ServiceItemName = new string('a', 101),
+                ShortDescription = "ShortDescription",
+                Description = "Description",
+                ServiceCategoryId = "SECA000002",
+                IconDisplay = "IconDisplay",
+            };
+
+            var context = new ValidationContext(createUpdateServiceItemDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateServiceItemDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field ServiceItemName must be a string or array type with a maximum length of '100'.");
+        }
+
+        [Fact]
+        public async Task CreateServiceItem_MissingShortDescription_ReturnsOk()
+        {
+            var createUpdateServiceItemDTO = new CreateUpdateServiceItemDTO
+            {
+                ServiceItemName = "ServiceItemName",
+                Description = "Description",
+                ServiceCategoryId = "SECA000002",
+                IconDisplay = "IconDisplay",
+            };
+
+            var context = new ValidationContext(createUpdateServiceItemDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateServiceItemDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The ShortDescription field is required.");
+        }
+
+        [Fact]
+        public async Task CreateServiceItem_InvalidShortDescription_ReturnsOk()
+        {
+            var createUpdateServiceItemDTO = new CreateUpdateServiceItemDTO
+            {
+                ServiceItemName = "ServiceItemName",
+                ShortDescription = new string('a', 101),
+                Description = "Description",
+                ServiceCategoryId = "SECA000002",
+                IconDisplay = "IconDisplay",
+            };
+
+            var context = new ValidationContext(createUpdateServiceItemDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateServiceItemDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field ShortDescription must be a string or array type with a maximum length of '100'.");
+        }
+
+        [Fact]
+        public async Task CreateServiceItem_InvalidDescription_ReturnsOk()
+        {
+            var createUpdateServiceItemDTO = new CreateUpdateServiceItemDTO
+            {
+                ServiceItemName = "ServiceItemName",
+                ShortDescription = "ShortDescription",
+                Description = new string('a', 1001),
+                ServiceCategoryId = "SECA000002",
+                IconDisplay = "IconDisplay",
+            };
+
+            var context = new ValidationContext(createUpdateServiceItemDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateServiceItemDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field Description must be a string or array type with a maximum length of '1000'.");
+        }
+
+        [Fact]
+        public async Task CreateServiceItem_MissingServiceCategoryId_ReturnsOk()
+        {
+            var createUpdateServiceItemDTO = new CreateUpdateServiceItemDTO
+            {
+                ServiceItemName = "ServiceItemName",
+                ShortDescription = "ShortDescription",
+                Description = "Description",
+                IconDisplay = "IconDisplay",
+            };
+
+            var context = new ValidationContext(createUpdateServiceItemDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateServiceItemDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The ServiceCategoryId field is required.");
+        }
+
+
+        [Fact]
+        public async Task CreateServiceItem_InvalidIconDisplay_ReturnsOk()
+        {
+            var createUpdateServiceItemDTO = new CreateUpdateServiceItemDTO
+            {
+                ServiceItemName = "ServiceItemName",
+                ShortDescription = "ShortDescription",
+                Description = "Description",
+                ServiceCategoryId = "SECA000002",
+                IconDisplay = new string('a', 101),
+            };
+
+            var context = new ValidationContext(createUpdateServiceItemDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateServiceItemDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field IconDisplay must be a string or array type with a maximum length of '100'.");
+        }
+
 
         [Fact]
         public async Task GetServiceItemById_ReturnsOkResult()

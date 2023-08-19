@@ -7,7 +7,7 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceItemsController : ControllerBase
@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Controllers
             var serviceItem = await _serviceItemService.GetServiceItemById(serviceItemId);
             return Ok(serviceItem);
         }
-
+        [HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateServiceItem(CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
         {
@@ -39,6 +39,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Create successfully", ServiceItemDTO = serviceItemDto });
         }
 
+        [HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
         [HttpPut("update/{serviceItemId}")]
         public async Task<IActionResult> UpdateServiceItem(string serviceItemId, CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
         {
