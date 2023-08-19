@@ -8,7 +8,7 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    //[HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
+    [HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceCategoriesController : ControllerBase
@@ -38,6 +38,10 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateServiceCategory(CreateUpdateServiceCategoryDTO createUpdateServiceCategoryDTO)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+            }
             await _serviceCategoryService.CreateServiceCategory(createUpdateServiceCategoryDTO);
             var serviceCategory = await _serviceCategoryService.GetLastServiceCategoryWithServiceItems();
             return Ok(serviceCategory);

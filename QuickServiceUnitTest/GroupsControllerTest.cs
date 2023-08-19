@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.CustomField;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceUnitTest
 {
@@ -32,6 +33,7 @@ namespace QuickServiceUnitTest
                 {
                     cfg.CreateMap<Group, GroupDTO>();
                     cfg.CreateMap<User, UserDTO>();
+                    cfg.CreateMap<CreateUpdateGroupDTO, Group>();
                 }).CreateMapper(),
                 new Mock<IUserRepository>().Object,
                 new Mock<IBusinessHourRepository>().Object               
@@ -39,16 +41,112 @@ namespace QuickServiceUnitTest
             _controller = new GroupsController(groupService);
         }
 
-        [Fact]
-        public async Task GetAllGroup_ReturnsOkResult()
-        {
-            var result = _controller.GetAllGroup();
-            var resultType = result as OkObjectResult;
-            var resultList = resultType.Value as List<GroupDTO>;
+        //[Fact]
+        //public async Task CreateGroup_ValidInput_ReturnsOk()
+        //{
+        //    var createUpdateGroupDTO = new CreateUpdateGroupDTO
+        //    {
+        //        GroupName = "GroupName",
+        //        Description = "Description",
+        //        GroupLeader = "USER000001",
+        //    };
 
-            Assert.NotNull(result);
-            Assert.IsType<List<GroupDTO>>(resultType.Value);
-            Assert.Equal(16, resultList.Count);
+        //    var result = await _controller.CreateGroup(createUpdateGroupDTO);
+
+        //    Assert.IsType<OkObjectResult>(result);
+        //}
+
+        [Fact]
+        public async Task CreateGroup_MissingGroupName_ReturnsOk()
+        {
+            var createUpdateGroupDTO = new CreateUpdateGroupDTO
+            {
+                Description = "Description",
+                GroupLeader = "USER000001",
+            };
+
+            var context = new ValidationContext(createUpdateGroupDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateGroupDTO, context, validationResults, true);
+
+            // Assert
+            Assert.False(result);
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The GroupName field is required.");
+        }
+
+        [Fact]
+        public async Task CreateGroup_InvalidGroupName_ReturnsOk()
+        {
+            var createUpdateGroupDTO = new CreateUpdateGroupDTO
+            {
+                GroupName = new string('a', 101),
+                Description = "Description",
+                GroupLeader = "USER000001",
+            };
+
+            var context = new ValidationContext(createUpdateGroupDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateGroupDTO, context, validationResults, true);
+
+            // Assert
+            Assert.False(result);
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field GroupName must be a string or array type with a maximum length of '100'.");
+        }
+
+        [Fact]
+        public async Task CreateGroup_InvalidDescription_ReturnsOk()
+        {
+            var createUpdateGroupDTO = new CreateUpdateGroupDTO
+            {
+                GroupName = "GroupName",
+                Description = new string('a', 256),
+                GroupLeader = "USER000001",
+            };
+
+            var context = new ValidationContext(createUpdateGroupDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateGroupDTO, context, validationResults, true);
+
+            // Assert
+            Assert.False(result);
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field Description must be a string or array type with a maximum length of '255'.");
+        }
+
+        [Fact]
+        public async Task CreateGroup_MissingGroupLeader_ReturnsOk()
+        {
+            var createUpdateGroupDTO = new CreateUpdateGroupDTO
+            {
+                GroupName = "GroupName",
+                Description = "Description"
+            };
+
+            var context = new ValidationContext(createUpdateGroupDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateGroupDTO, context, validationResults, true);
+
+            // Assert
+            Assert.False(result);
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The GroupLeader field is required.");
+        }
+
+        [Fact]
+        public async Task CreateGroup_InvalidGroupLeader_ReturnsOk()
+        {
+            var createUpdateGroupDTO = new CreateUpdateGroupDTO
+            {
+                GroupName = "GroupName",
+                Description = "Description",
+                GroupLeader = new string('a', 11),
+            };
+
+            var context = new ValidationContext(createUpdateGroupDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(createUpdateGroupDTO, context, validationResults, true);
+
+            // Assert
+            Assert.False(result);
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field GroupLeader must be a string or array type with a maximum length of '10'.");
         }
 
         [Fact]

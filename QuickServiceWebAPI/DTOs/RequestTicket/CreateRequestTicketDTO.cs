@@ -20,6 +20,7 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
         public string? ServiceItemId { get; set; }
 
         [Required]
+        [EmailAddress]
         [MaxLength(100)]
         public string RequesterEmail { get; set; } = null!;
 

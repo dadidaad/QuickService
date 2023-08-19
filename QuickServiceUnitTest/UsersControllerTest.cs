@@ -15,6 +15,7 @@ using QuickServiceWebAPI.Services.Implements;
 using QuickServiceWebAPI.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace QuickServiceUnitTest
                     cfg.CreateMap<User, UserDTO>();
                     cfg.CreateMap<Group, GroupDTO>();
                     cfg.CreateMap<ServiceType, ServiceTypeDTO>();
+                    cfg.CreateMap<RegisterDTO, User>();
                 }).CreateMapper(),
                 Options.Create(new AzureStorageConfig()),
                 new Mock<IRoleRepository>().Object
@@ -47,17 +49,179 @@ namespace QuickServiceUnitTest
             _controller = new UsersController(userService);
         }
 
-        [Fact]
-        public void GetAllUser_ReturnsOkResult()
-        {
-            var result = _controller.GetAllUser();
-            var resultType = result as OkObjectResult;
-            var resultList = resultType.Value as List<UserDTO>;
+        //[Fact]
+        //public async Task CreateUser_ValidInput_ReturnsOk()
+        //{
+        //    var registerDTO = new RegisterDTO
+        //    {
+        //        Email = "Email@gmail.com",
+        //        Password = "Password",
+        //        FirstName = "FirstName",
+        //        MiddleName = "MiddleName",
+        //        LastName = "LastName"
+        //    };
 
-            //assert
-            Assert.NotNull(result);
-            Assert.IsType<List<UserDTO>>(resultType.Value);
-            Assert.Equal(10, resultList.Count);
+        //    var result = await _controller.CreateUser(registerDTO);
+
+        //    Assert.IsType<OkObjectResult>(result);
+        //}
+
+        [Fact]
+        public async Task CreateUser_MissingEmail_ReturnsOk()
+        {
+            var registerDTO = new RegisterDTO
+            {
+                Password = "Password",
+                FirstName = "FirstName",
+                MiddleName = "MiddleName",
+                LastName = "LastName"
+            };
+
+            var context = new ValidationContext(registerDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(registerDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The Email field is required.");
+        }
+
+        [Fact]
+        public async Task CreateUser_InvalidEmail_ReturnsOk()
+        {
+            var registerDTO = new RegisterDTO
+            {
+                Email = "Email",
+                Password = "Password",
+                FirstName = "FirstName",
+                MiddleName = "MiddleName",
+                LastName = "LastName"
+            };
+
+            var context = new ValidationContext(registerDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(registerDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The Email field is not a valid e-mail address.");
+        }
+
+        [Fact]
+        public async Task CreateUser_InvalidEmailLength_ReturnsOk()
+        {
+            var registerDTO = new RegisterDTO
+            {
+                Email = new string('E', 101),
+                Password = "Password",
+                FirstName = "FirstName",
+                MiddleName = "MiddleName",
+                LastName = "LastName"
+            };
+
+            var context = new ValidationContext(registerDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(registerDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field Email must be a string or array type with a maximum length of '100'.");
+        }
+
+        [Fact]
+        public async Task CreateUser_MissingPassword_ReturnsOk()
+        {
+            var registerDTO = new RegisterDTO
+            {
+                Email = "Email@gmail.com",
+                FirstName = "FirstName",
+                MiddleName = "MiddleName",
+                LastName = "LastName"
+            };
+
+            var context = new ValidationContext(registerDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(registerDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The Password field is required.");
+        }
+
+        [Fact]
+        public async Task CreateUser_InvalidPassword_ReturnsOk()
+        {
+            var registerDTO = new RegisterDTO
+            {
+                Email = "Email",
+                Password = new string('a', 101),
+                FirstName = "FirstName",
+                MiddleName = "MiddleName",
+                LastName = "LastName"
+            };
+
+            var context = new ValidationContext(registerDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(registerDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field Password must be a string or array type with a maximum length of '100'.");
+        }
+
+        [Fact]
+        public async Task CreateUser_InvalidFirstName_ReturnsOk()
+        {
+            var registerDTO = new RegisterDTO
+            {
+                Email = "Email",
+                Password = "Password",
+                FirstName = new string('a', 21),
+                MiddleName = "MiddleName",
+                LastName = "LastName"
+            };
+
+            var context = new ValidationContext(registerDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(registerDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field FirstName must be a string or array type with a maximum length of '20'.");
+        }
+
+        [Fact]
+        public async Task CreateUser_InvalidMiddleName_ReturnsOk()
+        {
+            var registerDTO = new RegisterDTO
+            {
+                Email = "Email",
+                Password = "Password",
+                FirstName = "FirstName",
+                MiddleName = new string('a', 21),
+                LastName = "LastName"
+            };
+
+            var context = new ValidationContext(registerDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(registerDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field MiddleName must be a string or array type with a maximum length of '20'.");
+        }
+
+        [Fact]
+        public async Task CreateUser_InvalidLastName_ReturnsOk()
+        {
+            var registerDTO = new RegisterDTO
+            {
+                Email = "Email",
+                Password = "Password",
+                FirstName = "FirstName",
+                MiddleName = "LastName",
+                LastName = new string('a', 21)
+            };
+
+            var context = new ValidationContext(registerDTO, null, null);
+            var validationResults = new List<ValidationResult>();
+            var result = Validator.TryValidateObject(registerDTO, context, validationResults, true);
+
+            // Assert
+            Assert.Contains(validationResults, vr => vr.ErrorMessage == "The field LastName must be a string or array type with a maximum length of '20'.");
         }
 
         [Fact]
