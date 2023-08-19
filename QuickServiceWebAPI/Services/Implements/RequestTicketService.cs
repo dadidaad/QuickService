@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.DTOs.Attachment;
+using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.ServiceItem;
 using QuickServiceWebAPI.DTOs.Sla;
@@ -25,13 +26,15 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IWorkflowAssignmentService _workflowAssignmentService;
         private readonly IRequestTicketHistoryService _requestTicketHistoryService;
         private readonly IRequestTicketHistoryRepository _requestTicketHistoryRepository;
+        private readonly IQueryRepository _queryRepository;
         public RequestTicketService(IRequestTicketRepository requestTicketRepository,
             ILogger<RequestTicketService> logger, IMapper mapper,
             IUserRepository userRepository,
             IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService,
             ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService
             , IRequestTicketHistoryService requestTicketHistoryService
-            , IRequestTicketHistoryRepository requestTicketHistoryRepository)
+            , IRequestTicketHistoryRepository requestTicketHistoryRepository,
+            IQueryRepository queryRepository)
         {
             _requestTicketRepository = requestTicketRepository;
             _logger = logger;
@@ -43,6 +46,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _workflowAssignmentService = workflowAssignmentService;
             _requestTicketHistoryService = requestTicketHistoryService;
             _requestTicketHistoryRepository = requestTicketHistoryRepository;
+            _queryRepository = queryRepository;
         }
 
         public async Task<RequestTicketDTO> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
@@ -170,15 +174,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         }
 
-        public async Task<List<RequestTicketAdminDTO>> GetRequestTicketsAdmin(string ticketType, string queryId)
-        {
-            List<RequestTicket> requestTickets = new();
 
-            if (ticketType == "all" && queryId == "none") requestTickets = _requestTicketRepository.GetRequestTicketsCustom();
-
-
-            return requestTickets.Select(x => _mapper.Map<RequestTicketAdminDTO>(x)).OrderByDescending(x => x.CreatedAt).ToList();
-        }
 
         public async Task<List<RequestTicketDTO>> GetAllListRequestTicket()
         {
@@ -371,6 +367,28 @@ namespace QuickServiceWebAPI.Services.Implements
             Slametric slametric = requestTicket.Sla.Slametrics.Where(s => requestTicket.Priority == s.Priority).FirstOrDefault();
             return isResponseDue ? requestTicket.CreatedAt + TimeSpan.FromTicks(slametric.ResponseTime)
                 : requestTicket.CreatedAt + TimeSpan.FromTicks(slametric.ResolutionTime);
+        }
+
+        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
+        {
+            var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+
+            return listTicket;
+        }
+
+        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsAdmin(string ticketType, string queryId)
+        {
+            List<RequestTicket> requestTickets = new();
+            var queryDto = new QueryDTO();
+            var query = await _queryRepository.GetQueryById(queryId);
+            if (query != null)
+            {
+                queryDto.QueryStatement = query.QueryStatement;
+                queryDto.QueryType = ticketType;
+            }
+            //if (ticketType == "all" && queryId == "none") ;
+            var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+            return listTicket;
         }
     }
 }

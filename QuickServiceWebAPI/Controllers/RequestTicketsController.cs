@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
+using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Services;
@@ -37,14 +38,6 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(await _requestTicketService.GetAllListRequestTicket());
         }
 
-
-        [Route("getticketsadmin/{ticketType?}/{queryId?}")]
-        [HttpGet]
-        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Admin)]
-        public async Task<IActionResult> GetTicketForAdmin(string ticketType, string queryId)
-        {
-            return Ok(await _requestTicketService.GetRequestTicketsAdmin(ticketType, queryId));
-        }
 
 
         [HttpGet("get/{requestTicketId}")]
@@ -89,5 +82,19 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Canceled successfully" });
         }
 
+        [Route("querytickets")]
+        [HttpPost]
+        public async Task<IActionResult> GetTicketByQuery(QueryDTO queryDTO)
+        {
+            return Ok(await _requestTicketService.GetRequestTicketsQueryAdmin(queryDTO));
+        }
+
+        [Route("getticketsadmin/{ticketType?}/{queryId?}")]
+        [HttpGet]
+        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Admin)]
+        public async Task<IActionResult> GetTicketForAdmin(string ticketType, string queryId)
+        {
+            return Ok(await _requestTicketService.GetRequestTicketsAdmin(ticketType, queryId));
+        }
     }
 }
