@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
+using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Services;
@@ -9,7 +10,7 @@ namespace QuickServiceWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class RequestTicketsController : ControllerBase
     {
         private readonly IRequestTicketService _requestTicketService;
@@ -36,13 +37,8 @@ namespace QuickServiceWebAPI.Controllers
         {
             return Ok(await _requestTicketService.GetAllListRequestTicket());
         }
-        [Route("getticketsadmin/{ticketType?}/{queryId?}")]
-        [HttpGet]
-        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
-        public async Task<IActionResult> GetTicketForAdmin(string ticketType, string queryId)
-        {
-            return Ok(await _requestTicketService.GetRequestTicketsAdmin(ticketType, queryId));
-        }
+
+
 
         [HttpGet("get/{requestTicketId}")]
         //[HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
@@ -79,12 +75,26 @@ namespace QuickServiceWebAPI.Controllers
 
         }
 
-        [HttpPut("cancel")]
+        [HttpPut("cancel/{requestTicketId}")]
         public async Task<IActionResult> CancelRequestTicketForRequester(string requestTicketId)
         {
             await _requestTicketService.CancelRequestTicket(requestTicketId);
             return Ok(new { message = "Canceled successfully" });
         }
 
+        [Route("querytickets")]
+        [HttpPost]
+        public async Task<IActionResult> GetTicketByQuery(QueryDTO queryDTO)
+        {
+            return Ok(await _requestTicketService.GetRequestTicketsQueryAdmin(queryDTO));
+        }
+
+        [Route("getticketsadmin/{ticketType?}/{queryId?}")]
+        [HttpGet]
+        //[HasPermission(PermissionEnum.ManageTickets, RoleType.Admin)]
+        public async Task<IActionResult> GetTicketForAdmin(string ticketType, string queryId)
+        {
+            return Ok(await _requestTicketService.GetRequestTicketsAdmin(ticketType, queryId));
+        }
     }
 }

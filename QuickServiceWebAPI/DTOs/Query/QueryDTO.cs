@@ -1,18 +1,20 @@
-﻿namespace QuickServiceWebAPI.DTOs.Query
+﻿using QuickServiceWebAPI.DTOs.User;
+
+namespace QuickServiceWebAPI.DTOs.Query
 {
     public class QueryDTO
     {
-        public string? OrderyBy { get; set; }
-        public bool? OrderASC { get; set; }
-        public string[]? Priority { get; set; }
-        public string[]? Status { get; set; }        
-        public string[]? RequestType { get; set; }                           
-        public string[]? Service { get; set; }
-        public string[]? Assignee { get; set; }
-        public string[]? Reporter { get; set; }
-        public string[]? Group { get; set; }
-        public string? Description { get; set; }
-        public DateTime? CreateTo { get; set; }
-        public DateTime? CreateFrom { get; set; }     
+        public string? QueryId { get; set; } = null!;
+
+        public string? QueryName { get; set; }
+
+        public string? QueryStatement { get; set; }
+
+        public bool? IsTeamQuery { get; set; }
+
+        public string? UserId { get; set; }
+        public string? QueryType { get; set; }
+
+        public virtual UserDTO? UserEntity { get; set; }
     }
 }
