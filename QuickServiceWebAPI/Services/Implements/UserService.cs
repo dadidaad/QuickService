@@ -117,7 +117,7 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.UpdateUser(existingUser, updateUser);
         }
 
-        private async Task<string?> GetPathImpageUpload(IFormFile image, string userId, string container)
+        protected virtual async Task<string?> GetPathImpageUpload(IFormFile image, string userId, string container)
         {
             if (image != null && CloudHelper.IsImage(image))
             {
