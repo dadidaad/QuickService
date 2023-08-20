@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickServiceUnitTest", "Qui
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B31AA305-3417-4B6A-A160-BE836408A3EC}"
 	ProjectSection(SolutionItems) = preProject
+		GetProfile.dgml = GetProfile.dgml
 		Graph1.dgml = Graph1.dgml
+		Login.dgml = Login.dgml
 	EndProjectSection
 EndProject
 Global

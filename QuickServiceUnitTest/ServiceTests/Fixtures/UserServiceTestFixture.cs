@@ -52,7 +52,7 @@ namespace QuickServiceUnitTest.ServiceTests.Fixtures
         }
 
     }
-    [CollectionDefinition("UserServiceTests")]
+    [CollectionDefinition("UserServiceTest")]
     public class UserServiceCollection : ICollectionFixture<UserServiceTestFixture>
     {
     }
