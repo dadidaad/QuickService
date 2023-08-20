@@ -34,9 +34,9 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 ServiceItem serviceItem = await _context.ServiceItems
+                                        .AsNoTracking()
                     .Include(s => s.Workflow)
                     .Include(s => s.ServiceCategory)
-                    .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.ServiceItemId == serviceItemId);
                 return serviceItem;
             }
@@ -92,7 +92,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.ServiceItems.OrderByDescending(u => u.ServiceItemId).FirstOrDefaultAsync();
+                return await _context.ServiceItems.AsNoTracking().Include(s => s.Workflow)
+                    .Include(s => s.ServiceCategory).OrderByDescending(u => u.ServiceItemId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
