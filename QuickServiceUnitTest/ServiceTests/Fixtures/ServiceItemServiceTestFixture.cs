@@ -50,6 +50,4 @@ namespace QuickServiceUnitTest.ServiceTests.Fixtures
         {
         }
     }
-
-
 }

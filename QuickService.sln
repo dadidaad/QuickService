@@ -7,12 +7,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickServiceWebAPI", "Quick
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickServiceUnitTest", "QuickServiceUnitTest\QuickServiceUnitTest.csproj", "{D7ABD32E-164F-4D36-B60A-A5D71DFB4927}"
 EndProject
+<<<<<<< Updated upstream
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B31AA305-3417-4B6A-A160-BE836408A3EC}"
 	ProjectSection(SolutionItems) = preProject
 		GetProfile.dgml = GetProfile.dgml
 		Graph1.dgml = Graph1.dgml
 		Login.dgml = Login.dgml
 	EndProjectSection
+=======
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickServiceUnitTestForRepos", "QuickServiceUnitTestForRepos\QuickServiceUnitTestForRepos.csproj", "{D8D1303F-1C16-438F-BB11-891BDE880FC3}"
+>>>>>>> Stashed changes
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +32,10 @@ Global
 		{D7ABD32E-164F-4D36-B60A-A5D71DFB4927}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7ABD32E-164F-4D36-B60A-A5D71DFB4927}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7ABD32E-164F-4D36-B60A-A5D71DFB4927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8D1303F-1C16-438F-BB11-891BDE880FC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8D1303F-1C16-438F-BB11-891BDE880FC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8D1303F-1C16-438F-BB11-891BDE880FC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8D1303F-1C16-438F-BB11-891BDE880FC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

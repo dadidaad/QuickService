@@ -1,8 +1,10 @@
 ﻿using Moq;
 using QuickServiceUnitTest.ServiceTests.Fixtures;
+using QuickServiceWebAPI.DTOs.Role;
 using QuickServiceWebAPI.DTOs.ServiceItem;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Services.Implements;
 using QuickServiceWebAPI.Utilities;
 using System;
@@ -58,18 +60,18 @@ namespace QuickServiceUnitTest.ServiceTests
             // Arrange
             var serviceItemService = _fixture.ServiceItemService;
 
-            var serviceCategory = new ServiceCategory
-            {
-                ServiceCategoryId = "ABC"
-            };
-
             var createUpdateServiceItemDTO = new CreateUpdateServiceItemDTO
             {
-                ServiceCategoryId = serviceCategory.ServiceCategoryId
+                ServiceCategoryId = null
             };
 
-            _fixture.MockServiceCategoryRepository.Setup(repo => repo.GetServiceCategoryById(It.IsAny<string>())).ReturnsAsync((ServiceCategory?)null);
+            _fixture.MockServiceCategoryRepository.Setup(repo => repo.GetServiceCategoryById(It.IsAny<string>()))
+                 .ReturnsAsync((ServiceCategory)null);
 
+            _fixture.MockMapper.Setup(mapper => mapper.Map<ServiceItem>(It.IsAny<CreateUpdateServiceItemDTO>())).Returns(new ServiceItem());
+            _fixture.MockMapper.Setup(mapper => mapper.Map<ServiceItem>(createUpdateServiceItemDTO)).Returns(new ServiceItem());
+
+            // Act and Assert
             await Assert.ThrowsAsync<AppException>(async () => await serviceItemService.CreateServiceItem(createUpdateServiceItemDTO));
         }
 

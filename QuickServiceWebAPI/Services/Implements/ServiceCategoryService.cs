@@ -59,6 +59,10 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task DeleteServiceCategory(string serviceCategoryId)
         {
             var serviceCategory = await _repository.GetServiceCategoryById(serviceCategoryId);
+            if (serviceCategory == null)
+            {
+                throw new AppException("ServiceCategory not found");
+            }
             await _repository.DeleteServiceCategory(serviceCategory);
         }
         public async Task<string> GetNextId()
