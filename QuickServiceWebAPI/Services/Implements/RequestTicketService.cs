@@ -369,26 +369,26 @@ namespace QuickServiceWebAPI.Services.Implements
                 : requestTicket.CreatedAt + TimeSpan.FromTicks(slametric.ResolutionTime);
         }
 
-        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
-        {
-            var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+        //public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
+        //{
+        //    var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
 
-            return listTicket;
-        }
+        //    return listTicket;
+        //}
 
-        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsAdmin(string ticketType, string queryId)
-        {
-            List<RequestTicket> requestTickets = new();
-            var queryDto = new QueryDTO();
-            var query = await _queryRepository.GetQueryById(queryId);
-            if (query != null)
-            {
-                queryDto.QueryStatement = query.QueryStatement;
-                queryDto.QueryType = ticketType;
-            }
-            //if (ticketType == "all" && queryId == "none") ;
-            var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
-            return listTicket;
-        }
+        //public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsAdmin(string ticketType, string queryId)
+        //{
+        //    List<RequestTicket> requestTickets = new();
+        //    var queryDto = new QueryDTO();
+        //    var query = await _queryRepository.GetQueryById(queryId);
+        //    if (query != null)
+        //    {
+        //        queryDto.QueryStatement = query.QueryStatement;
+        //        queryDto.QueryType = ticketType;
+        //    }
+        //    //if (ticketType == "all" && queryId == "none") ;
+        //    var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+        //    return listTicket;
+        //}
     }
 }

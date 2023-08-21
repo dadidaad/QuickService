@@ -63,11 +63,11 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Group not found");
             }
-            if (_customFieldRepository.GetCustomFieldById(createUpdateRequestTicketExtDTO.FieldId) == null)
+            if (await _customFieldRepository.GetCustomFieldById(createUpdateRequestTicketExtDTO.FieldId) == null)
             {
                 throw new AppException("Customer field with id " + createUpdateRequestTicketExtDTO.FieldId + " not found");
             }
-            if (_requestTicketRepository.GetRequestTicketById(createUpdateRequestTicketExtDTO.TicketId) == null)
+            if (await _requestTicketRepository.GetRequestTicketById(createUpdateRequestTicketExtDTO.TicketId) == null)
             {
                 throw new AppException("Request ticket with id " + createUpdateRequestTicketExtDTO.TicketId + " not found");
             }
