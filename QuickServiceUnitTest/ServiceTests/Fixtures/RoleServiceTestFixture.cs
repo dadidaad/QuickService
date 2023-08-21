@@ -37,5 +37,10 @@ namespace QuickServiceUnitTest.ServiceTests.Fixtures
                MockPermissionRepository.Object
             );
         }
+
+        [CollectionDefinition("RoleServiceTest")]
+        public class RoleServiceCollection : ICollectionFixture<RoleServiceTestFixture>
+        {
+        }
     }
 }

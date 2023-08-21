@@ -34,6 +34,18 @@ namespace QuickServiceUnitTest.ServiceTests
                 Condition = true
             };
 
+            var FromWorkflowTask = new WorkflowTask
+            {
+                WorkflowTaskId = create.FromWorkflowTask
+            };
+
+            var ToWorkflowTask = new WorkflowTask
+            {
+                WorkflowTaskId = create.ToWorkflowTask
+            };
+
+            _fixture.MockIIWorkflowTaskRepository.Setup(repo => repo.GetWorkflowTaskById(It.IsAny<string>())).ReturnsAsync((WorkflowTask?)FromWorkflowTask);
+            _fixture.MockIIWorkflowTaskRepository.Setup(repo => repo.GetWorkflowTaskById(It.IsAny<string>())).ReturnsAsync((WorkflowTask?)ToWorkflowTask);
             _fixture.MockMapper.Setup(mapper => mapper.Map<WorkflowTransition>(It.IsAny<CreateWorkflowTransitionDTO>())).Returns(new WorkflowTransition());
             _fixture.MockMapper.Setup(mapper => mapper.Map<WorkflowTransition>(create)).Returns(new WorkflowTransition());
 
@@ -61,7 +73,7 @@ namespace QuickServiceUnitTest.ServiceTests
             };
 
             _fixture.MockMapper.Setup(mapper => mapper.Map<WorkflowTransition>(It.IsAny<CreateWorkflowTransitionDTO>())).Returns(new WorkflowTransition());
-            _fixture.MockMapper.Setup(mapper => mapper.Map<WorkflowTransition>(create)).Returns(new WorkflowTransition());
+            _fixture.MockMapper.Setup(mapper => mapper.Map<WorkflowTransition>(create.FromWorkflowTask)).Returns(new WorkflowTransition());
 
             _fixture.MockMapper.Setup(mapper => mapper.Map<WorkflowTransition>(It.IsAny<CreateWorkflowTransitionDTO>())).Returns(new WorkflowTransition());
 

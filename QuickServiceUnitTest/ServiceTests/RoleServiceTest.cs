@@ -55,7 +55,6 @@ namespace QuickServiceUnitTest.ServiceTests
                 Description = "Role Description Test Valid Input",
                 RoleType = 0
             };
-
             _fixture.MockMapper.Setup(mapper => mapper.Map<Role>(It.IsAny<CreateDTO>())).Returns(new Role());
             _fixture.MockMapper.Setup(mapper => mapper.Map<Role>(createDTO)).Returns(new Role());
             _fixture.MockMapper.Setup(mapper => mapper.Map<Role>(It.IsAny<CreateDTO>())).Returns(new Role { Permissions = permissions });

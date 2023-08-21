@@ -161,7 +161,7 @@ namespace QuickServiceUnitTest.ServiceTests
         }
 
         [Fact]
-        public async Task UpdateUser_UserNotFound_ThrowsAppException()
+        public async Task UpdateRequestTicket_RequestTicketNotFound_ThrowsAppException()
         {
 
             var requestTicketService = _fixture.RequestTicketService;

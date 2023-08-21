@@ -81,27 +81,30 @@ namespace QuickServiceUnitTest.ServiceTests
                 {
                         new PermissionDTO{ PermissionId="ROLE000001", PermissionName="Permission", IsGranted=true },
                 };
-            var createUpdatePermissionDTO = new UpdatePermissionsDTO
-            {
-                RoleId = "ROLE000001",
-                Permissions = permissions,
-                // Other properties
-            };
-            
             var existingRole = new Role
             {
                 RoleId = "ROLE000001",
                 // Other properties
             };
+
+            var createUpdatePermissionDTO = new UpdatePermissionsDTO
+            {
+                RoleId = existingRole.RoleId,
+                Permissions = permissions,
+                // Other properties
+            };
+            
+            
             var exPermission = new Permission
             {
                 PermissionId = "PER00001",
                 PermissionName = "Permission1"
+                               
             };
             var updatePermission = new Permission
             {
-                PermissionId = "PER00001",
-                PermissionName = "Permission2"
+                PermissionId = "PER00002",
+                PermissionName = "Permission2"               
             };
             var groupId = "GROU000001";
             _fixture.MockRoleRepository.Setup(repo => repo.GetRoleById(It.IsAny<string>()))

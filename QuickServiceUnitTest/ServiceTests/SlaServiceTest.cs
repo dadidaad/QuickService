@@ -126,27 +126,26 @@ namespace QuickServiceUnitTest.ServiceTests
             
             var slaDelete = new Sla
             {
-                Slaid = "SELA000001",
-                Slaname = "Default SLA policy",
-                Description = "Default policy"
+                //Slaid = "SELA000001",
+                //Slaname = "Default SLA policy",
+                //Description = "Default policy"
                 // Initialize properties
             };
-            var sla = new Sla
-            {
-                Slaid = "SELA000001"
-            };
+
             var slaMetric = new Slametric
             {
                 SlametricId = "SLAM000001"
             };
             _fixture.MockSlaRepository.Setup(repo => repo.GetSLAById(id))
                 .ReturnsAsync(slaDelete);
-            _fixture.MockSlametricRepository.Setup(repo => repo.DeleteSlaMetricsOfSla(sla));
+            _fixture.MockSlametricRepository.Setup(repo => repo.DeleteSlaMetricsOfSla(slaDelete));
             // Act
             await _fixture.SlaService.DeleteSLA(id);
 
             // Assert
-            _fixture.MockSlaRepository.Verify(repo => repo.DeleteSLA(sla), Times.Once);
+            _fixture.MockSlametricRepository.Verify(
+               service => service.DeleteSlaMetricsOfSla(slaDelete), Times.Once);
+            _fixture.MockSlaRepository.Verify(repo => repo.DeleteSLA(slaDelete), Times.Once);
         }
     }
 }

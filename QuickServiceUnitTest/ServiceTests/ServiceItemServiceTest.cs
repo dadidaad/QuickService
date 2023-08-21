@@ -66,7 +66,7 @@ namespace QuickServiceUnitTest.ServiceTests
             };
 
             _fixture.MockServiceCategoryRepository.Setup(repo => repo.GetServiceCategoryById(It.IsAny<string>()))
-                 .ReturnsAsync((ServiceCategory)null);
+                 .ReturnsAsync((ServiceCategory?)null);
 
             _fixture.MockMapper.Setup(mapper => mapper.Map<ServiceItem>(It.IsAny<CreateUpdateServiceItemDTO>())).Returns(new ServiceItem());
             _fixture.MockMapper.Setup(mapper => mapper.Map<ServiceItem>(createUpdateServiceItemDTO)).Returns(new ServiceItem());
