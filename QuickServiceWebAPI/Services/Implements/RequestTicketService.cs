@@ -390,5 +390,11 @@ namespace QuickServiceWebAPI.Services.Implements
             var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
             return listTicket;
         }
+
+        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsFilterUser(QueryConfigDTO queryDto)
+        {
+            var listTicket = await _requestTicketRepository.GetRequestTicketsFilterUser(queryDto);
+            return listTicket;
+        }
     }
 }

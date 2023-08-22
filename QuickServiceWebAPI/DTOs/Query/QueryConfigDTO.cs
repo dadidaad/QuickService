@@ -4,6 +4,7 @@
     {
         public string? OrderyBy { get; set; }
         public bool? OrderASC { get; set; }
+        public bool? IsIncident { get; set; }
         public string[]? Priority { get; set; }
         public string[]? Status { get; set; }        
         public string[]? RequestType { get; set; }                           

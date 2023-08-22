@@ -206,45 +206,39 @@ namespace QuickServiceWebAPI.Repositories.Implements
             return Task.FromResult(listTicketsDto);
         }
 
+        public Task<List<TicketQueryAdminDTO>> GetRequestTicketsFilterUser(QueryConfigDTO queryDto)
+        {
+            var listTicketsDto = new List<TicketQueryAdminDTO>();
+            var listTickets = _context.RequestTickets.Include(g => g.AssignedToGroupNavigation)
+                    .Include(u => u.AssignedToNavigation)
+                    .Include(a => a.Attachment)
+                    .Include(r => r.Requester)
+                    .Include(s => s.ServiceItem).ThenInclude(sc => sc.ServiceCategory)
+                    .Include(sl => sl.Sla)
+                    .ThenInclude(slm => slm.Slametrics)
+                    .Where(x =>
+                        x.IsIncident == queryDto.IsIncident &&
+                        (string.IsNullOrEmpty(queryDto.TitleSearch) || (x.Title != null && x.Title.Contains(queryDto.TitleSearch))) &&
+                        (queryDto.CreatedFrom == null || x.CreatedAt >= queryDto.CreatedFrom) &&
+                        (queryDto.CreatedTo == null || x.CreatedAt <= queryDto.CreatedTo)
+                        && (queryDto.Service == null || queryDto.Service.Length == 0 || (x.ServiceItem != null && queryDto.Service.Contains(x.ServiceItem.ServiceCategoryId)))
+                        && (queryDto.RequestType == null || queryDto.RequestType.Length == 0 || (x.ServiceItem != null && queryDto.RequestType.Contains(x.ServiceItem.ServiceItemId)))
+                        && (queryDto.Status == null || queryDto.Status.Length == 0 || queryDto.Status.Contains(x.Status))
+                       ).ToList();
 
-        //public string TicketId { get; set; } = null!;
-
-        //public string Title { get; set; } = null!;
-        //public string ServiceCategoryId { get; set; } = null!;
-
-        //public string ServiceCategoryName { get; set; } = null!;
-
-        //public string ServiceItemId { get; set; } = null!;
-
-        //public string ServiceItemName { get; set; } = null!;
-
-        //public string GroupId { get; set; } = null!;
-
-        //public string GroupName { get; set; } = null!;
-        //public string RequesterId { get; set; } = null!;
-
-        //public string? RequesterFullName { get; set; }
-
-        //public string AssigneeId { get; set; } = null!;
-
-        //public string? AssigneeFullName { get; set; }
-
-        //public string Status { get; set; } = null!;
-
-        //public DateTime CreatedAt { get; set; }
-        //public string Priority { get; set; } = null!;
-
-        //public string? OrderyBy { get; set; }
-        //public bool? OrderASC { get; set; }
-        //public string[]? Priority { get; set; }
-        //public string[]? Status { get; set; }
-        //public string[]? RequestType { get; set; }
-        //public string[]? Service { get; set; }
-        //public string[]? Assignee { get; set; }
-        //public string[]? Reporter { get; set; }
-        //public string[]? Group { get; set; }
-        //public string? TitleSearch { get; set; }
-        //public DateTime? CreatedTo { get; set; }
-        //public DateTime? CreatedFrom { get; set; }
+            listTicketsDto = listTickets.Select(q => new TicketQueryAdminDTO()
+                       {
+                           TicketId = q.RequestTicketId,
+                           Title = q.Title,
+                           IsIncident = q.IsIncident,
+                           ServiceCategoryId = q.ServiceItem != null ? q.ServiceItem.ServiceCategory.ServiceCategoryId : null,
+                           ServiceCategoryName = q.ServiceItem != null ? q.ServiceItem.ServiceCategory.ServiceCategoryName : null,
+                           ServiceItemId = q.ServiceItem != null ? q.ServiceItem.ServiceItemId : null,
+                           ServiceItemName = q.ServiceItem != null ? q.ServiceItem.ServiceItemName : null,                                                  
+                           Status = q.Status,
+                           CreatedAt = q.CreatedAt,
+                       }).Take(1000).ToList();
+            return Task.FromResult(listTicketsDto);
+        }
     }
 }

@@ -16,5 +16,6 @@ namespace QuickServiceWebAPI.Repositories
         public List<RequestTicket> GetRequestTicketsForRequester(string requester);
 
         public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
+        public Task<List<TicketQueryAdminDTO>> GetRequestTicketsFilterUser(QueryConfigDTO queryDto);
     }
 }
