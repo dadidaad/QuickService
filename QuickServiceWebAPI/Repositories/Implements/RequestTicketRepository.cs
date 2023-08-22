@@ -218,6 +218,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .ThenInclude(slm => slm.Slametrics)
                     .Where(x =>
                         x.IsIncident == queryDto.IsIncident &&
+                        (queryDto.Reporter == null || queryDto.Reporter.Length == 0 || queryDto.Reporter.Contains(x.RequesterId)) &&
                         (string.IsNullOrEmpty(queryDto.TitleSearch) || (x.Title != null && x.Title.Contains(queryDto.TitleSearch))) &&
                         (queryDto.CreatedFrom == null || x.CreatedAt >= queryDto.CreatedFrom) &&
                         (queryDto.CreatedTo == null || x.CreatedAt <= queryDto.CreatedTo)
