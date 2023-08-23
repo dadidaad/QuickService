@@ -88,7 +88,13 @@ namespace QuickServiceWebAPI.Controllers
         {
             return Ok(await _requestTicketService.GetRequestTicketsQueryAdmin(queryDTO));
         }
-
+        [Route("filtertickets")]
+        [HttpPost]
+        public async Task<IActionResult> GetTicketByQuery(QueryConfigDTO queryConfigDTO)
+        {
+            return Ok(await _requestTicketService.GetRequestTicketsFilterUser(queryConfigDTO));
+        }
+        
         [Route("getticketsadmin/{ticketType?}/{queryId?}")]
         [HttpGet]
         //[HasPermission(PermissionEnum.ManageTickets, RoleType.Admin)]
