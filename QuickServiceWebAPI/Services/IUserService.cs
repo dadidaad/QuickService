@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.Services
         public Task UpdateUser(UpdateUserDTO updateDTO);
         public Task<AuthenticateResponseDTO> Authenticate(AuthenticateRequestDTO authenticateRequestDTO);
         public Task<UserDTO> GetUserById(string userId);
-        public Task<User> DeactiveUser(string userId);
+        public Task DeactiveUser(string userId);
         public List<UserDTO> GetUsers();
         public Task AssignRole(AssignRoleDTO assignRoleDTO);
         public Task ChangePassword(ChangePasswordDTO changePasswordDTO);
