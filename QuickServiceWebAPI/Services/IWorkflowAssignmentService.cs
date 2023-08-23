@@ -1,4 +1,5 @@
-﻿using QuickServiceWebAPI.DTOs.WorkflowAssignment;
+﻿using QuickServiceWebAPI.DTOs.User;
+using QuickServiceWebAPI.DTOs.WorkflowAssignment;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 
@@ -6,7 +7,7 @@ namespace QuickServiceWebAPI.Services
 {
     public interface IWorkflowAssignmentService
     {
-        public Task AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO);
+        public Task<UserDTO> AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO);
 
         public Task AssignWorkflow(RequestTicket requestTicket, string? currentTaskId);
 
