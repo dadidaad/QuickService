@@ -92,7 +92,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [Authorize]
-        [HttpGet("search")]
+        [HttpPost("search")]
         public async Task<IActionResult> SearchUser(ContainStringDTO containStringDTO)
         {
             return Ok(await _userService.GetUserByContainString(containStringDTO));

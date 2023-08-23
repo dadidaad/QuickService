@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Data.Common;
+using System.Data;
+using System.Dynamic;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace QuickServiceWebAPI.Utilities
@@ -45,6 +49,36 @@ namespace QuickServiceWebAPI.Utilities
                 throw new ArgumentNullException("predicate", "predicate is null.");
 
             source.Where(predicate).ToList().ForEach(e => source.Remove(e));
+        }
+
+        public static IEnumerable<dynamic> DynamicListFromSql(this DbContext db, string Sql, Dictionary<string, object> Params)
+        {
+            using (var cmd = db.Database.GetDbConnection().CreateCommand())
+            {
+                cmd.CommandText = Sql;
+                if (cmd.Connection.State != ConnectionState.Open) { cmd.Connection.Open(); }
+
+                foreach (KeyValuePair<string, object> p in Params)
+                {
+                    DbParameter dbParameter = cmd.CreateParameter();
+                    dbParameter.ParameterName = p.Key;
+                    dbParameter.Value = p.Value;
+                    cmd.Parameters.Add(dbParameter);
+                }
+
+                using (var dataReader = cmd.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        var row = new ExpandoObject() as IDictionary<string, object>;
+                        for (var fieldCount = 0; fieldCount < dataReader.FieldCount; fieldCount++)
+                        {
+                            row.Add(dataReader.GetName(fieldCount), dataReader[fieldCount]);
+                        }
+                        yield return row;
+                    }
+                }
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
+using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -290,6 +292,49 @@ namespace QuickServiceWebAPI.Repositories.Implements
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task<List<dynamic>> CountRequestTicketByDay(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                IQueryable<RequestTicket> query = _context.RequestTickets;
+                var groupedQuery = await query.GroupBy(q => q.CreatedAt.Date)
+                    .OrderByDescending(c => c.Key)
+                     .Select(grp => new
+                     {
+                         Date = grp.Key,
+                         TotalCreated = grp.Count(),
+                         TotalResolved = grp
+                                .Where(g => (g.Status == StatusEnum.Resolved.ToString()
+                                || g.Status == StatusEnum.Closed.ToString()) && g.State == StateEnum.Normal.ToString())
+                                .Count(),
+                         ServiceItem = (string)null
+                     }).Where(q => q.Date >= fromDate && q.Date <= toDate).ToListAsync<dynamic>();
+                return groupedQuery;
+            }
+            catch (Exception Ex)
+            {
+                _logger.LogError(Ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task<List<dynamic>> CountRequestTicketByDayAndServiceItem(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                var groupedQuery = EnumerableUtils
+                    .DynamicListFromSql(_context,
+                    "EXEC [QuickServices].[GetGroupedData] @fromDate, @toDate",
+                    new Dictionary<string, object> { { "fromDate", fromDate }, { "toDate", toDate } });
+                return groupedQuery.ToList();
+            }
+            catch (Exception Ex)
+            {
+                _logger.LogError(Ex, "An error occurred");
                 throw;
             }
         }

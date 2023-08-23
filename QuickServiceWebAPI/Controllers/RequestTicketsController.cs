@@ -102,5 +102,8 @@ namespace QuickServiceWebAPI.Controllers
         {
             return Ok(await _requestTicketService.GetRequestTicketsAdmin(ticketType, queryId));
         }
+
+
+
     }
 }

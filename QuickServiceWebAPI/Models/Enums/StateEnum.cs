@@ -7,6 +7,7 @@ namespace QuickServiceWebAPI.Models.Enums
         New,
         Normal,
         OverdueResponseTime,
-        OverdueResolutionTime
+        OverdueResolutionTime,
+        Cancel
     }
 }
