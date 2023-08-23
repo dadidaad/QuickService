@@ -90,5 +90,12 @@ namespace QuickServiceWebAPI.Controllers
             await _userService.DeactiveUser(userId);
             return Ok(new { message = "Deactive user successfully" });
         }
+
+        [Authorize]
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUser(ContainStringDTO containStringDTO)
+        {
+            return Ok(await _userService.GetUserByContainString(containStringDTO));
+        }
     }
 }

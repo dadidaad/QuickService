@@ -83,6 +83,27 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        public async Task<List<User>> GetUsersByContainString(string containStr, string? groupId)
+        {
+            try
+            {
+                IQueryable<User> query = _context.Users.Include(u => u.Groups);
+                if (!string.IsNullOrEmpty(groupId))
+                {
+                    query = query.Where(u => u.Groups.Any(u => u.GroupId == groupId));
+                }
+
+                query =  query.Where(u => u.Email.Contains(containStr)
+                || string.Concat(u.FirstName, " ", u.MiddleName, " ", u.LastName).Contains(containStr));
+                return await query.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving user");
+                throw; // Rethrow the exception to propagate it up the call stack if necessary
+            }
+        }
+
         public async Task UpdateUser(User existingUser, User updateUser)
         {
             try

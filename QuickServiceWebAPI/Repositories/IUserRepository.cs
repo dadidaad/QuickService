@@ -10,5 +10,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task AddUser(User user);
         public Task UpdateUser(User existingUser, User updateUser);
         public Task<User> GetLastUser();
+        public Task<List<User>> GetUsersByContainString(string containStr, string? groupId);
     }
 }

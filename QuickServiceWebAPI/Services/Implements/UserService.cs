@@ -234,5 +234,11 @@ namespace QuickServiceWebAPI.Services.Implements
             updateUser.Password = newHassPassword;
             await _repository.UpdateUser(existingUser, updateUser);
         }
+
+        public async Task<List<UserDTO>> GetUserByContainString(ContainStringDTO containStringDTO)
+        {
+            var listUserRelated = await _repository.GetUsersByContainString(containStringDTO.containStr, containStringDTO.GroupId);
+            return _mapper.Map<List<UserDTO>>(listUserRelated);
+        }
     }
 }
