@@ -311,7 +311,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                                 .Where(g => (g.Status == StatusEnum.Resolved.ToString()
                                 || g.Status == StatusEnum.Closed.ToString()) && g.State == StateEnum.Normal.ToString())
                                 .Count(),
-                         ServiceItem = (string)null
+                         ServiceItemName = (string)null
                      }).Where(q => q.Date >= fromDate && q.Date <= toDate).ToListAsync<dynamic>();
                 return groupedQuery;
             }
