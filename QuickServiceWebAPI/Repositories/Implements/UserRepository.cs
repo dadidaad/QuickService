@@ -60,7 +60,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.Include(u => u.Groups).Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
+                User user = await _context.Users.Include(u => u.GroupsNavigation).Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
                 return user;
             }
             catch (Exception ex)
@@ -87,10 +87,10 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                IQueryable<User> query = _context.Users.Include(u => u.Groups);
+                IQueryable<User> query = _context.Users.Include(u => u.GroupsNavigation);
                 if (!string.IsNullOrEmpty(groupId))
                 {
-                    query = query.Where(u => u.Groups.Any(u => u.GroupId == groupId));
+                    query = query.Where(u => u.GroupsNavigation.Any(u => u.GroupId == groupId));
                 }
 
                 query =  query.Where(u => u.Email.Contains(containStr)

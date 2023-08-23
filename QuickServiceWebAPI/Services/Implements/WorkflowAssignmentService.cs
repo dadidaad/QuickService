@@ -235,7 +235,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var currentWorkflowTask = await _workflowTaskRepository.GetWorkflowTaskById(workflowAssignment.CurrentTaskId);
             if (currentWorkflowTask.GroupId != null)
             {
-                if (!user.Groups.Any(g => g.GroupId == currentWorkflowTask.GroupId))
+                if (!user.GroupsNavigation.Any(g => g.GroupId == currentWorkflowTask.GroupId))
                 {
                     throw new AppException($"User with id {assignTaskToAgentDTO.AssigneeId} not in group assign");
                 }

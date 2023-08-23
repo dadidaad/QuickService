@@ -110,6 +110,10 @@ namespace QuickServiceWebAPI.Services.Implements
                     throw new AppException($"Group with id {createUpdateWorkflowTaskDTO.GroupId} not found");
                 }
             }
+            else if(string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId) && string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
+            {
+
+            }
             else
             {
                 throw new AppException($"Only accept group or assignee");
