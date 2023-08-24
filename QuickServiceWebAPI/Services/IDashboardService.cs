@@ -1,4 +1,6 @@
-﻿namespace QuickServiceWebAPI.Services
+﻿using QuickServiceWebAPI.DTOs.Dashboard;
+
+namespace QuickServiceWebAPI.Services
 {
     public interface IDashboardService
     {
@@ -15,5 +17,6 @@
         public Task<Dictionary<string, int>> GetRequestTicketByStatusCount();
         public Task<Dictionary<string, int>> GetRequestTicketByPriorityCount();
         public Task<Dictionary<string, int>> GetRequestTicketByServiceCategoryCount();
+        public Task<List<CountRequestTicketByDayDTO>> CountRequestTicketByDay(CountByDayDTO countByDayDTO);
     }
 }

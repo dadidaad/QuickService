@@ -38,8 +38,7 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("assign")]
         public async Task<IActionResult> AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO)
         {
-            await _workflowAssignmentService.AssignTaskToAgent(assignTaskToAgentDTO);
-            return Ok(new { message = "Assign successfully" });
+            return Ok(new { message = "Assign successfully", UserDTO = await _workflowAssignmentService.AssignTaskToAgent(assignTaskToAgentDTO)});
         }
     }
 }

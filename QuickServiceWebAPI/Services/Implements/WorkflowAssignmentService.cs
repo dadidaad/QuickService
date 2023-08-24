@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.RequestTicket;
+using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.DTOs.WorkflowAssignment;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
@@ -220,7 +221,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return StatusMapping.ContainsKey(statusEnum);
         }
 
-        public async Task AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO)
+        public async Task<UserDTO> AssignTaskToAgent(AssignTaskToAgentDTO assignTaskToAgentDTO)
         {
             var workflowAssignment = await _repository.GetWorkflowAssignmentByWorkflowAssignmentId(assignTaskToAgentDTO.WorkflowAssignmentId);
             if (workflowAssignment == null)
@@ -235,7 +236,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var currentWorkflowTask = await _workflowTaskRepository.GetWorkflowTaskById(workflowAssignment.CurrentTaskId);
             if (currentWorkflowTask.GroupId != null)
             {
-                if (!user.Groups.Any(g => g.GroupId == currentWorkflowTask.GroupId))
+                if (!user.GroupsNavigation.Any(g => g.GroupId == currentWorkflowTask.GroupId))
                 {
                     throw new AppException($"User with id {assignTaskToAgentDTO.AssigneeId} not in group assign");
                 }
@@ -255,6 +256,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 UserId = requestTicket.AssignedTo
             };
             await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            return _mapper.Map<UserDTO>(user);
         }
     }
 }

@@ -82,5 +82,20 @@ namespace QuickServiceWebAPI.Controllers
             await _userService.ResetPassword(resetPasswordDTO);
             return Ok(new { message = "Reset password successfully" });
         }
+
+        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
+        [HttpPost("deactive")]
+        public async Task<IActionResult> DeactiveUser(string userId)
+        {
+            await _userService.DeactiveUser(userId);
+            return Ok(new { message = "Deactive user successfully" });
+        }
+
+        [Authorize]
+        [HttpPost("search")]
+        public async Task<IActionResult> SearchUser(ContainStringDTO containStringDTO)
+        {
+            return Ok(await _userService.GetUserByContainString(containStringDTO));
+        }
     }
 }

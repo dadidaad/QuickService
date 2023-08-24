@@ -350,6 +350,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException($"Request ticket with id {requestTicketId} not found");
             }
             requestTicket.Status = StatusEnum.Canceled.ToString();
+            requestTicket.State = StateEnum.Cancel.ToString();
             await _requestTicketRepository.UpdateRequestTicket(requestTicket);
             var history = new RequestTicketHistory();
             history.Content = $"Request canceled request ticket";
@@ -375,6 +376,10 @@ namespace QuickServiceWebAPI.Services.Implements
 
         private async Task HandleStateForRequestTicket(RequestTicket requestTicket)
         {
+            if(requestTicket.State == StateEnum.Cancel.ToString())
+            {
+                return;
+            }
             var responseTime = CalculateDatetime(requestTicket, true);
             var resolutionTime = CalculateDatetime(requestTicket, false);
             if ((requestTicket.LastUpdateAt <= resolutionTime && requestTicket.LastUpdateAt != null)
@@ -457,6 +462,12 @@ namespace QuickServiceWebAPI.Services.Implements
                     break;
             }
             //var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+            return listTicket;
+        }
+
+        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsFilterUser(QueryConfigDTO queryDto)
+        {
+            var listTicket = await _requestTicketRepository.GetRequestTicketsFilterUser(queryDto);
             return listTicket;
         }
     }

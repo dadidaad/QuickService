@@ -41,9 +41,19 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.AddUser(user);
         }
 
-        public Task<User> DeactiveUser(string userId)
+        public async Task DeactiveUser(string userId)
         {
-            throw new NotImplementedException();
+            var existingUser = await _repository.GetUserDetails(userId);
+            if (existingUser == null)
+            {
+                throw new AppException($"User with id {userId} not found");
+            }
+            if (existingUser.IsActive.HasValue && existingUser.IsActive.Value)
+            {
+                var updateUser = existingUser.DeepCopy();
+                updateUser.IsActive = false;
+                await _repository.UpdateUser(existingUser, updateUser);
+            }
         }
 
         private async Task<string> GetNextId()
@@ -68,6 +78,10 @@ namespace QuickServiceWebAPI.Services.Implements
             if (user == null || !BCrypt.Net.BCrypt.Verify(authenticateRequestDTO.Password, user.Password))
             {
                 throw new AppException("Email or password is incorrect");
+            }
+            if (!user.IsActive.HasValue || !user.IsActive.Value)
+            {
+                throw new AppException($"User with email {authenticateRequestDTO.Email} has been deactive from system");
             }
             var response = _mapper.Map<AuthenticateResponseDTO>(user);
             response.Token = await _jWTUtils.GenerateToken(user);
@@ -117,7 +131,7 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.UpdateUser(existingUser, updateUser);
         }
 
-        private async Task<string?> GetPathImpageUpload(IFormFile image, string userId, string container)
+        protected virtual async Task<string?> GetPathImpageUpload(IFormFile image, string userId, string container)
         {
             if (image != null && CloudHelper.IsImage(image))
             {
@@ -219,6 +233,12 @@ namespace QuickServiceWebAPI.Services.Implements
             var updateUser = _mapper.Map<User>(existingUser);
             updateUser.Password = newHassPassword;
             await _repository.UpdateUser(existingUser, updateUser);
+        }
+
+        public async Task<List<UserDTO>> GetUserByContainString(ContainStringDTO containStringDTO)
+        {
+            var listUserRelated = await _repository.GetUsersByContainString(containStringDTO.containStr, containStringDTO.GroupId);
+            return _mapper.Map<List<UserDTO>>(listUserRelated);
         }
     }
 }

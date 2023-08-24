@@ -110,6 +110,10 @@ namespace QuickServiceWebAPI.Services.Implements
                     throw new AppException($"Group with id {createUpdateWorkflowTaskDTO.GroupId} not found");
                 }
             }
+            else if(string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId) && string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
+            {
+
+            }
             else
             {
                 throw new AppException($"Only accept group or assignee");
@@ -125,7 +129,10 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException($"Workflow Task with id {workflowTaskId} not found");
             }
             var listWorkflowAssignment = await _workflowAssignmentRepository.GetWorkflowAssignmentsByWorkflowTaskId(workflowTaskId);
-            await _workflowAssignmentService.DeleteListWorkflowAssignment(listWorkflowAssignment);
+            if (listWorkflowAssignment.IsAny())
+            {
+                await _workflowAssignmentService.DeleteListWorkflowAssignment(listWorkflowAssignment);
+            }
             await _repository.DeleteWorkflowTask(workflowTask);
         }
 

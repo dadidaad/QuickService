@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
+using QuickServiceWebAPI.DTOs.Dashboard;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Services;
@@ -134,6 +135,13 @@ namespace QuickServiceWebAPI.Controllers
                 Problem = problemCount,
                 ServiceRequests  = serviceRequests
             });
+        }
+
+        [HttpPost("countbyday")]
+        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
+        public async Task<IActionResult> CountRequestTicketByDay(CountByDayDTO countByDayDTO)
+        {
+            return Ok(await _dashboardService.CountRequestTicketByDay(countByDayDTO));
         }
     }
 }

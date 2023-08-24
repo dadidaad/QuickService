@@ -1,15 +1,22 @@
 ﻿using AutoMapper;
+using QuickServiceWebAPI.DTOs.Dashboard;
+using QuickServiceWebAPI.DTOs.ServiceItem;
+using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Repositories.Implements;
+using System.Data.SqlTypes;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
     public class DashboardService : IDashboardService
     {
+        private readonly IMapper _mapper;
         private readonly IDashboardRepository _repository;
-        public DashboardService(IDashboardRepository repository)
+        public DashboardService(IDashboardRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<int> GetChangeCount()
@@ -83,6 +90,37 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var requestTicketCounts = await _repository.GetRequestTicketByProblemImpactCount();
             return requestTicketCounts;
+        }
+
+        public async Task<List<CountRequestTicketByDayDTO>> CountRequestTicketByDay(CountByDayDTO countByDayDTO)
+        {
+            if (!countByDayDTO.FromDate.HasValue)
+            {
+                countByDayDTO.FromDate = SqlDateTime.MinValue.Value;
+            }
+            if (!countByDayDTO.ToDate.HasValue)
+            {
+                countByDayDTO.ToDate = DateTime.Now;
+            }
+
+            var resultListFromDb = new List<dynamic>();
+            if (!countByDayDTO.NeedDividedByServiceItem)
+            {
+                resultListFromDb = await _repository
+                    .CountRequestTicketByDay(countByDayDTO.FromDate.Value, countByDayDTO.ToDate.Value);
+            }
+            else
+            {
+                resultListFromDb = await _repository
+                    .CountRequestTicketByDayAndServiceItem(countByDayDTO.FromDate.Value, countByDayDTO.ToDate.Value);
+            }
+            return resultListFromDb.Select(x => new CountRequestTicketByDayDTO
+            {
+                Date = x.Date,
+                TotalCreated =  x.TotalCreated,
+                TotalResolved = x.TotalResolved,
+                ServiceItemName = x.ServiceItemName is DBNull ? null : x.ServiceItemName
+            }).ToList();
         }
     }
 }

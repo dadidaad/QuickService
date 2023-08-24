@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickServiceWebAPI", "QuickServiceWebAPI\QuickServiceWebAPI.csproj", "{318B4626-D52A-4185-9172-89805D5FFEB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickServiceUnitTest", "QuickServiceUnitTest\QuickServiceUnitTest.csproj", "{D7ABD32E-164F-4D36-B60A-A5D71DFB4927}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickServiceUnitTest", "QuickServiceUnitTest\QuickServiceUnitTest.csproj", "{D7ABD32E-164F-4D36-B60A-A5D71DFB4927}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
