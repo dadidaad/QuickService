@@ -28,6 +28,7 @@
 
         public DateTime CreatedAt { get; set; }
         public string Priority { get; set; } = null!;
+        public string Type { get; set; } = null!;
 
     }
 }

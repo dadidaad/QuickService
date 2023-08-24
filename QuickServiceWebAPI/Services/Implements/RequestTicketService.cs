@@ -27,14 +27,30 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IRequestTicketHistoryService _requestTicketHistoryService;
         private readonly IRequestTicketHistoryRepository _requestTicketHistoryRepository;
         private readonly IQueryRepository _queryRepository;
+        private readonly IChangeService _changeService;
+        private readonly IProblemService _problemService;
+        private IRequestTicketRepository requestTicketRepository;
+        private ILogger<RequestTicketService> logger;
+        private IMapper mapper;
+        private IUserRepository userRepository;
+        private IServiceItemRepository serviceItemRepository;
+        private IAttachmentService attachmentService;
+        private ISlaRepository slaRepository;
+        private IWorkflowAssignmentService workflowAssignmentService;
+        private IRequestTicketHistoryService requestTicketHistoryService;
+        private IRequestTicketHistoryRepository requestTicketHistoryRepository;
+        private IQueryRepository queryRepository;
+
         public RequestTicketService(IRequestTicketRepository requestTicketRepository,
             ILogger<RequestTicketService> logger, IMapper mapper,
             IUserRepository userRepository,
             IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService,
-            ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService
-            , IRequestTicketHistoryService requestTicketHistoryService
-            , IRequestTicketHistoryRepository requestTicketHistoryRepository,
-            IQueryRepository queryRepository)
+            ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService,
+            IRequestTicketHistoryService requestTicketHistoryService,
+            IRequestTicketHistoryRepository requestTicketHistoryRepository,
+            IQueryRepository queryRepository,
+            IChangeService changeService,
+            IProblemService problemService)
         {
             _requestTicketRepository = requestTicketRepository;
             _logger = logger;
@@ -47,6 +63,23 @@ namespace QuickServiceWebAPI.Services.Implements
             _requestTicketHistoryService = requestTicketHistoryService;
             _requestTicketHistoryRepository = requestTicketHistoryRepository;
             _queryRepository = queryRepository;
+            _changeService = changeService;
+            _problemService = problemService;
+        }
+
+        public RequestTicketService(IRequestTicketRepository requestTicketRepository, ILogger<RequestTicketService> logger, IMapper mapper, IUserRepository userRepository, IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService, ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService, IRequestTicketHistoryService requestTicketHistoryService, IRequestTicketHistoryRepository requestTicketHistoryRepository, IQueryRepository queryRepository)
+        {
+            this.requestTicketRepository = requestTicketRepository;
+            this.logger = logger;
+            this.mapper = mapper;
+            this.userRepository = userRepository;
+            this.serviceItemRepository = serviceItemRepository;
+            this.attachmentService = attachmentService;
+            this.slaRepository = slaRepository;
+            this.workflowAssignmentService = workflowAssignmentService;
+            this.requestTicketHistoryService = requestTicketHistoryService;
+            this.requestTicketHistoryRepository = requestTicketHistoryRepository;
+            this.queryRepository = queryRepository;
         }
 
         public async Task<RequestTicketDTO> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
@@ -376,14 +409,34 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
         {
-            var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+            var typeTicket = queryDto.QueryType ?? "all";
+            var listTicket = new List<TicketQueryAdminDTO>();
+            switch (typeTicket)
+            {
+                case "all":
+                    listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                case "incident":
+                    listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                case "problem":
+                    listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                case "change":
+                    listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                default:
+                    break;
+            }
+
 
             return listTicket;
         }
 
         public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsAdmin(string ticketType, string queryId)
         {
-            List<RequestTicket> requestTickets = new();
+            var typeTicket = ticketType;
+            var listTicket = new List<TicketQueryAdminDTO>();
             var queryDto = new QueryDTO();
             var query = await _queryRepository.GetQueryById(queryId);
             if (query != null)
@@ -391,8 +444,24 @@ namespace QuickServiceWebAPI.Services.Implements
                 queryDto.QueryStatement = query.QueryStatement;
                 queryDto.QueryType = ticketType;
             }
-            //if (ticketType == "all" && queryId == "none") ;
-            var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+            switch (typeTicket)
+            {
+                case "all":
+                    listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                case "incident":
+                    listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                case "problem":
+                    listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                case "change":
+                    listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                default:
+                    break;
+            }
+            //var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
             return listTicket;
         }
 

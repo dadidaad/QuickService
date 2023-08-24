@@ -45,17 +45,19 @@ namespace QuickServiceUnitTest.ServiceTests.Fixtures
             MockRequestTicketHistoryRepository = new Mock<IRequestTicketHistoryRepository>();
             MockQueryRepository = new Mock<IQueryRepository>();
 
-            RequestTicketService = new RequestTicketService(
-                MockRequestTicketRepository.Object,
-                MockLogger.Object, MockMapper.Object,
-                MockUserRepository.Object,
-                MockServiceItemRepository.Object,
-                MockAttachmentService.Object,
-                MockSlaRepository.Object,
-                MockWorkflowAssignmentService.Object,
-                MockRequestTicketHistoryService.Object,
-                MockRequestTicketHistoryRepository.Object,
-                MockQueryRepository.Object);
+
+            //RequestTicketService = new RequestTicketService(
+            //    MockRequestTicketRepository.Object,
+            //    MockLogger.Object, MockMapper.Object,
+            //    MockUserRepository.Object,
+            //    MockServiceItemRepository.Object,
+            //    MockAttachmentService.Object,
+            //    MockSlaRepository.Object,
+            //    MockWorkflowAssignmentService.Object,
+            //    MockRequestTicketHistoryService.Object,
+            //    MockRequestTicketHistoryRepository.Object,
+            //    MockQueryRepository.Object);
+
             
         }
 

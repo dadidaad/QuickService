@@ -194,7 +194,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
                         AssigneeFullName = q.AssignedToNavigation != null ? $"{q.AssignedToNavigation.FirstName} {q.AssignedToNavigation.MiddleName} {q.AssignedToNavigation.LastName}" : null,
                         Status = q.Status,
                         CreatedAt = q.CreatedAt,
-                        Priority = q.Priority
+                        Priority = q.Priority,
+                        Type = queryDto.QueryType
                     }).ToList();
 
             if (hasQueryConfig && queryConfig.OrderASC == true && queryConfig.OrderyBy != null)
