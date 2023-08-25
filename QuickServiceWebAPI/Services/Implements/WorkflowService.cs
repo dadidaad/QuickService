@@ -16,13 +16,13 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IRequestTicketRepository _requestTicketRepository;
         private readonly ISlaRepository _slaRepository;
         private readonly IMapper _mapper;
-        private readonly IWorkflowTaskService _workflowTaskService;
+        private readonly Lazy<IWorkflowTaskService> _workflowTaskService;
         private readonly IWorkflowAssignmentRepository _workflowAssignmentRepository;
 
         public WorkflowService(IWorkflowRepository repository, IUserRepository userRepository, 
             IServiceItemRepository serviceItemRepository, IRequestTicketRepository requestTicketRepository,
             ISlaRepository slaRepository, IMapper mapper,
-            IWorkflowTaskService workflowTaskService,
+            Lazy<IWorkflowTaskService> workflowTaskService,
             IWorkflowAssignmentRepository workflowAssignmentRepository)
         {
             _repository = repository;
@@ -82,7 +82,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 Description = $"{statusWorkflowTaskEnum} task in workflow",
                 WorkflowId = workflowId
             };
-            await _workflowTaskService.CreateWorkflowTask(createUpdateWorkflowTaskResolvedDTO, true);
+            await _workflowTaskService.Value.CreateWorkflowTask(createUpdateWorkflowTaskResolvedDTO, true);
         }
         public async Task UpdateWorkflow(string workflowId, CreateUpdateWorkflowDTO createUpdateWorkflowDTO)
         {

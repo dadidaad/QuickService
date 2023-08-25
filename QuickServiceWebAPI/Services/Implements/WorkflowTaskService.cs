@@ -19,12 +19,13 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IUserRepository _userRepository;
         private readonly IGroupRepository _groupRepository;
         private readonly IRequestTicketRepository _requestTicketRepository;
+        private readonly Lazy<IWorkflowService> _workflowService;
 
         public WorkflowTaskService(IWorkflowTaskRepository repository, IWorkflowRepository workflowRepository,
             IWorkflowAssignmentRepository workflowAssignmentRepository, IWorkflowAssignmentService workflowAssignmentService,
             IMapper mapper,
             IUserRepository userRepository, IGroupRepository groupRepository,
-            IRequestTicketRepository requestTicketRepository)
+            IRequestTicketRepository requestTicketRepository, Lazy<IWorkflowService> workflowService)
         {
             _repository = repository;
             _workflowRepository = workflowRepository;
@@ -34,6 +35,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _userRepository = userRepository;
             _groupRepository = groupRepository;
             _requestTicketRepository = requestTicketRepository;
+            _workflowService = workflowService;
         }
 
         public async Task<List<WorkflowTaskDTO>> GetWorkflowsTaskByWorkflow(string workflowId)
@@ -145,26 +147,9 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.DeleteWorkflowTask(workflowTask);
         }
 
-        private async Task<bool> CheckStatusRequestTicketToEditWorkflowTask(string workflowId)
-        {
-            var workflow = await _workflowRepository.GetWorkflowById(workflowId);
-            if (workflow == null)
-            {
-                throw new AppException($"Workflow with id {workflowId} not found");
-            }
-            var requestTickets = await _requestTicketRepository.GetAllRequestTicketRelatedToWorkflow(workflowId);
-            if (requestTickets.Any(r => r.Status != StatusEnum.Resolved.ToString()
-            || r.Status != StatusEnum.Canceled.ToString()
-            || r.Status != StatusEnum.Closed.ToString()))
-            {
-                return false;
-            }
-            return true;
-        }
-
         private async Task HandleEditWorkflowTask(string workflowId)
         {
-            bool checkConditionEdit = await CheckStatusRequestTicketToEditWorkflowTask(workflowId);
+            bool checkConditionEdit = await _workflowService.Value.CheckStatusRequestTicketToEditWorkflowTask(workflowId);
             if (!checkConditionEdit)
             {
                 throw new AppException("Can not edit workflow already assign task to request ticket");
