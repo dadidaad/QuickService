@@ -57,14 +57,14 @@ namespace QuickServiceWebAPI.Services.Implements
                 if (isInserted)
                 {
                     await _notificationHub.Clients.All.SendNormalMessage("Ok");
-                    await _notificationHub.Clients.All.SendMessageAsync(_mapper.Map<NotificationDTO>(notification));
+                    await _notificationHub.Clients.All.ReceiveNotification(_mapper.Map<NotificationDTO>(notification));
                     if (!string.IsNullOrEmpty(notification.ToUserId))
                     {
-                        await _notificationHub.Clients.User(notification.ToUserId).SendMessageAsync(_mapper.Map<NotificationDTO>(notification));
+                        await _notificationHub.Clients.User(notification.ToUserId).ReceiveNotification(_mapper.Map<NotificationDTO>(notification));
                     }
                     else if(!string.IsNullOrEmpty(notification.ToGroupId))
                     {
-                        await _notificationHub.Clients.Group(notification.ToGroupId).SendMessageAsync(_mapper.Map<NotificationDTO>(notification));
+                        await _notificationHub.Clients.Group(notification.ToGroupId).ReceiveNotification(_mapper.Map<NotificationDTO>(notification));
                     }
                 }
             }

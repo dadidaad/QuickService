@@ -19,17 +19,17 @@ namespace QuickServiceWebAPI.Hubs.Implements
 
         public async Task ReceiveMessage(NotificationDTO notificationDTO)
         {
-            await Clients.All.SendMessageAsync(notificationDTO);
+            await Clients.All.ReceiveNotification(notificationDTO);
         }
 
         public async Task ReceiveInGroup(string groupId, NotificationDTO notificationDTO)
         {
-            await Clients.Group(groupId).SendMessageAsync(notificationDTO);
+            await Clients.Group(groupId).ReceiveNotification(notificationDTO);
         }
 
         public async Task ReceiveUser(string userId, NotificationDTO notificationDTO)
         {
-            await Clients.Users(userId).SendMessageAsync(notificationDTO);
+            await Clients.Users(userId).ReceiveNotification(notificationDTO);
         }
         public async Task AddUserToGroup(string groupId)
         {
