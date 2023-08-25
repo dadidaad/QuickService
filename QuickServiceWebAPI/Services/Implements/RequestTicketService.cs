@@ -99,7 +99,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
                     RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
                     RequestTicketId = requestTicket.RequestTicketId,
-                    Content = $"{requestTicket.Requester.FirstName} Create request",
+                    Content = $"Create request",
                     LastUpdate = requestTicket.CreatedAt,
                     UserId = requestTicket.RequesterId
                 };
@@ -291,49 +291,49 @@ namespace QuickServiceWebAPI.Services.Implements
                     , updateRequestTicketDTO.Urgency.ToEnum(UrgencyEnum.Low)).ToString();
             }
 
-            //if (updateRequestTicketDTO.Status == StatusEnum.Resolved.ToString())
-            //{
-            //    var history = new RequestTicketHistory();
-            //    history.Content = $"Ticket is Completed";
-            //    history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
-            //    history.RequestTicketId = existingRequestTicket.RequestTicketId;
-            //    history.LastUpdate = DateTime.Now;
-            //    history.UserId = existingRequestTicket.AssignedTo;
-            //    await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
-            //}
+            if (updateRequestTicketDTO.Status == StatusEnum.Resolved.ToString())
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Ticket is Completed";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingRequestTicket.AssignedTo;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
 
-            //if (existingRequestTicket.Status != updateRequestTicketDTO.Status && updateRequestTicketDTO.Status != StatusEnum.Resolved.ToString())
-            //{
-            //    var history = new RequestTicketHistory();
-            //    history.Content = $"{existingRequestTicket.AssignedToNavigation.FirstName} Change Status to {updateRequestTicketDTO.Status}";
-            //    history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
-            //    history.RequestTicketId = existingRequestTicket.RequestTicketId;
-            //    history.LastUpdate = DateTime.Now;
-            //    history.UserId = existingRequestTicket.AssignedTo;
-            //    await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
-            //}
+            if (existingRequestTicket.Status != updateRequestTicketDTO.Status && updateRequestTicketDTO.Status != StatusEnum.Resolved.ToString())
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Status to {updateRequestTicketDTO.Status}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingRequestTicket.AssignedTo;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
 
-            //if (existingRequestTicket.Impact != updateRequestTicketDTO.Impact)
-            //{
-            //    var history = new RequestTicketHistory();
-            //    history.Content = $"{existingRequestTicket.AssignedToNavigation.FirstName} Change Impact to {updateRequestTicketDTO.Impact}";
-            //    history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
-            //    history.RequestTicketId = existingRequestTicket.RequestTicketId;
-            //    history.LastUpdate = DateTime.Now;
-            //    history.UserId = existingRequestTicket.AssignedTo;
-            //    await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
-            //}
+            if (existingRequestTicket.Impact != updateRequestTicketDTO.Impact)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Impact to {updateRequestTicketDTO.Impact}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingRequestTicket.AssignedTo;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
 
-            //if (existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency)
-            //{
-            //    var history = new RequestTicketHistory();
-            //    history.Content = $"{existingRequestTicket.AssignedToNavigation.FirstName} Change Urgency to {updateRequestTicketDTO.Urgency}";
-            //    history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
-            //    history.RequestTicketId = existingRequestTicket.RequestTicketId;
-            //    history.LastUpdate = DateTime.Now;
-            //    history.UserId = existingRequestTicket.AssignedTo;
-            //    await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
-            //}
+            if (existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Urgency to {updateRequestTicketDTO.Urgency}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.RequestTicketId = existingRequestTicket.RequestTicketId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingRequestTicket.AssignedTo;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
 
             var updateTicket = _mapper.Map(updateRequestTicketDTO, existingRequestTicket);
             updateTicket.LastUpdateAt = DateTime.Now;
