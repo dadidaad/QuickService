@@ -18,7 +18,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [Authorize]
-        [HttpGet("noti")]
+        [HttpGet("noti/{userId}/{isGetOnlyUnRead=false}")]
         public async Task<IActionResult> GetAllNotification(string userId, bool isGetOnlyUnRead)
         {
             return Ok(await _notificationService.GetNotifications(userId, isGetOnlyUnRead));

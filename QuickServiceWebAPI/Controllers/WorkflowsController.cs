@@ -71,7 +71,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
 
-        [[HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]]
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpGet("checkedit")]
         public async Task<IActionResult> CheckEditWorkflow(string workflowId)
         {
