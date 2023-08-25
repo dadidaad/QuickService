@@ -69,5 +69,13 @@ namespace QuickServiceWebAPI.Controllers
             await _workflowService.RemoveWorkflowFromServiceItem(removeWorkflowFromServiceItemDTO);
             return Ok(new { message = "Remove successfully" });
         }
+
+
+        [[HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]]
+        [HttpGet("checkedit")]
+        public async Task<IActionResult> CheckEditWorkflow(string workflowId)
+        {
+            return Ok(new { Condition = await _workflowService.CheckStatusRequestTicketToEditWorkflowTask(workflowId) });
+        }
     }
 }

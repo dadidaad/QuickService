@@ -177,6 +177,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
         }
 
+
         private async Task HandleRequestTicketForCurrentTask(RequestTicket requestTicket, WorkflowTask currentWorkTask, WorkflowAssignment workflowAssignment)
         {
             requestTicket.Status = MappingWorkflowTaskStatusToRequestTicketStatus(currentWorkTask.Status.ToEnum(StatusWorkflowTaskEnum.Open)).ToString();

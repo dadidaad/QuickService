@@ -63,6 +63,10 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("ServiceCategory not found");
             }
+            if (serviceCategory.ServiceItems.Any())
+            {
+                throw new AppException($"Can not delete service category have service items inside");
+            }
             await _repository.DeleteServiceCategory(serviceCategory);
         }
         public async Task<string> GetNextId()

@@ -17,5 +17,7 @@ namespace QuickServiceWebAPI.Repositories
         public Task<bool> CheckExistingRequestTicket(string requestTicketId);
         //public Task<bool> CheckAllWorkflowStepCompleted(List<WorkflowStep> workflowSteps, RequestTicket requestTicket);
         public Task<WorkflowAssignment?> GetLastWorkflowAssignment();
+        public Task DeleteWorkflowAssignmentRelatedToTicket(string requestTicketId);
+        public Task<List<string>> DeleteWorkflowAssignmentRelatedToServiceItem(string serviceItemId);
     }
 }

@@ -245,5 +245,47 @@ namespace QuickServiceWebAPI.Repositories.Implements
                        }).Take(1000).ToList();
             return Task.FromResult(listTicketsDto);
         }
+
+        public async Task<List<RequestTicket>> GetAllRequestTicketRelatedToWorkflow(string workflowId)
+        {
+            try
+            {
+                return await _context.RequestTickets.Include(r => r.ServiceItem)
+                    .Where(r => r.ServiceItem != null && r.ServiceItem.WorkflowId == workflowId).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<RequestTicket>> GetAllRequestTicketRelatedToServiceItem(string serviceItemId)
+        {
+            try
+            {
+                return await _context.RequestTickets.Include(r => r.ServiceItem)
+                    .Where(r => r.ServiceItem != null && r.ServiceItem.ServiceItemId == serviceItemId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task DeleteRequestTicketRelatedToServiceItem(string serviceItemId)
+        {
+            try
+            {
+                _context.RequestTickets.RemoveRange(_context.RequestTickets.Where(r => r.ServiceItemId == serviceItemId));
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
     }
 }

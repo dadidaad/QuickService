@@ -4,6 +4,7 @@ using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
+using System.Runtime.InteropServices;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -13,6 +14,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IWorkflowRepository _workflowRepository;
         private readonly IWorkflowAssignmentRepository _workflowAssignmentRepository;
         private readonly IWorkflowAssignmentService _workflowAssignmentService;
+        private readonly IWorkflowService _workflowService;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
         private readonly IGroupRepository _groupRepository;
@@ -20,7 +22,8 @@ namespace QuickServiceWebAPI.Services.Implements
             IWorkflowRepository workflowRepository, IMapper mapper,
             IUserRepository userRepository, IGroupRepository groupRepository,
             IWorkflowAssignmentRepository workflowAssignmentRepository,
-            IWorkflowAssignmentService workflowAssignmentService)
+            IWorkflowAssignmentService workflowAssignmentService,
+            IWorkflowService workflowService)
         {
             _repository = repository;
             _workflowRepository = workflowRepository;
@@ -29,6 +32,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _groupRepository = groupRepository;
             _workflowAssignmentRepository = workflowAssignmentRepository;
             _workflowAssignmentService = workflowAssignmentService;
+            _workflowService = workflowService;
         }
 
         public async Task<List<WorkflowTaskDTO>> GetWorkflowsTaskByWorkflow(string workflowId)
@@ -55,6 +59,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Workflow with id {createUpdateWorkflowTaskDTO.WorkflowId} not found");
             }
+            await HandleEditWorkflowTask(workflow.WorkflowId);
             if ((createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString() 
                 || createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Open.ToString()) 
                 && !AcceptResovledAndOpenTask)
@@ -76,6 +81,8 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("WorkflowTask not found");
             }
+            await HandleEditWorkflowTask(workflowTask.WorkflowId);
+
             if (await _workflowRepository.GetWorkflowById(createUpdateWorkflowTaskDTO.WorkflowId) == null)
             {
                 throw new AppException("Workflow with id " + createUpdateWorkflowTaskDTO.WorkflowId + " not found");
@@ -128,6 +135,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Workflow Task with id {workflowTaskId} not found");
             }
+            await HandleEditWorkflowTask(workflowTask.WorkflowId);
             var listWorkflowAssignment = await _workflowAssignmentRepository.GetWorkflowAssignmentsByWorkflowTaskId(workflowTaskId);
             if (listWorkflowAssignment.IsAny())
             {
@@ -136,6 +144,15 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.DeleteWorkflowTask(workflowTask);
         }
 
+
+        private async Task HandleEditWorkflowTask(string workflowId)
+        {
+            bool checkConditionEdit = await _workflowService.CheckStatusRequestTicketToEditWorkflowTask(workflowId);
+            if (!checkConditionEdit)
+            {
+                throw new AppException("Can not edit workflow already assign task to request ticket");
+            }
+        }
 
         public async Task<string> GetNextId()
         {

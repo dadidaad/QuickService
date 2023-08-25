@@ -101,6 +101,23 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.UpdateWorkflow(workflow);
         }
 
+        public async Task<bool> CheckStatusRequestTicketToEditWorkflowTask(string workflowId)
+        {
+            var workflow = await _repository.GetWorkflowById(workflowId);
+            if(workflow == null)
+            {
+                throw new AppException($"Workflow with id {workflowId} not found");
+            }
+            var requestTickets = await _requestTicketRepository.GetAllRequestTicketRelatedToWorkflow(workflowId);
+            if(requestTickets.Any(r => r.Status != StatusEnum.Resolved.ToString() 
+            || r.Status != StatusEnum.Canceled.ToString()
+            || r.Status != StatusEnum.Closed.ToString()))
+            {
+                return false;
+            }
+            return true;
+        }
+
         public async Task DeleteWorkflow(string workflowId)
         {
             var workflow = await _repository.GetWorkflowById(workflowId);

@@ -34,7 +34,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 ServiceItem serviceItem = await _context.ServiceItems
-                                        .AsNoTracking()
                     .Include(s => s.Workflow)
                     .Include(s => s.ServiceCategory)
                     .FirstOrDefaultAsync(x => x.ServiceItemId == serviceItemId);

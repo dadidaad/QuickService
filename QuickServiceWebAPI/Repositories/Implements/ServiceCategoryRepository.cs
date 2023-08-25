@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                ServiceCategory serviceCategory = await _context.ServiceCategories.AsNoTracking().Include(x => x.ServiceItems).FirstOrDefaultAsync(x => x.ServiceCategoryId == serviceCategoryId);
+                ServiceCategory serviceCategory = await _context.ServiceCategories.Include(x => x.ServiceItems).FirstOrDefaultAsync(x => x.ServiceCategoryId == serviceCategoryId);
                 return serviceCategory;
             }
             catch (Exception ex)

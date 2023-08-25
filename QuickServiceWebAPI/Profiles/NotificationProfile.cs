@@ -9,6 +9,7 @@ namespace QuickServiceWebAPI.Profiles
         public NotificationProfile()
         {
             CreateMap<Notification, NotificationDTO>()
+                .MaxDepth(1)
                 .PreserveReferences()
                 .ForMember(dest => dest.RequestTicketId,
                  opt => opt.MapFrom(src => src.Relate != null ? src.Relate.RequestTicketId : null))
