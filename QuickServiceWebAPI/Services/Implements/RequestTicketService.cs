@@ -11,7 +11,9 @@ using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
+using System.Net.Sockets;
 using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -437,10 +439,20 @@ namespace QuickServiceWebAPI.Services.Implements
                 : requestTicket.CreatedAt + TimeSpan.FromTicks(slametric.ResolutionTime);
         }
 
-        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
+        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDtoInput)
         {
-            var typeTicket = queryDto.QueryType ?? "all";
+            var typeTicket = queryDtoInput.QueryType ?? "all";
             var listTicket = new List<TicketQueryAdminDTO>();
+            var queryDto = new QueryDTO();
+            queryDto.QueryType = typeTicket;
+            if (!string.IsNullOrEmpty(queryDtoInput.QueryId))
+            {
+                var query = await _queryRepository.GetQueryById(queryDtoInput.QueryId);
+                if(query != null)
+                {
+                    queryDto.QueryStatement = query.QueryStatement;
+                }
+            }
             switch (typeTicket)
             {
                 case "all":

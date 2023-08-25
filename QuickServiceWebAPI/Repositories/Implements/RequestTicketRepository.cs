@@ -150,7 +150,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             var listTickets = new List<RequestTicket>();
             var hasQueryConfig = !string.IsNullOrEmpty(queryDto.QueryStatement);
-            if (!hasQueryConfig) listTickets = GetRequestTickets();
+            if (!hasQueryConfig) listTickets = GetRequestTickets().Where(x=>x.IsIncident == (queryDto.QueryType=="incident")).ToList();
             var queryConfig = new QueryConfigDTO();
             if (hasQueryConfig) queryConfig = JsonConvert.DeserializeObject<QueryConfigDTO>(queryDto.QueryStatement);
             var listTicketsDto = new List<TicketQueryAdminDTO>();
@@ -191,8 +191,10 @@ namespace QuickServiceWebAPI.Repositories.Implements
                         GroupName = q.AssignedToGroupNavigation != null ? q.AssignedToGroupNavigation.GroupName : null,
                         RequesterId = q.RequesterId,
                         RequesterFullName = q.Requester.FirstName + q.Requester.MiddleName + q.Requester.LastName,
+                        RequesterAvatar = q.Requester.Avatar,
                         AssigneeId = q.AssignedTo,
                         AssigneeFullName = q.AssignedToNavigation != null ? $"{q.AssignedToNavigation.FirstName} {q.AssignedToNavigation.MiddleName} {q.AssignedToNavigation.LastName}" : null,
+                        AssigneeAvatar = q.AssignedToNavigation != null ? q.AssignedToNavigation.Avatar : null,
                         Status = q.Status,
                         CreatedAt = q.CreatedAt,
                         Priority = q.Priority,
