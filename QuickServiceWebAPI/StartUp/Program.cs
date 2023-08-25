@@ -212,7 +212,7 @@ RecurringJob
 SeedDatabase();
 
 //hub signalR
-app.MapHub<NotificationHub>("/notify");
+app.MapHub<NotificationHub>("/hub/notify");
 
 app.MapControllers();
 
@@ -228,5 +228,3 @@ void SeedDatabase() //can be placed at the very bottom under app.Run()
         dbInitializer.SeedSla();
     }
 }
-
-public partial class Program { }

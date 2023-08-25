@@ -59,7 +59,7 @@ namespace QuickServiceWebAPI.Controllers
             };
             return Ok(await _requestTicketService.GetDetailsRequestTicketForRequester(requesterResquestDTO));
         }
-     
+
         [HttpPost("sendticket")]
         public async Task<IActionResult> SendRequestTicket([FromForm] CreateRequestTicketDTO createRequestTicketDTO)
         {
@@ -70,8 +70,11 @@ namespace QuickServiceWebAPI.Controllers
         [HasPermission(PermissionEnum.ManageTickets, RoleType.Agent)]
         public async Task<IActionResult> UpdateRequestTicket(UpdateRequestTicketDTO updateRequestTicketDTO)
         {
-            await _requestTicketService.UpdateRequestTicket(updateRequestTicketDTO);
-            return Ok(new { message = "Update successfully" });
+            return Ok(new
+            {
+                message = "Update successfully",
+                UpdateRequestTicketDTO = await _requestTicketService.UpdateRequestTicket(updateRequestTicketDTO)
+            });
 
         }
 
@@ -94,7 +97,7 @@ namespace QuickServiceWebAPI.Controllers
         {
             return Ok(await _requestTicketService.GetRequestTicketsFilterUser(queryConfigDTO));
         }
-        
+
         [Route("getticketsadmin/{ticketType?}/{queryId?}")]
         [HttpGet]
         //[HasPermission(PermissionEnum.ManageTickets, RoleType.Admin)]

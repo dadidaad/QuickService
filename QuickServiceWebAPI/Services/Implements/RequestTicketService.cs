@@ -245,7 +245,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<RequestTicket, RequestTicketForRequesterDTO>(requestTicket);
         }
 
-        public async Task UpdateRequestTicket(UpdateRequestTicketDTO updateRequestTicketDTO)
+        public async Task<RequestTicketDTO> UpdateRequestTicket(UpdateRequestTicketDTO updateRequestTicketDTO)
         {
             var existingRequestTicket = await _requestTicketRepository.GetRequestTicketById(updateRequestTicketDTO.RequestTicketId);
             if (existingRequestTicket == null)
@@ -347,6 +347,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 await HandleSendNotification(updateTicket);
             }
+            return _mapper.Map<RequestTicketDTO>(updateTicket);
         }
 
         private async Task HandleSendNotification(RequestTicket requestTicket)
