@@ -98,7 +98,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     query = query.Where(u => u.GroupsNavigation.Any(u => u.GroupId == groupId));
                 }
 
-                query =  query.Where(u => u.Email.Contains(containStr)
+                query = query.Where(u => u.Email.Contains(containStr)
                 || string.Concat(u.FirstName, " ", u.MiddleName, " ", u.LastName).Contains(containStr));
                 return await query.ToListAsync();
             }

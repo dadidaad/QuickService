@@ -8,7 +8,7 @@ namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
         [MaxLength(10)]
         [Required]
         public string WorkflowAssignmentId { get; set; } = null!;
-        
+
         public bool IsCompleted { get; set; }
 
         [Required]

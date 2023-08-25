@@ -1,5 +1,4 @@
 ﻿using QuickServiceWebAPI.CustomAttributes;
-using QuickServiceWebAPI.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.Change
@@ -33,10 +32,10 @@ namespace QuickServiceWebAPI.DTOs.Change
         public string? GroupId { get; set; }
 
         [Required]
-        [MaxLength (10)]
+        [MaxLength(10)]
         public string RequesterId { get; set; } = null!;
 
-        [MaxLength (10)] 
+        [MaxLength(10)]
         public string? AssignerId { get; set; }
 
         [Required]

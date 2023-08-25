@@ -49,7 +49,7 @@ namespace QuickServiceWebAPI.Services.Implements
         //        slametric.SlametricId = await GetNextId();
         //        await _repository.AddSLAmetric(slametric);
         //    }
-            
+
         //}
 
         public async Task UpdateSLAmetric(UpdateSlametricsDTO updateSlametricsDTO)

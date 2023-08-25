@@ -10,6 +10,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateWorkflow(Workflow Workflow);
         public Task DeleteWorkflow(Workflow Workflow);
         public Task<Workflow> GetLastWorkflow();
-        
+
     }
 }

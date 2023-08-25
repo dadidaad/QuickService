@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
@@ -150,18 +149,18 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             var listTickets = new List<RequestTicket>();
             var hasQueryConfig = !string.IsNullOrEmpty(queryDto.QueryStatement);
-            if (!hasQueryConfig) listTickets = GetRequestTickets().Where(x=>x.IsIncident == (queryDto.QueryType=="incident")).ToList();
+            if (!hasQueryConfig) listTickets = GetRequestTickets().Where(x => x.IsIncident == (queryDto.QueryType == "incident")).ToList();
             var queryConfig = new QueryConfigDTO();
             if (hasQueryConfig) queryConfig = JsonConvert.DeserializeObject<QueryConfigDTO>(queryDto.QueryStatement);
             var listTicketsDto = new List<TicketQueryAdminDTO>();
 
             if (queryConfig == null) return Task.FromResult(listTicketsDto);
 
-            if(hasQueryConfig) listTickets = _context.RequestTickets.Include(g => g.AssignedToGroupNavigation)
+            if (hasQueryConfig) listTickets = _context.RequestTickets.Include(g => g.AssignedToGroupNavigation)
                     .Include(u => u.AssignedToNavigation)
                     .Include(a => a.Attachment)
                     .Include(r => r.Requester)
-                    .Include(s => s.ServiceItem).ThenInclude(sc=>sc.ServiceCategory)
+                    .Include(s => s.ServiceItem).ThenInclude(sc => sc.ServiceCategory)
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
                     .Where(x =>
@@ -232,17 +231,17 @@ namespace QuickServiceWebAPI.Repositories.Implements
                        ).ToList();
 
             listTicketsDto = listTickets.Select(q => new TicketQueryAdminDTO()
-                       {
-                           TicketId = q.RequestTicketId,
-                           Title = q.Title,
-                           IsIncident = q.IsIncident,
-                           ServiceCategoryId = q.ServiceItem != null ? q.ServiceItem.ServiceCategory.ServiceCategoryId : null,
-                           ServiceCategoryName = q.ServiceItem != null ? q.ServiceItem.ServiceCategory.ServiceCategoryName : null,
-                           ServiceItemId = q.ServiceItem != null ? q.ServiceItem.ServiceItemId : null,
-                           ServiceItemName = q.ServiceItem != null ? q.ServiceItem.ServiceItemName : null,                                                  
-                           Status = q.Status,
-                           CreatedAt = q.CreatedAt,
-                       }).Take(1000).ToList();
+            {
+                TicketId = q.RequestTicketId,
+                Title = q.Title,
+                IsIncident = q.IsIncident,
+                ServiceCategoryId = q.ServiceItem != null ? q.ServiceItem.ServiceCategory.ServiceCategoryId : null,
+                ServiceCategoryName = q.ServiceItem != null ? q.ServiceItem.ServiceCategory.ServiceCategoryName : null,
+                ServiceItemId = q.ServiceItem != null ? q.ServiceItem.ServiceItemId : null,
+                ServiceItemName = q.ServiceItem != null ? q.ServiceItem.ServiceItemName : null,
+                Status = q.Status,
+                CreatedAt = q.CreatedAt,
+            }).Take(1000).ToList();
             return Task.FromResult(listTicketsDto);
         }
 
@@ -253,7 +252,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 return await _context.RequestTickets.Include(r => r.ServiceItem)
                     .Where(r => r.ServiceItem != null && r.ServiceItem.WorkflowId == workflowId).ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;

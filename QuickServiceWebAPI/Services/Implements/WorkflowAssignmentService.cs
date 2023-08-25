@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Notification;
-using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.DTOs.WorkflowAssignment;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
-using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -100,7 +98,7 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var notificationDto = new AddNotificationDTO();
             bool needSendNoti = false;
-            if(!string.IsNullOrEmpty(workflowTask.GroupId))
+            if (!string.IsNullOrEmpty(workflowTask.GroupId))
             {
                 notificationDto.ToGroupId = workflowTask.GroupId;
                 notificationDto.NotificationType = NotificationTypeEnum.AssignGroup;

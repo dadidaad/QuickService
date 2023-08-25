@@ -6,7 +6,7 @@ namespace QuickServiceWebAPI.Profiles
 {
     public class ProblemProfile : Profile
     {
-        public ProblemProfile() 
+        public ProblemProfile()
         {
             CreateMap<Problem, ProblemDTO>().
                 ForMember(dest => dest.AssignerEntity,

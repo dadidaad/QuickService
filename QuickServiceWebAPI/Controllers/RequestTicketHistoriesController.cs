@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using QuickServiceWebAPI.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.Services;
-using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {

@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.RequestTicketHistory;
-using QuickServiceWebAPI.DTOs.ServiceCategory;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;

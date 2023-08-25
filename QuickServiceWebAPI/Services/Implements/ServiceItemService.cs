@@ -19,7 +19,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IWorkflowRepository _workflowRepository;
         private readonly IWorkflowAssignmentRepository _workflowAssignmentRepository;
         private readonly IRequestTicketRepository _requestTicketRepository;
-        private readonly IAttachmentService _attachmentService; 
+        private readonly IAttachmentService _attachmentService;
         public ServiceItemService(IServiceItemRepository repository, IMapper mapper,
             IOptions<AzureStorageConfig> storageConfig, ILogger<ServiceItemService> logger,
             IServiceCategoryRepository serviceCategoryRepository,
@@ -110,7 +110,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
             if (listAttachmnetId.Any())
             {
-                foreach(var attachmentId in listAttachmnetId.ToHashSet())
+                foreach (var attachmentId in listAttachmnetId.ToHashSet())
                 {
                     await _attachmentService.DeleteAttachment(attachmentId);
                 }

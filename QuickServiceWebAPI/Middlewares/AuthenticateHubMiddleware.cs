@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using QuickServiceWebAPI.Services;
-using QuickServiceWebAPI.Utilities;
-
-namespace QuickServiceWebAPI.Middlewares
+﻿namespace QuickServiceWebAPI.Middlewares
 {
     public class AuthenticateHubMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public AuthenticateHubMiddleware(RequestDelegate next) 
+        public AuthenticateHubMiddleware(RequestDelegate next)
         {
             _next = next;
         }

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Sla;
-using QuickServiceWebAPI.DTOs.SLAMetric;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
 
@@ -97,11 +95,11 @@ namespace QuickServiceWebAPI.Services.Implements
             if (sla.ServiceItems.Any() || sla.RequestTickets.Any())
             {
                 var defaultSla = await _repository.GetDefaultSla();
-                foreach(var item in sla.ServiceItems)
+                foreach (var item in sla.ServiceItems)
                 {
                     defaultSla.ServiceItems.Add(item);
                 }
-                foreach(var item in sla.RequestTickets)
+                foreach (var item in sla.RequestTickets)
                 {
                     defaultSla.RequestTickets.Add(item);
                 }

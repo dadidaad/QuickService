@@ -22,7 +22,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 int result = await _context.SaveChangesAsync();
                 return result > 0;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;
@@ -58,7 +58,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<List<Notification>> GetNotifications(string ToUserId, List<string> groupIdList , bool isGetOnlyUnRead)
+        public async Task<List<Notification>> GetNotifications(string ToUserId, List<string> groupIdList, bool isGetOnlyUnRead)
         {
             try
             {
@@ -66,14 +66,14 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(n => n.FromUser)
                     .Include(n => n.Relate)
                     .Include(n => n.ToGroup)
-                    .Where(n => n.ToUserId == ToUserId || groupIdList.Contains(n.ToGroupId)).OrderByDescending(x=>x.CreatedDate);
+                    .Where(n => n.ToUserId == ToUserId || groupIdList.Contains(n.ToGroupId)).OrderByDescending(x => x.CreatedDate);
                 if (isGetOnlyUnRead)
                 {
                     query = query.Where(n => !n.IsRead);
                 }
                 return await query.ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;

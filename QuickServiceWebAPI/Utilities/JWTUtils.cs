@@ -64,7 +64,7 @@ namespace QuickServiceWebAPI.Utilities
             }
             if (user.GroupsNavigation.Any())
             {
-                foreach(var group in user.GroupsNavigation)
+                foreach (var group in user.GroupsNavigation)
                 {
                     claims.Add(new(CustomClaims.Groups, group.GroupId));
                 }

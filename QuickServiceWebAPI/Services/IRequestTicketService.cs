@@ -1,6 +1,5 @@
 ﻿using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
-using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Services
 {

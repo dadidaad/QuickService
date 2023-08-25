@@ -75,7 +75,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("User with id " + userId + " not found");
             }
-            if(!group.Users.Any(user => user.UserId == userId))
+            if (!group.Users.Any(user => user.UserId == userId))
             {
                 group.Users.Add(user);
             }

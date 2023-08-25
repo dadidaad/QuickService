@@ -1,12 +1,8 @@
 using Hangfire;
 using Hangfire.SqlServer;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using QuickServiceWebAPI.Hubs;
@@ -20,7 +16,6 @@ using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Services.Authentication;
 using QuickServiceWebAPI.Services.Implements;
 using QuickServiceWebAPI.Utilities;
-using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
 //Get connection string from appsettings
@@ -210,8 +205,8 @@ app.UseCors(x => x
 //Do background jobs
 var crons = "0 */12 * * *";
 RecurringJob
-    .AddOrUpdate<IRequestTicketService>("ticket-job", 
-    job =>  job.UpdateTicketStateJobAsync(), crons);
+    .AddOrUpdate<IRequestTicketService>("ticket-job",
+    job => job.UpdateTicketStateJobAsync(), crons);
 
 //Seed database
 SeedDatabase();

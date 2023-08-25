@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Comment;
-using QuickServiceWebAPI.DTOs.ServiceCategory;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
-using System.Net.Mail;
 
 namespace QuickServiceWebAPI.Services.Implements
 {

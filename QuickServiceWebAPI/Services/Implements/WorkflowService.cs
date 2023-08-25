@@ -19,7 +19,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly Lazy<IWorkflowTaskService> _workflowTaskService;
         private readonly IWorkflowAssignmentRepository _workflowAssignmentRepository;
 
-        public WorkflowService(IWorkflowRepository repository, IUserRepository userRepository, 
+        public WorkflowService(IWorkflowRepository repository, IUserRepository userRepository,
             IServiceItemRepository serviceItemRepository, IRequestTicketRepository requestTicketRepository,
             ISlaRepository slaRepository, IMapper mapper,
             Lazy<IWorkflowTaskService> workflowTaskService,

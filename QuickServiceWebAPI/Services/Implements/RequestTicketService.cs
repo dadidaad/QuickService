@@ -1,19 +1,14 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.Notification;
 using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.ServiceItem;
-using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
-using System.Net.Sockets;
 using System.Transactions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -448,7 +443,7 @@ namespace QuickServiceWebAPI.Services.Implements
             if (!string.IsNullOrEmpty(queryDtoInput.QueryId))
             {
                 var query = await _queryRepository.GetQueryById(queryDtoInput.QueryId);
-                if(query != null)
+                if (query != null)
                 {
                     queryDto.QueryStatement = query.QueryStatement;
                 }

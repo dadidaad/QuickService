@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
 using System.Data;
-using System.Reflection.Metadata;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -75,7 +74,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        
+
         public async Task DeleteSLA(Sla sla)
         {
             try

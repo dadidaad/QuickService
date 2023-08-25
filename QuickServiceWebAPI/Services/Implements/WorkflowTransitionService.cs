@@ -13,7 +13,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IWorkflowRepository _workflowRepository;
         private readonly IMapper _mapper;
 
-        public WorkflowTransitionService(IWorkflowTransitionRepository repository, 
+        public WorkflowTransitionService(IWorkflowTransitionRepository repository,
             IWorkflowTaskRepository taskRepository, IMapper mapper,
             IWorkflowRepository workflowRepository)
         {
@@ -26,11 +26,11 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task CreateWorkflowTransition(CreateWorkflowTransitionDTO workflowTransitionDTO)
         {
             var fromWorkflowTask = await _taskRepository.GetWorkflowTaskById(workflowTransitionDTO.FromWorkflowTask);
-            if(fromWorkflowTask == null)
+            if (fromWorkflowTask == null)
             {
                 throw new AppException($"Workflow task with id {workflowTransitionDTO.FromWorkflowTask} not found");
             }
-            if(workflowTransitionDTO.FromWorkflowTask != workflowTransitionDTO.ToWorkflowTask)
+            if (workflowTransitionDTO.FromWorkflowTask != workflowTransitionDTO.ToWorkflowTask)
             {
                 var toWorkflowTask = await _taskRepository.GetWorkflowTaskById(workflowTransitionDTO.ToWorkflowTask);
                 if (toWorkflowTask == null)
@@ -46,7 +46,7 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var workflowTransition = await _repository
                 .GetWorkflowTransitionById(fromWorkflowTaskId, toWorkflowTaskId);
-            if(workflowTransition == null)
+            if (workflowTransition == null)
             {
                 throw new AppException($"Workflow transition not found");
             }
@@ -67,7 +67,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<List<WorkflowTransitionDTO>> GetWorkflowTransitionsByWorkflow(string workflowId)
         {
             var workflow = await _workflowRepository.GetWorkflowById(workflowId);
-            if(workflow == null)
+            if (workflow == null)
             {
                 throw new AppException($"Workflow with id {workflowId} not found");
             }

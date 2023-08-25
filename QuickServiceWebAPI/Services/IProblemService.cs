@@ -1,5 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.Change;
-using QuickServiceWebAPI.DTOs.Problem;
+﻿using QuickServiceWebAPI.DTOs.Problem;
 using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 

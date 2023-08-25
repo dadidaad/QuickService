@@ -64,13 +64,13 @@ namespace QuickServiceWebAPI.Seeds
 
         public void SeedSla()
         {
-           
+
             var slas = jsonData.Value<JArray>("Sla").ToObject<List<Sla>>();
             if (slas == null)
             {
                 return;
             }
-            foreach(var sla in slas)
+            foreach (var sla in slas)
             {
                 if (!_context.Slas.Any(s => s.Slaid == sla.Slaid))
                 {

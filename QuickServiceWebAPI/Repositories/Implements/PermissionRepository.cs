@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
-using QuickServiceWebAPI.Utilities;
-using System.Data;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {

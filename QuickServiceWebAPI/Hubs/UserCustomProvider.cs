@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.JsonWebTokens;
-using QuickServiceWebAPI.Helpers;
-using System.Security.Claims;
 
 namespace QuickServiceWebAPI.Hubs
 {
@@ -9,7 +7,7 @@ namespace QuickServiceWebAPI.Hubs
     {
         public string? GetUserId(HubConnectionContext connection)
         {
-            var httpContext  = connection.GetHttpContext();
+            var httpContext = connection.GetHttpContext();
 
             var userId = connection.User.Claims
                 .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)

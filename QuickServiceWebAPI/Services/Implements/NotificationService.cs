@@ -62,7 +62,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     {
                         await _notificationHub.Clients.User(notification.ToUserId).ReceiveNotification(_mapper.Map<NotificationDTO>(notification));
                     }
-                    else if(!string.IsNullOrEmpty(notification.ToGroupId))
+                    else if (!string.IsNullOrEmpty(notification.ToGroupId))
                     {
                         await _notificationHub.Clients.Group(notification.ToGroupId).ReceiveNotification(_mapper.Map<NotificationDTO>(notification));
                     }
@@ -131,7 +131,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 case NotificationTypeEnum.AssignUser:
                     {
-                        if(toUserId != null)
+                        if (toUserId != null)
                         {
                             notification.NotificationHeader = "Ticket assigned";
                             notification.NotificationBody = $"You have" +
@@ -146,7 +146,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     }
                 case NotificationTypeEnum.AssignGroup:
                     {
-                        if(toGroup != null)
+                        if (toGroup != null)
                         {
                             notification.NotificationHeader = "Ticket assigned";
                             notification.NotificationBody = $"Request ticket with id " +

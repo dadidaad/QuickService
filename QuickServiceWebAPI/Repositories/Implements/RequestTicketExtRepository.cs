@@ -59,7 +59,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.RequestTicketExts.Where(x=>x.TicketId == requestTicketId).Include(r => r.Ticket).ThenInclude(sa => sa.Sla).ThenInclude(slm => slm.Slametrics).Include(f => f.Field).ToListAsync();
+                return await _context.RequestTicketExts.Where(x => x.TicketId == requestTicketId).Include(r => r.Ticket).ThenInclude(sa => sa.Sla).ThenInclude(slm => slm.Slametrics).Include(f => f.Field).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -109,6 +109,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        
+
     }
 }

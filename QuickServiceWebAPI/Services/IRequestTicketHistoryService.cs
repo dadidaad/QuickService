@@ -1,5 +1,4 @@
 ﻿using QuickServiceWebAPI.DTOs.RequestTicketHistory;
-using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Services
 {

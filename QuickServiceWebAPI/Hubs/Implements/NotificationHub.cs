@@ -21,7 +21,7 @@ namespace QuickServiceWebAPI.Hubs.Implements
         {
             await Clients.All.ReceiveNotification(notificationDTO);
         }
-        
+
         public async Task SendText(string text)
         {
             await Clients.All.ReceiveNormalMessage(text);

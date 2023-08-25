@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Newtonsoft.Json;
-using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.Models;
@@ -45,7 +43,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException(e.Message);
             }
-            
+
         }
         public async Task<QueryDTO> UpdateQuery(QueryDTO queryDTO)
         {
@@ -101,13 +99,13 @@ namespace QuickServiceWebAPI.Services.Implements
             return requestTickets.Select(requestTicket => _mapper.Map<RequestTicketDTO>(requestTicket)).ToList();
         }
 
-       
+
 
         Task<List<RequestTicketDTO>> IQueryService.GetQueryRequestTicket(QueryConfigDTO query)
         {
             throw new NotImplementedException();
         }
 
-       
+
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -231,7 +230,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 _context.WorkflowAssignments.RemoveRange(_context.WorkflowAssignments.Where(wa => wa.ReferenceId == requestTicketId));
                 await _context.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;
@@ -246,13 +245,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 var listItems = _context.WorkflowAssignments.Include(r => r.Reference)
                     .Where(wa => wa.Reference.ServiceItemId == serviceItemId);
 
-                foreach(var item in listItems)
+                foreach (var item in listItems)
                 {
-                    if(item.AttachmentId != null)
+                    if (item.AttachmentId != null)
                     {
                         attachmentIdList.Add(item.AttachmentId);
                     }
-                    if(item.Reference.AttachmentId != null)
+                    if (item.Reference.AttachmentId != null)
                     {
                         attachmentIdList.Add(item.Reference.AttachmentId);
                     }

@@ -1,9 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.User;
-using QuickServiceWebAPI.DTOs.Workflow;
 using QuickServiceWebAPI.DTOs.WorkflowTransition;
-using QuickServiceWebAPI.Models.Enums;
-using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.WorkflowTask
 {
@@ -23,7 +20,7 @@ namespace QuickServiceWebAPI.DTOs.WorkflowTask
 
         public virtual GroupDTO? GroupEntity { get; set; }
 
-        public virtual UserDTO? UserEntity { get; set; } 
+        public virtual UserDTO? UserEntity { get; set; }
 
         //public virtual WorkflowDTO? WorkflowEntity { get; set; }
     }

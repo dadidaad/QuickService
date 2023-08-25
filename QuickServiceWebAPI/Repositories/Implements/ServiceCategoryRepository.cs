@@ -53,7 +53,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 throw;
             }
         }
-     
+
 
         public async Task UpdateServiceCategory(ServiceCategory serviceCategory)
         {

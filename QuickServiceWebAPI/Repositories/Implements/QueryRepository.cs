@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
-using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -33,7 +31,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Queries.Where(q=>q.UserId==userId && (type=="" || q.QueryType==type)).Include(u => u.User).ToList();
+                return _context.Queries.Where(q => q.UserId == userId && (type == "" || q.QueryType == type)).Include(u => u.User).ToList();
             }
             catch (Exception ex)
             {
@@ -68,7 +66,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
                     .Where(x => (query.Assignee.Contains(x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName) || query.Assignee == null) &&
-                        ((query.CreatedFrom == null || x.CreatedAt >= query.CreatedFrom)  && (query.CreatedTo == null || x.CreatedAt <= query.CreatedTo)) &&
+                        ((query.CreatedFrom == null || x.CreatedAt >= query.CreatedFrom) && (query.CreatedTo == null || x.CreatedAt <= query.CreatedTo)) &&
                         (query.TitleSearch == null || x.Description.Contains(query.TitleSearch)) &&
                         (query.Group == null || query.Group.Contains(x.AssignedToGroupNavigation.GroupName)) &&
                         (query.Reporter == null || query.Reporter.Contains(x.Requester.FirstName + " " + x.Requester.LastName)) &&
@@ -139,6 +137,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        
+
     }
 }

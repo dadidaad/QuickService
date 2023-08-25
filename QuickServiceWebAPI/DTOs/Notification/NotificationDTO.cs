@@ -1,8 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.Group;
-using QuickServiceWebAPI.DTOs.RequestTicket;
-using QuickServiceWebAPI.DTOs.User;
-
-namespace QuickServiceWebAPI.DTOs.Notification
+﻿namespace QuickServiceWebAPI.DTOs.Notification
 {
     public class NotificationDTO
     {
@@ -27,6 +23,6 @@ namespace QuickServiceWebAPI.DTOs.Notification
         public string? GroupName { get; set; }
 
         public string? FromUserName { get; set; }
-        
+
     }
 }

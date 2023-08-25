@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Permission;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
 

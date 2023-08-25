@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.ServiceItem;
 using QuickServiceWebAPI.Models.Enums;
@@ -7,7 +6,7 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceItemsController : ControllerBase
@@ -17,7 +16,7 @@ namespace QuickServiceWebAPI.Controllers
         {
             _serviceItemService = serviceItemService;
         }
-       
+
         [HttpGet("getall")]
         public IActionResult GetAllServiceItem()
         {

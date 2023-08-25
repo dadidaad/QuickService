@@ -1,10 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.Attachment;
-using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.User;
-using QuickServiceWebAPI.DTOs.Workflow;
 using QuickServiceWebAPI.DTOs.WorkflowTask;
-using QuickServiceWebAPI.Models;
-using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.WorkflowAssignment
 {

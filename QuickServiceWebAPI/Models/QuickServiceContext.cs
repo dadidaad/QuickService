@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace QuickServiceWebAPI.Models;
 
@@ -77,7 +75,7 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<YearlyHolidayList> YearlyHolidayLists { get; set; }
 
-  
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Asset>(entity =>

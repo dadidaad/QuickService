@@ -1,5 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.RequestTicket;
-using QuickServiceWebAPI.DTOs.User;
+﻿using QuickServiceWebAPI.DTOs.User;
 
 namespace QuickServiceWebAPI.DTOs.RequestTicketHistory
 {
