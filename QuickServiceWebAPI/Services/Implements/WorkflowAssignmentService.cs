@@ -282,16 +282,6 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.UpdateWorkflowAssignment(updateWorkflowAssignment);
             var requestTicket = await _requestTicketRepository.GetRequestTicketById(workflowAssignment.ReferenceId);
             await HandleRequestTicketForCurrentTask(requestTicket, currentWorkflowTask, workflowAssignment);
-
-            var history = new RequestTicketHistory
-            {
-                Content = $"Assigned to {requestTicket.AssignedToNavigation.FirstName}",
-                RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
-                RequestTicketId = requestTicket.RequestTicketId,
-                LastUpdate = DateTime.Now,
-                UserId = requestTicket.AssignedTo
-            };
-            await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
             return _mapper.Map<UserDTO>(user);
         }
     }
