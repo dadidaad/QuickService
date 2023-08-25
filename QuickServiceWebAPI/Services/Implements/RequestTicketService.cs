@@ -30,20 +30,8 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IQueryRepository _queryRepository;
         private readonly INotificationService _notificationService;
         private readonly IGroupRepository _groupRepository;
-
         private readonly IChangeService _changeService;
         private readonly IProblemService _problemService;
-        private IRequestTicketRepository requestTicketRepository;
-        private ILogger<RequestTicketService> logger;
-        private IMapper mapper;
-        private IUserRepository userRepository;
-        private IServiceItemRepository serviceItemRepository;
-        private IAttachmentService attachmentService;
-        private ISlaRepository slaRepository;
-        private IWorkflowAssignmentService workflowAssignmentService;
-        private IRequestTicketHistoryService requestTicketHistoryService;
-        private IRequestTicketHistoryRepository requestTicketHistoryRepository;
-        private IQueryRepository queryRepository;
 
         public RequestTicketService(IRequestTicketRepository requestTicketRepository,
             ILogger<RequestTicketService> logger, IMapper mapper,
@@ -54,11 +42,7 @@ namespace QuickServiceWebAPI.Services.Implements
             , IRequestTicketHistoryRepository requestTicketHistoryRepository
             , IQueryRepository queryRepository
             , INotificationService notificationService
-            , IGroupRepository groupRepository)
-            ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService,
-            IRequestTicketHistoryService requestTicketHistoryService,
-            IRequestTicketHistoryRepository requestTicketHistoryRepository,
-            IQueryRepository queryRepository,
+            , IGroupRepository groupRepository,
             IChangeService changeService,
             IProblemService problemService)
         {
@@ -77,21 +61,6 @@ namespace QuickServiceWebAPI.Services.Implements
             _groupRepository = groupRepository;
             _changeService = changeService;
             _problemService = problemService;
-        }
-
-        public RequestTicketService(IRequestTicketRepository requestTicketRepository, ILogger<RequestTicketService> logger, IMapper mapper, IUserRepository userRepository, IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService, ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService, IRequestTicketHistoryService requestTicketHistoryService, IRequestTicketHistoryRepository requestTicketHistoryRepository, IQueryRepository queryRepository)
-        {
-            this.requestTicketRepository = requestTicketRepository;
-            this.logger = logger;
-            this.mapper = mapper;
-            this.userRepository = userRepository;
-            this.serviceItemRepository = serviceItemRepository;
-            this.attachmentService = attachmentService;
-            this.slaRepository = slaRepository;
-            this.workflowAssignmentService = workflowAssignmentService;
-            this.requestTicketHistoryService = requestTicketHistoryService;
-            this.requestTicketHistoryRepository = requestTicketHistoryRepository;
-            this.queryRepository = queryRepository;
         }
 
         public async Task<RequestTicketDTO> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
