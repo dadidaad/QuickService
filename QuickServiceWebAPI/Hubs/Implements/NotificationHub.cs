@@ -17,17 +17,22 @@ namespace QuickServiceWebAPI.Hubs.Implements
             _logger = logger;
         }
 
-        public async Task ReceiveMessage(NotificationDTO notificationDTO)
+        public async Task SendMessage(NotificationDTO notificationDTO)
         {
             await Clients.All.ReceiveNotification(notificationDTO);
         }
+        
+        public async Task SendText(string text)
+        {
+            await Clients.All.ReceiveNormalMessage(text);
+        }
 
-        public async Task ReceiveInGroup(string groupId, NotificationDTO notificationDTO)
+        public async Task SendToGroup(string groupId, NotificationDTO notificationDTO)
         {
             await Clients.Group(groupId).ReceiveNotification(notificationDTO);
         }
 
-        public async Task ReceiveUser(string userId, NotificationDTO notificationDTO)
+        public async Task SendToUser(string userId, NotificationDTO notificationDTO)
         {
             await Clients.Users(userId).ReceiveNotification(notificationDTO);
         }

@@ -8,7 +8,7 @@ namespace QuickServiceWebAPI.Middlewares
     {
         private readonly RequestDelegate _next;
 
-        public AuthenticateHubMiddleware(RequestDelegate next)
+        public AuthenticateHubMiddleware(RequestDelegate next) 
         {
             _next = next;
         }
@@ -19,7 +19,7 @@ namespace QuickServiceWebAPI.Middlewares
             var request = context.Request;
 
             // web sockets cannot pass headers so we must take the access token from query param and
-            // add it to the header before authentication middleware runs
+            // add it to the header before authentication middleware  runs
             if (request.Path.StartsWithSegments("/hub", StringComparison.OrdinalIgnoreCase) &&
                 request.Query.TryGetValue("access_token", out var accessToken))
             {

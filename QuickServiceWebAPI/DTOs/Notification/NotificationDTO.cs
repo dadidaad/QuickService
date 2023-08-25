@@ -20,10 +20,13 @@ namespace QuickServiceWebAPI.DTOs.Notification
 
         public string? NotificationType { get; set; }
 
-        public virtual RequestTicketDTO? Relate { get; set; }
+        public string? RequestTicketId { get; set; }
 
-        public virtual GroupDTO? ToGroup { get; set; }
+        public string? RequestTicketTitle { get; set; }
 
-        public virtual UserDTO? FromUser { get; set; }
+        public string? GroupName { get; set; }
+
+        public string? FromUserName { get; set; }
+        
     }
 }

@@ -77,7 +77,7 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<AzureStorageConfig>(builder.Configuration.GetSection("AzureStorageConfig"));
 
 //add signalR
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(opt => opt.EnableDetailedErrors = true);
 builder.Services.AddSingleton<IUserIdProvider, UserCustomProvider>();
 
 //Add service scoped

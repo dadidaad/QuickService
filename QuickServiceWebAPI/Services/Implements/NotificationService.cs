@@ -56,8 +56,8 @@ namespace QuickServiceWebAPI.Services.Implements
                 bool isInserted = await _repository.AddNotification(notification);
                 if (isInserted)
                 {
-                    await _notificationHub.Clients.All.SendNormalMessage("Ok");
-                    await _notificationHub.Clients.All.ReceiveNotification(_mapper.Map<NotificationDTO>(notification));
+                    //await _notificationHub.Clients.All.ReceiveNormalMessage("Ok from server");
+                    //await _notificationHub.Clients.All.ReceiveNotification(_mapper.Map<NotificationDTO>(notification));
                     if (!string.IsNullOrEmpty(notification.ToUserId))
                     {
                         await _notificationHub.Clients.User(notification.ToUserId).ReceiveNotification(_mapper.Map<NotificationDTO>(notification));
@@ -140,6 +140,7 @@ namespace QuickServiceWebAPI.Services.Implements
                             notification.TargetUrl = $"{TargetUrlForRequestTicket}{requestTicket.RequestTicketId}";
                             notification.RelateId = requestTicket.RequestTicketId;
                             notification.ToUserId = toUserId;
+                            notification.Relate = requestTicket;
                         }
                         break;
                     }
@@ -154,6 +155,9 @@ namespace QuickServiceWebAPI.Services.Implements
                             notification.TargetUrl = $"{TargetUrlForRequestTicket}{requestTicket.RequestTicketId}";
                             notification.RelateId = requestTicket.RequestTicketId;
                             notification.ToGroupId = toGroup?.GroupId;
+                            notification.Relate = requestTicket;
+                            notification.ToGroup = toGroup;
+
                         }
                         break;
                     }
@@ -165,6 +169,8 @@ namespace QuickServiceWebAPI.Services.Implements
                             $"\n Request ticket: {requestTicket.Title}";
                         notification.TargetUrl = $"{TargetUrlForRequestTicket}{requestTicket.RequestTicketId}";
                         notification.RelateId = requestTicket.RequestTicketId;
+                        notification.Relate = requestTicket;
+
                         break;
                     }
                 case NotificationTypeEnum.Approval:
