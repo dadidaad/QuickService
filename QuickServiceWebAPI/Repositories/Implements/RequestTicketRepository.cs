@@ -37,7 +37,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                RequestTicket requestTicket = await _context.RequestTickets.Include(g => g.AssignedToGroupNavigation)
+                RequestTicket requestTicket = await _context.RequestTickets
+                    .Include(g => g.AssignedToGroupNavigation)
                     .Include(u => u.AssignedToNavigation)
                     .Include(a => a.Attachment)
                     .Include(r => r.Requester)

@@ -52,6 +52,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 var notification = GetCaseOfNotification(addNotificationDTO.NotificationType, requestTicket, group, addNotificationDTO.ToUserId);
                 notification.CreatedDate = DateTime.Now;
                 notification.IsRead = false;
+                notification.NotificationId = await GetNextId();
                 bool isInserted = await _repository.AddNotification(notification);
                 if (isInserted)
                 {

@@ -88,6 +88,10 @@ namespace QuickServiceWebAPI.Services.Implements
             workflowAssignment.CurrentTaskId = workflowTask.WorkflowTaskId;
             workflowAssignment.WorkflowAssignmentId = await GetNextId();
             await _repository.AddWorkflowAssignment(workflowAssignment);
+            if (!string.IsNullOrEmpty(workflowAssignment.AssigneeId))
+            {
+                await HandleRequestTicketForCurrentTask(requestTicket, workflowTask, workflowAssignment);
+            }
             await HandleNotificationWhenAssignWorkflow(workflowTask, requestTicket);
         }
 
@@ -144,7 +148,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             if (currentWorkflowTask.GroupId != null)
             {
-                if (!user.Groups.Any(g => g.GroupId == currentWorkflowTask.GroupId))
+                if (!user.GroupsNavigation.Any(g => g.GroupId == currentWorkflowTask.GroupId))
                 {
                     throw new AppException($"User with id {checkWorkflowAssignmentDTO.FinisherId} not in group assign");
                 }
@@ -179,17 +183,18 @@ namespace QuickServiceWebAPI.Services.Implements
             requestTicket.AssignedToGroup = currentWorkTask.GroupId;
             requestTicket.AssignedTo = workflowAssignment.AssigneeId;
             requestTicket.LastUpdateAt = DateTime.Now;
-            var history = new RequestTicketHistory
+            if (!string.IsNullOrEmpty(requestTicket.AssignedTo))
             {
-                Content = $"Assigned to",
-                RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
-                RequestTicketId = requestTicket.RequestTicketId,
-                LastUpdate = DateTime.Now,
-                UserId = requestTicket.AssignedTo
-            };
-
-
-            await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+                var history = new RequestTicketHistory
+                {
+                    Content = $"Assigned to",
+                    RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
+                    RequestTicketId = requestTicket.RequestTicketId,
+                    LastUpdate = DateTime.Now,
+                    UserId = requestTicket.AssignedTo
+                };
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
 
             if (requestTicket.Status == StatusEnum.Resolved.ToString())
             {
