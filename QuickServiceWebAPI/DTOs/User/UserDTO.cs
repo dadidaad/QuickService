@@ -25,7 +25,7 @@ namespace QuickServiceWebAPI.DTOs.User
         public string? PersonalEmail { get; set; }
 
         public string? WallPaper { get; set; }
-
+        public bool? IsActive { get; set; }
         public virtual List<GroupDTO> GroupDTOs { get; set; } = new List<GroupDTO>();
     }
 }
