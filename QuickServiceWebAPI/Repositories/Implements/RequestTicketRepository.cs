@@ -150,7 +150,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             var listTickets = new List<RequestTicket>();
             var hasQueryConfig = !string.IsNullOrEmpty(queryDto.QueryStatement);
-            if (!hasQueryConfig) listTickets = GetRequestTickets();
+            if (!hasQueryConfig) listTickets = GetRequestTickets().Where(x=>x.IsIncident == (queryDto.QueryType=="incident")).ToList();
             var queryConfig = new QueryConfigDTO();
             if (hasQueryConfig) queryConfig = JsonConvert.DeserializeObject<QueryConfigDTO>(queryDto.QueryStatement);
             var listTicketsDto = new List<TicketQueryAdminDTO>();
