@@ -79,7 +79,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Users.Include(r => r.Role).ToList();
+                return _context.Users.Include(r => r.Role).Include(g => g.Groups).ToList();
             }
             catch (Exception ex)
             {
