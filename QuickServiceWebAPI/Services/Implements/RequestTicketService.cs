@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.DTOs.Attachment;
+using QuickServiceWebAPI.DTOs.Notification;
 using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.ServiceItem;
@@ -27,14 +28,19 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IRequestTicketHistoryService _requestTicketHistoryService;
         private readonly IRequestTicketHistoryRepository _requestTicketHistoryRepository;
         private readonly IQueryRepository _queryRepository;
+        private readonly INotificationService _notificationService;
+        private readonly IGroupRepository _groupRepository;
+
         public RequestTicketService(IRequestTicketRepository requestTicketRepository,
             ILogger<RequestTicketService> logger, IMapper mapper,
             IUserRepository userRepository,
             IServiceItemRepository serviceItemRepository, IAttachmentService attachmentService,
             ISlaRepository slaRepository, IWorkflowAssignmentService workflowAssignmentService
             , IRequestTicketHistoryService requestTicketHistoryService
-            , IRequestTicketHistoryRepository requestTicketHistoryRepository,
-            IQueryRepository queryRepository)
+            , IRequestTicketHistoryRepository requestTicketHistoryRepository
+            , IQueryRepository queryRepository
+            , INotificationService notificationService
+            , IGroupRepository groupRepository)
         {
             _requestTicketRepository = requestTicketRepository;
             _logger = logger;
@@ -47,6 +53,8 @@ namespace QuickServiceWebAPI.Services.Implements
             _requestTicketHistoryService = requestTicketHistoryService;
             _requestTicketHistoryRepository = requestTicketHistoryRepository;
             _queryRepository = queryRepository;
+            _notificationService = notificationService;
+            _groupRepository = groupRepository;
         }
 
         public async Task<RequestTicketDTO> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
@@ -244,6 +252,32 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Request ticket with id {updateRequestTicketDTO.RequestTicketId} already assign to a workflow and cannot update status");
             }
+
+            if (await _workflowAssignmentService.CheckRequestTicketExists(updateRequestTicketDTO.RequestTicketId) &&
+                (!string.IsNullOrEmpty(updateRequestTicketDTO.AssignedTo) || !string.IsNullOrEmpty(updateRequestTicketDTO.AssignedToGroup)))
+            {
+                throw new AppException($"Request ticket with id {updateRequestTicketDTO.RequestTicketId} already assign to a workflow and cannot update assigner");
+            }
+
+            bool needSendNoti = false;
+            if (!string.IsNullOrEmpty(updateRequestTicketDTO.AssignedTo))
+            {
+                if (await _userRepository.GetUserDetails(updateRequestTicketDTO.AssignedTo) == null)
+                {
+                    throw new AppException($"User with id {updateRequestTicketDTO.AssignedTo} not found");
+                }
+                needSendNoti = true;
+            }
+
+            if (!string.IsNullOrEmpty(updateRequestTicketDTO.AssignedToGroup))
+            {
+                if (await _groupRepository.GetGroupById(updateRequestTicketDTO.AssignedToGroup) == null)
+                {
+                    throw new AppException($"Group with id {updateRequestTicketDTO.AssignedTo} not found");
+                }
+                needSendNoti = true;
+            }
+
             if ((existingRequestTicket.Impact != updateRequestTicketDTO.Impact
                 || existingRequestTicket.Urgency != updateRequestTicketDTO.Urgency))
             {
@@ -302,6 +336,28 @@ namespace QuickServiceWebAPI.Services.Implements
                 updateTicket.ResolvedTime = DateTime.Now;
             }
             await _requestTicketRepository.UpdateRequestTicket(updateTicket);
+
+            if (needSendNoti)
+            {
+                await HandleSendNotification(updateTicket);
+            }
+        }
+
+        private async Task HandleSendNotification(RequestTicket requestTicket)
+        {
+            var notificationDto = new AddNotificationDTO();
+            if (!string.IsNullOrEmpty(requestTicket.AssignedToGroup) && string.IsNullOrEmpty(requestTicket.AssignedTo))
+            {
+                notificationDto.ToGroupId = requestTicket.AssignedToGroup;
+                notificationDto.NotificationType = NotificationTypeEnum.AssignGroup;
+            }
+            if (!string.IsNullOrEmpty(requestTicket.AssignedTo))
+            {
+                notificationDto.ToUserId = requestTicket.AssignedTo;
+                notificationDto.NotificationType = NotificationTypeEnum.AssignUser;
+            }
+            notificationDto.RelateId = requestTicket.RequestTicketId;
+            await _notificationService.AddNotifications(notificationDto);
         }
 
         public Task DeleteRequestTicket(string requestTicketId)
@@ -343,7 +399,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         private async Task HandleStateForRequestTicket(RequestTicket requestTicket)
         {
-            if(requestTicket.State == StateEnum.Cancel.ToString())
+            if (requestTicket.State == StateEnum.Cancel.ToString())
             {
                 return;
             }

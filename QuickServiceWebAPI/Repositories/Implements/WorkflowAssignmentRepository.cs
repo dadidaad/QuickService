@@ -7,8 +7,8 @@ namespace QuickServiceWebAPI.Repositories.Implements
     public class WorkflowAssignmentRepository : IWorkflowAssignmentRepository
     {
         private readonly QuickServiceContext _context;
-
         private readonly ILogger<WorkflowAssignmentRepository> _logger;
+
         public WorkflowAssignmentRepository(QuickServiceContext context, ILogger<WorkflowAssignmentRepository> logger)
         {
             _context = context;

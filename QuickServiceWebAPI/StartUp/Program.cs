@@ -1,10 +1,13 @@
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using QuickServiceWebAPI.Hubs;
+using QuickServiceWebAPI.Hubs.Implements;
 using QuickServiceWebAPI.Middlewares;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
@@ -70,6 +73,10 @@ builder.Services.AddSwaggerGen(option =>
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<AzureStorageConfig>(builder.Configuration.GetSection("AzureStorageConfig"));
 
+//add signalR
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, UserCustomProvider>();
+
 //Add service scoped
 builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
@@ -127,6 +134,9 @@ builder.Services.AddScoped<IRequestTicketHistoryRepository, RequestTicketHistory
 builder.Services.AddScoped<IRequestTicketHistoryService, RequestTicketHistoryService>();
 builder.Services.AddScoped<IChangeRepository, ChangeRepository>();
 builder.Services.AddScoped<IChangeService, ChangeService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
 
 builder.Services.AddScoped<IProblemRepository, ProblemRepository>();
 builder.Services.AddScoped<IProblemService, ProblemService>();
@@ -200,6 +210,9 @@ RecurringJob
 
 //Seed database
 SeedDatabase();
+
+//hub signalR
+app.MapHub<NotificationHub>("/notify");
 
 app.MapControllers();
 

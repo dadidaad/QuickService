@@ -61,6 +61,8 @@ public partial class RequestTicket
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
     public virtual Problem? Problem { get; set; }
 
     public virtual ICollection<RequestTicketExt> RequestTicketExts { get; set; } = new List<RequestTicketExt>();

@@ -47,6 +47,10 @@ public partial class User
 
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
 
+    public virtual ICollection<Notification> NotificationFromUsers { get; set; } = new List<Notification>();
+
+    public virtual ICollection<Notification> NotificationToUsers { get; set; } = new List<Notification>();
+
     public virtual ICollection<Problem> ProblemAssigners { get; set; } = new List<Problem>();
 
     public virtual ICollection<Problem> ProblemRequesters { get; set; } = new List<Problem>();

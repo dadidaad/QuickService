@@ -25,6 +25,8 @@ public partial class Group
 
     public virtual User GroupLeaderNavigation { get; set; } = null!;
 
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
     public virtual ICollection<Problem> Problems { get; set; } = new List<Problem>();
 
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();

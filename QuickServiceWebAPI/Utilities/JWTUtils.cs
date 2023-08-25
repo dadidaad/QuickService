@@ -62,6 +62,13 @@ namespace QuickServiceWebAPI.Utilities
                     }
                 }
             }
+            if (user.GroupsNavigation.Any())
+            {
+                foreach(var group in user.GroupsNavigation)
+                {
+                    claims.Add(new(CustomClaims.Groups, group.GroupId));
+                }
+            }
             // generate token that is valid for 1 days
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtOptions.SecretKey);

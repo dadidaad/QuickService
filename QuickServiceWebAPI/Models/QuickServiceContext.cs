@@ -33,6 +33,8 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<Group> Groups { get; set; }
 
+    public virtual DbSet<Notification> Notifications { get; set; }
+
     public virtual DbSet<Permission> Permissions { get; set; }
 
     public virtual DbSet<Problem> Problems { get; set; }
@@ -75,7 +77,7 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<YearlyHolidayList> YearlyHolidayLists { get; set; }
 
-   
+  
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Asset>(entity =>
@@ -398,6 +400,62 @@ public partial class QuickServiceContext : DbContext
                 .HasConstraintName("FK__Groups__GroupLea__01142BA1");
         });
 
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.ToTable("Notifications", "QuickServices");
+
+            entity.Property(e => e.NotificationId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("NotificationID");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.FromUserId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("FromUserID");
+            entity.Property(e => e.NotificationBody).HasMaxLength(250);
+            entity.Property(e => e.NotificationHeader).HasMaxLength(50);
+            entity.Property(e => e.NotificationType)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.RelateId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("RelateID");
+            entity.Property(e => e.TargetUrl)
+                .HasMaxLength(50)
+                .HasColumnName("TargetURL");
+            entity.Property(e => e.ToGroupId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("ToGroupID");
+            entity.Property(e => e.ToUserId)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("ToUserID");
+
+            entity.HasOne(d => d.FromUser).WithMany(p => p.NotificationFromUsers)
+                .HasForeignKey(d => d.FromUserId)
+                .HasConstraintName("FK_Notification_UserFrom");
+
+            entity.HasOne(d => d.Relate).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.RelateId)
+                .HasConstraintName("FK_Notification_RelateTo");
+
+            entity.HasOne(d => d.ToGroup).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.ToGroupId)
+                .HasConstraintName("FK_Notification_GroupTo");
+
+            entity.HasOne(d => d.ToUser).WithMany(p => p.NotificationToUsers)
+                .HasForeignKey(d => d.ToUserId)
+                .HasConstraintName("FK_Notification_UserTo");
+        });
+
         modelBuilder.Entity<Permission>(entity =>
         {
             entity.HasKey(e => e.PermissionId).HasName("PK__Permissi__EFA6FB0FDE165077");
@@ -489,7 +547,7 @@ public partial class QuickServiceContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.QueryStatement)
-                .HasMaxLength(255)
+                .HasMaxLength(2000)
                 .IsUnicode(false);
             entity.Property(e => e.QueryType)
                 .HasMaxLength(100)
