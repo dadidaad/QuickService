@@ -1,4 +1,6 @@
-﻿using QuickServiceWebAPI.Models;
+﻿using QuickServiceWebAPI.DTOs.Query;
+using QuickServiceWebAPI.DTOs.RequestTicket;
+using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Repositories
 {
@@ -10,5 +12,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateChange(Change change);
         public Task DeleteChange(Change change);
         public Task<Change> GetLastChange();
+        public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
     }
 }

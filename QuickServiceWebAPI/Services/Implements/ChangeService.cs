@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.Change;
+using QuickServiceWebAPI.DTOs.Query;
+using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
@@ -180,6 +182,11 @@ namespace QuickServiceWebAPI.Services.Implements
         }
 
         public Task DeleteChange(string changeId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
         {
             throw new NotImplementedException();
         }
