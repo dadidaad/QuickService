@@ -46,7 +46,10 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.Email == email);
+                User user = await _context.Users
+                    .Include(u => u.Role).ThenInclude(r => r.Permissions)
+                    .Include(u => u.GroupsNavigation)
+                    .FirstOrDefaultAsync(u => u.Email == email);
                 return user;
             }
             catch (Exception ex)
@@ -60,7 +63,9 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.Include(u => u.GroupsNavigation).Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
+                User user = await _context.Users
+                    .Include(u => u.GroupsNavigation)
+                    .Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
                 return user;
             }
             catch (Exception ex)
