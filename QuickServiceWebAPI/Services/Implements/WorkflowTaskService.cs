@@ -3,6 +3,7 @@ using QuickServiceWebAPI.DTOs.WorkflowTask;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
+using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 using System.Runtime.InteropServices;
 
@@ -14,31 +15,31 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IWorkflowRepository _workflowRepository;
         private readonly IWorkflowAssignmentRepository _workflowAssignmentRepository;
         private readonly IWorkflowAssignmentService _workflowAssignmentService;
-        private readonly IWorkflowService _workflowService;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
         private readonly IGroupRepository _groupRepository;
-        public WorkflowTaskService(IWorkflowTaskRepository repository,
-            IWorkflowRepository workflowRepository, IMapper mapper,
+        private readonly IRequestTicketRepository _requestTicketRepository;
+
+        public WorkflowTaskService(IWorkflowTaskRepository repository, IWorkflowRepository workflowRepository,
+            IWorkflowAssignmentRepository workflowAssignmentRepository, IWorkflowAssignmentService workflowAssignmentService,
+            IMapper mapper,
             IUserRepository userRepository, IGroupRepository groupRepository,
-            IWorkflowAssignmentRepository workflowAssignmentRepository,
-            IWorkflowAssignmentService workflowAssignmentService,
-            IWorkflowService workflowService)
+            IRequestTicketRepository requestTicketRepository)
         {
             _repository = repository;
             _workflowRepository = workflowRepository;
+            _workflowAssignmentRepository = workflowAssignmentRepository;
+            _workflowAssignmentService = workflowAssignmentService;
             _mapper = mapper;
             _userRepository = userRepository;
             _groupRepository = groupRepository;
-            _workflowAssignmentRepository = workflowAssignmentRepository;
-            _workflowAssignmentService = workflowAssignmentService;
-            _workflowService = workflowService;
+            _requestTicketRepository = requestTicketRepository;
         }
 
         public async Task<List<WorkflowTaskDTO>> GetWorkflowsTaskByWorkflow(string workflowId)
         {
             var workflow = await _workflowRepository.GetWorkflowById(workflowId);
-            if(workflow == null)
+            if (workflow == null)
             {
                 throw new AppException($"Workflow with id {workflowId} not found");
             }
@@ -60,8 +61,8 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException($"Workflow with id {createUpdateWorkflowTaskDTO.WorkflowId} not found");
             }
             await HandleEditWorkflowTask(workflow.WorkflowId);
-            if ((createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString() 
-                || createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Open.ToString()) 
+            if ((createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Resolved.ToString()
+                || createUpdateWorkflowTaskDTO.Status == StatusWorkflowTaskEnum.Open.ToString())
                 && !AcceptResovledAndOpenTask)
             {
                 throw new AppException($"Workflow already have resolved and open Task");
@@ -87,7 +88,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Workflow with id " + createUpdateWorkflowTaskDTO.WorkflowId + " not found");
             }
-            if(workflowTask.Status == StatusWorkflowTaskEnum.Open.ToString() || workflowTask.Status == StatusWorkflowTaskEnum.Resolved.ToString())
+            if (workflowTask.Status == StatusWorkflowTaskEnum.Open.ToString() || workflowTask.Status == StatusWorkflowTaskEnum.Resolved.ToString())
             {
                 if (createUpdateWorkflowTaskDTO.Status != workflowTask.Status)
                 {
@@ -117,7 +118,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     throw new AppException($"Group with id {createUpdateWorkflowTaskDTO.GroupId} not found");
                 }
             }
-            else if(string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId) && string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
+            else if (string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.GroupId) && string.IsNullOrEmpty(createUpdateWorkflowTaskDTO.AssignerId))
             {
 
             }
@@ -144,10 +145,26 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.DeleteWorkflowTask(workflowTask);
         }
 
+        private async Task<bool> CheckStatusRequestTicketToEditWorkflowTask(string workflowId)
+        {
+            var workflow = await _workflowRepository.GetWorkflowById(workflowId);
+            if (workflow == null)
+            {
+                throw new AppException($"Workflow with id {workflowId} not found");
+            }
+            var requestTickets = await _requestTicketRepository.GetAllRequestTicketRelatedToWorkflow(workflowId);
+            if (requestTickets.Any(r => r.Status != StatusEnum.Resolved.ToString()
+            || r.Status != StatusEnum.Canceled.ToString()
+            || r.Status != StatusEnum.Closed.ToString()))
+            {
+                return false;
+            }
+            return true;
+        }
 
         private async Task HandleEditWorkflowTask(string workflowId)
         {
-            bool checkConditionEdit = await _workflowService.CheckStatusRequestTicketToEditWorkflowTask(workflowId);
+            bool checkConditionEdit = await CheckStatusRequestTicketToEditWorkflowTask(workflowId);
             if (!checkConditionEdit)
             {
                 throw new AppException("Can not edit workflow already assign task to request ticket");
