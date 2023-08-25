@@ -66,7 +66,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(n => n.FromUser)
                     .Include(n => n.Relate)
                     .Include(n => n.ToGroup)
-                    .Where(n => n.ToUserId == ToUserId || groupIdList.Contains(n.ToGroupId));
+                    .Where(n => n.ToUserId == ToUserId || groupIdList.Contains(n.ToGroupId)).OrderByDescending(x=>x.CreatedDate);
                 if (isGetOnlyUnRead)
                 {
                     query = query.Where(n => !n.IsRead);
