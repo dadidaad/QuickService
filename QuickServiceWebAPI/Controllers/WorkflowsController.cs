@@ -12,6 +12,7 @@ namespace QuickServiceWebAPI.Controllers
     public class WorkflowsController : ControllerBase
     {
         private readonly IWorkflowService _workflowService;
+
         public WorkflowsController(IWorkflowService workflowService)
         {
             _workflowService = workflowService;
@@ -71,7 +72,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
 
-        [[HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]]
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpGet("checkedit")]
         public async Task<IActionResult> CheckEditWorkflow(string workflowId)
         {
