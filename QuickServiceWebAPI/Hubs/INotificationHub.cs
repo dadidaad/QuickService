@@ -4,6 +4,7 @@ namespace QuickServiceWebAPI.Hubs
 {
     public interface INotificationHub
     {
-        public Task SendMessage(NotificationDTO notificationDTO); 
+        public Task ReceiveNotification(NotificationDTO notificationDTO); 
+        public Task SendNormalMessage(string message);
     }
 }
