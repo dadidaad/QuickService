@@ -1,9 +1,12 @@
 using Hangfire;
 using Hangfire.SqlServer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using QuickServiceWebAPI.Hubs;
@@ -170,6 +173,7 @@ builder.Services.AddHangfireServer();
 //Add authen and author
 builder.Services.AddAuthentication(UserAuthenticationHandler.Schema)
     .AddScheme<UserAuthenticationOptions, UserAuthenticationHandler>(UserAuthenticationHandler.Schema, null);
+
 builder.Services.AddAuthorization();
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
@@ -191,7 +195,7 @@ app.UseHttpsRedirection();
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
 // custom jwt auth middleware
-//app.UseMiddleware<JWTMiddleware>();
+app.UseMiddleware<AuthenticateHubMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
