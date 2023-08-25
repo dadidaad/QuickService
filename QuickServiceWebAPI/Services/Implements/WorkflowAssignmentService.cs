@@ -285,7 +285,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
             var history = new RequestTicketHistory
             {
-                Content = $"Assigned to {requestTicket.AssignedToNavigation.FirstName}",
+                Content = $"Assigned to",
                 RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
                 RequestTicketId = requestTicket.RequestTicketId,
                 LastUpdate = DateTime.Now,
