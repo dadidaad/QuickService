@@ -411,6 +411,20 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var typeTicket = queryDto.QueryType ?? "all";
             var listTicket = new List<TicketQueryAdminDTO>();
+            var queryDto = new QueryDTO();
+            queryDto.QueryType = typeTicket;
+            if (!string.IsNullOrEmpty(queryDtoInput.QueryId))
+            {
+                var query = await _queryRepository.GetQueryById(queryDtoInput.QueryId);
+                if (query != null)
+                {
+                    queryDto.QueryStatement = query.QueryStatement;
+                }
+            }
+            if(!string.IsNullOrEmpty(queryDtoInput.QueryStatement))
+            {
+                queryDto.QueryStatement = queryDtoInput.QueryStatement;
+            }
             switch (typeTicket)
             {
                 case "all":

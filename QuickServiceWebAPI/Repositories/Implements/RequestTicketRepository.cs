@@ -164,15 +164,16 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     .Include(sl => sl.Sla)
                     .ThenInclude(slm => slm.Slametrics)
                     .Where(x =>
+                        (x.IsIncident == (queryDto.QueryType == "incident")) &&
                         (queryConfig.Priority == null || queryConfig.Priority.Length == 0 || queryConfig.Priority.Contains(x.Priority)) &&
                         (queryConfig.TitleSearch == null || (x.Title != null && x.Title.Contains(queryConfig.TitleSearch))) &&
-                        (queryConfig.Assignee == null || queryConfig.Assignee.Length == 0 || (queryConfig.Assignee != null && x.AssignedToNavigation != null && queryConfig.Assignee.Contains(x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName))) &&
+                        (queryConfig.Assignee == null || queryConfig.Assignee.Length == 0 || (queryConfig.Assignee != null && x.AssignedToNavigation != null && queryConfig.Assignee.Contains(x.AssignedToNavigation.UserId))) &&
                         (queryConfig.CreatedFrom == null || x.CreatedAt >= queryConfig.CreatedFrom) &&
                         (queryConfig.CreatedTo == null || x.CreatedAt <= queryConfig.CreatedTo) &&
-                        (queryConfig.Group == null || queryConfig.Group.Length == 0 || (x.AssignedToGroupNavigation != null && queryConfig.Group.Contains(x.AssignedToGroupNavigation.GroupName))) &&
-                        (queryConfig.Reporter == null || queryConfig.Reporter.Length == 0 || queryConfig.Reporter.Contains(x.Requester.FirstName + " " + x.Requester.LastName)) &&
-                        (queryConfig.Service == null || queryConfig.Service.Length == 0 || (x.ServiceItem != null && queryConfig.Service.Contains(x.ServiceItem.ServiceCategory.ServiceCategoryName))) &&
-                        (queryConfig.RequestType == null || queryConfig.RequestType.Length == 0 || (x.ServiceItem != null && queryConfig.RequestType.Contains(x.ServiceItem.ServiceItemName))) &&
+                        (queryConfig.Group == null || queryConfig.Group.Length == 0 || (x.AssignedToGroupNavigation != null && queryConfig.Group.Contains(x.AssignedToGroupNavigation.GroupId))) &&
+                        (queryConfig.Reporter == null || queryConfig.Reporter.Length == 0 || queryConfig.Reporter.Contains(x.Requester.UserId)) &&
+                        (queryConfig.Service == null || queryConfig.Service.Length == 0 || (x.ServiceItem != null && queryConfig.Service.Contains(x.ServiceItem.ServiceCategoryId))) &&
+                        (queryConfig.RequestType == null || queryConfig.RequestType.Length == 0 || (x.ServiceItem != null && queryConfig.RequestType.Contains(x.ServiceItem.ServiceItemId))) &&
                         (queryConfig.Status == null || queryConfig.Status.Length == 0 || queryConfig.Status.Contains(x.Status))
                        ).Take(1000).ToList();
 
