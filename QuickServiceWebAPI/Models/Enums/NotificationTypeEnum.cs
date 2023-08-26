@@ -5,6 +5,7 @@
         AssignUser,
         Discuss,
         Approval,
-        AssignGroup
+        AssignGroup,
+        UpdateStatus
     }
 }

@@ -118,6 +118,16 @@ namespace QuickServiceWebAPI.Services.Implements
 
         }
 
+
+        private async Task HandleNotificationForUpdateStatus(RequestTicket requestTicket)
+        {
+            var notificationDto = new AddNotificationDTO();
+            notificationDto.ToUserId = requestTicket.RequesterId;
+            notificationDto.NotificationType = NotificationTypeEnum.UpdateStatus;
+            notificationDto.RelateId = requestTicket.RequestTicketId;
+            await _notificationService.AddNotifications(notificationDto);
+        }
+
         public async Task CompleteWorkflowTask(CheckWorkflowAssignmentDTO checkWorkflowAssignmentDTO)
         {
             var workflowAssignment = await _repository
@@ -200,6 +210,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 requestTicket.ResolvedTime = DateTime.Now;
             }
             await _requestTicketRepository.UpdateRequestTicket(requestTicket);
+            await HandleNotificationForUpdateStatus(requestTicket);
         }
 
         private StatusEnum MappingWorkflowTaskStatusToRequestTicketStatus(StatusWorkflowTaskEnum statusWorkflowTaskEnum)

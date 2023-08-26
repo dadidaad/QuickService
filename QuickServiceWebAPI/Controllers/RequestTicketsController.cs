@@ -82,7 +82,14 @@ namespace QuickServiceWebAPI.Controllers
         public async Task<IActionResult> CancelRequestTicketForRequester(string requestTicketId)
         {
             await _requestTicketService.CancelRequestTicket(requestTicketId);
-            return Ok(new { message = "Canceled successfully" });
+            return Ok(new { message = "Cancel successfully" });
+        }
+
+        [HttpPut("confirm/{requestTicketId}")]
+        public async Task<IActionResult> ConfirmRequestTicketForRequester(string requestTicketId)
+        {
+            await _requestTicketService.ConfirmRequestTicket(requestTicketId);
+            return Ok(new { message = "Confirm Status successfully" });
         }
 
         [Route("querytickets")]

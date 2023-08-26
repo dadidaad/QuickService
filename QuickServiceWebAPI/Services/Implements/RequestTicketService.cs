@@ -262,6 +262,12 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException($"Request ticket with id {updateRequestTicketDTO.RequestTicketId} already assign to a workflow and cannot update assigner");
             }
 
+            if(updateRequestTicketDTO.Status == StatusEnum.Canceled.ToString()
+                || updateRequestTicketDTO.Status == StatusEnum.Closed.ToString())
+            {
+                throw new AppException("Only requester can update this status to canceled or closed");
+            }    
+
             bool needSendNoti = false;
             if (!string.IsNullOrEmpty(updateRequestTicketDTO.AssignedTo))
             {
@@ -517,6 +523,29 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var listTicket = await _requestTicketRepository.GetRequestTicketsFilterUser(queryDto);
             return listTicket;
+        }
+
+        public async Task ConfirmRequestTicket(string requestTicketId)
+        {
+            var requestTicket = await _requestTicketRepository.GetRequestTicketById(requestTicketId);
+            if (requestTicketId == null)
+            {
+                throw new AppException($"Request ticket with id {requestTicketId} not found");
+            }
+
+            if(requestTicket.Status != StatusEnum.Resolved.ToString())
+            {
+                throw new AppException($"Only confirm if request ticket is resolved");
+            }
+            requestTicket.Status = StatusEnum.Closed.ToString();
+            await _requestTicketRepository.UpdateRequestTicket(requestTicket);
+            var history = new RequestTicketHistory();
+            history.Content = $"Request confirm closed request ticket";
+            history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+            history.RequestTicketId = requestTicket.RequestTicketId;
+            history.LastUpdate = DateTime.Now;
+            history.UserId = requestTicket.RequesterId;
+            await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
         }
     }
 }
