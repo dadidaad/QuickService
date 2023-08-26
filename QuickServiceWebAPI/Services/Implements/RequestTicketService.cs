@@ -448,9 +448,17 @@ namespace QuickServiceWebAPI.Services.Implements
                     queryDto.QueryStatement = query.QueryStatement;
                 }
             }
+            //Xử lý riêng service request
+            if(queryDtoInput.QueryStatement != null && queryDtoInput.QueryType == "service")
+            {
+                queryDto.QueryStatement = queryDtoInput.QueryStatement;
+            }
             switch (typeTicket)
             {
                 case "all":
+                    listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                case "service":
                     listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "incident":
@@ -484,6 +492,9 @@ namespace QuickServiceWebAPI.Services.Implements
             switch (typeTicket)
             {
                 case "all":
+                    listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    break;
+                case "service":
                     listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "incident":

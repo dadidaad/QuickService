@@ -169,10 +169,10 @@ namespace QuickServiceWebAPI.Repositories.Implements
                         (queryConfig.Assignee == null || queryConfig.Assignee.Length == 0 || (queryConfig.Assignee != null && x.AssignedToNavigation != null && queryConfig.Assignee.Contains(x.AssignedToNavigation.FirstName + x.AssignedToNavigation.LastName))) &&
                         (queryConfig.CreatedFrom == null || x.CreatedAt >= queryConfig.CreatedFrom) &&
                         (queryConfig.CreatedTo == null || x.CreatedAt <= queryConfig.CreatedTo) &&
-                        (queryConfig.Group == null || queryConfig.Group.Length == 0 || (x.AssignedToGroupNavigation != null && queryConfig.Group.Contains(x.AssignedToGroupNavigation.GroupName))) &&
+                        (queryConfig.Group == null || queryConfig.Group.Length == 0 || (x.AssignedToGroupNavigation != null && queryConfig.Group.Contains(x.AssignedToGroupNavigation.GroupId))) &&
                         (queryConfig.Reporter == null || queryConfig.Reporter.Length == 0 || queryConfig.Reporter.Contains(x.Requester.FirstName + " " + x.Requester.LastName)) &&
-                        (queryConfig.Service == null || queryConfig.Service.Length == 0 || (x.ServiceItem != null && queryConfig.Service.Contains(x.ServiceItem.ServiceCategory.ServiceCategoryName))) &&
-                        (queryConfig.RequestType == null || queryConfig.RequestType.Length == 0 || (x.ServiceItem != null && queryConfig.RequestType.Contains(x.ServiceItem.ServiceItemName))) &&
+                        (queryConfig.Service == null || queryConfig.Service.Length == 0 || (x.ServiceItem != null && queryConfig.Service.Contains(x.ServiceItem.ServiceCategoryId))) &&
+                        (queryConfig.RequestType == null || queryConfig.RequestType.Length == 0 || (x.ServiceItem != null && queryConfig.RequestType.Contains(x.ServiceItem.ServiceItemId))) &&
                         (queryConfig.Status == null || queryConfig.Status.Length == 0 || queryConfig.Status.Contains(x.Status))
                        ).Take(1000).ToList();
 
@@ -198,7 +198,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                         CreatedAt = q.CreatedAt,
                         Priority = q.Priority,
                         Type = queryDto.QueryType
-                    }).ToList();
+                    }).OrderByDescending(x=>x.CreatedAt).ToList();
 
             if (hasQueryConfig && queryConfig.OrderASC == true && queryConfig.OrderyBy != null)
             {

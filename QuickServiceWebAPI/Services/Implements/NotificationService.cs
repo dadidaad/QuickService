@@ -38,7 +38,7 @@ namespace QuickServiceWebAPI.Services.Implements
         }
 
 
-        public static string TargetUrlForRequestTicket = "admin/tickets/";
+        public static string TargetUrlForRequestTicket = "/admin/tickets/";
         public async Task AddNotifications(AddNotificationDTO addNotificationDTO)
         {
             try
