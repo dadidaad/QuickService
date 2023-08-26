@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuickServiceWebAPI.Models;
 
@@ -12,6 +14,8 @@ public partial class QuickServiceContext : DbContext
         : base(options)
     {
     }
+
+    public virtual DbSet<AggregatedCounter> AggregatedCounters { get; set; }
 
     public virtual DbSet<Asset> Assets { get; set; }
 
@@ -27,9 +31,21 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<Comment> Comments { get; set; }
 
+    public virtual DbSet<Counter> Counters { get; set; }
+
     public virtual DbSet<CustomField> CustomFields { get; set; }
 
     public virtual DbSet<Group> Groups { get; set; }
+
+    public virtual DbSet<Hash> Hashes { get; set; }
+
+    public virtual DbSet<Job> Jobs { get; set; }
+
+    public virtual DbSet<JobParameter> JobParameters { get; set; }
+
+    public virtual DbSet<JobQueue> JobQueues { get; set; }
+
+    public virtual DbSet<List> Lists { get; set; }
 
     public virtual DbSet<Notification> Notifications { get; set; }
 
@@ -47,6 +63,10 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
+    public virtual DbSet<Schema> Schemas { get; set; }
+
+    public virtual DbSet<Server> Servers { get; set; }
+
     public virtual DbSet<Service> Services { get; set; }
 
     public virtual DbSet<ServiceCategory> ServiceCategories { get; set; }
@@ -59,9 +79,13 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<ServiceType> ServiceTypes { get; set; }
 
+    public virtual DbSet<Set> Sets { get; set; }
+
     public virtual DbSet<Sla> Slas { get; set; }
 
     public virtual DbSet<Slametric> Slametrics { get; set; }
+
+    public virtual DbSet<State> States { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -75,9 +99,24 @@ public partial class QuickServiceContext : DbContext
 
     public virtual DbSet<YearlyHolidayList> YearlyHolidayLists { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=tcp:quick-service.database.windows.net,1433; database=Quick service; user=quickservice; password=admin123!");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AggregatedCounter>(entity =>
+        {
+            entity.HasKey(e => e.Key).HasName("PK_HangFire_CounterAggregated");
+
+            entity.ToTable("AggregatedCounter", "HangFire");
+
+            entity.HasIndex(e => e.ExpireAt, "IX_HangFire_AggregatedCounter_ExpireAt").HasFilter("([ExpireAt] IS NOT NULL)");
+
+            entity.Property(e => e.Key).HasMaxLength(100);
+            entity.Property(e => e.ExpireAt).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Asset>(entity =>
         {
             entity.HasKey(e => e.AssetId).HasName("PK__Assets__43492372FD1E1DD6");
@@ -222,20 +261,16 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("ChangeID");
-            entity.Property(e => e.AssignerId)
+            entity.Property(e => e.AssigneeId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
-                .HasColumnName("AssignerID");
+                .HasColumnName("AssigneeID");
             entity.Property(e => e.AttachmentId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("AttachmentID");
-            entity.Property(e => e.BackoutPlan).IsUnicode(false);
-            entity.Property(e => e.ChangeType)
-                .HasMaxLength(20)
-                .IsUnicode(false);
             entity.Property(e => e.CreatedTime).HasColumnType("datetime");
             entity.Property(e => e.GroupId)
                 .HasMaxLength(10)
@@ -243,28 +278,19 @@ public partial class QuickServiceContext : DbContext
                 .IsFixedLength()
                 .HasColumnName("GroupID");
             entity.Property(e => e.Impact).HasMaxLength(20);
-            entity.Property(e => e.IsApprovedByCab).HasColumnName("IsApprovedByCAB");
-            entity.Property(e => e.PlannedEndDate).HasColumnType("datetime");
-            entity.Property(e => e.PlannedStartDate).HasColumnType("datetime");
             entity.Property(e => e.Priority).HasMaxLength(20);
-            entity.Property(e => e.ProblemId)
+            entity.Property(e => e.Slaid)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
-                .HasColumnName("ProblemID");
-            entity.Property(e => e.RequesterId)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("RequesterID");
-            entity.Property(e => e.Risk).HasMaxLength(20);
+                .HasColumnName("SLAID");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .IsUnicode(false);
             entity.Property(e => e.Title).HasMaxLength(250);
 
-            entity.HasOne(d => d.Assigner).WithMany(p => p.ChangeAssigners)
-                .HasForeignKey(d => d.AssignerId)
+            entity.HasOne(d => d.Assignee).WithMany(p => p.Changes)
+                .HasForeignKey(d => d.AssigneeId)
                 .HasConstraintName("FK_Changes_Users");
 
             entity.HasOne(d => d.Attachment).WithMany(p => p.Changes)
@@ -277,15 +303,10 @@ public partial class QuickServiceContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_Changes_Group");
 
-            entity.HasOne(d => d.Problem).WithMany(p => p.Changes)
-                .HasForeignKey(d => d.ProblemId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK_Changes_Problems");
-
-            entity.HasOne(d => d.Requester).WithMany(p => p.ChangeRequesters)
-                .HasForeignKey(d => d.RequesterId)
+            entity.HasOne(d => d.Sla).WithMany(p => p.Changes)
+                .HasForeignKey(d => d.Slaid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Changes_User");
+                .HasConstraintName("FK__Changes__SLAID__27C3E46E");
         });
 
         modelBuilder.Entity<Comment>(entity =>
@@ -329,6 +350,17 @@ public partial class QuickServiceContext : DbContext
                 .HasForeignKey(d => d.RequestTicketId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Comments__Reques__18EBB532");
+        });
+
+        modelBuilder.Entity<Counter>(entity =>
+        {
+            entity.HasKey(e => new { e.Key, e.Id }).HasName("PK_HangFire_Counter");
+
+            entity.ToTable("Counter", "HangFire");
+
+            entity.Property(e => e.Key).HasMaxLength(100);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.ExpireAt).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<CustomField>(entity =>
@@ -396,6 +428,70 @@ public partial class QuickServiceContext : DbContext
                 .HasForeignKey(d => d.GroupLeader)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Groups__GroupLea__01142BA1");
+        });
+
+        modelBuilder.Entity<Hash>(entity =>
+        {
+            entity.HasKey(e => new { e.Key, e.Field }).HasName("PK_HangFire_Hash");
+
+            entity.ToTable("Hash", "HangFire");
+
+            entity.HasIndex(e => e.ExpireAt, "IX_HangFire_Hash_ExpireAt").HasFilter("([ExpireAt] IS NOT NULL)");
+
+            entity.Property(e => e.Key).HasMaxLength(100);
+            entity.Property(e => e.Field).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<Job>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_HangFire_Job");
+
+            entity.ToTable("Job", "HangFire");
+
+            entity.HasIndex(e => e.ExpireAt, "IX_HangFire_Job_ExpireAt").HasFilter("([ExpireAt] IS NOT NULL)");
+
+            entity.HasIndex(e => e.StateName, "IX_HangFire_Job_StateName").HasFilter("([StateName] IS NOT NULL)");
+
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.ExpireAt).HasColumnType("datetime");
+            entity.Property(e => e.StateName).HasMaxLength(20);
+        });
+
+        modelBuilder.Entity<JobParameter>(entity =>
+        {
+            entity.HasKey(e => new { e.JobId, e.Name }).HasName("PK_HangFire_JobParameter");
+
+            entity.ToTable("JobParameter", "HangFire");
+
+            entity.Property(e => e.Name).HasMaxLength(40);
+
+            entity.HasOne(d => d.Job).WithMany(p => p.JobParameters)
+                .HasForeignKey(d => d.JobId)
+                .HasConstraintName("FK_HangFire_JobParameter_Job");
+        });
+
+        modelBuilder.Entity<JobQueue>(entity =>
+        {
+            entity.HasKey(e => new { e.Queue, e.Id }).HasName("PK_HangFire_JobQueue");
+
+            entity.ToTable("JobQueue", "HangFire");
+
+            entity.Property(e => e.Queue).HasMaxLength(50);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.FetchedAt).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<List>(entity =>
+        {
+            entity.HasKey(e => new { e.Key, e.Id }).HasName("PK_HangFire_List");
+
+            entity.ToTable("List", "HangFire");
+
+            entity.HasIndex(e => e.ExpireAt, "IX_HangFire_List_ExpireAt").HasFilter("([ExpireAt] IS NOT NULL)");
+
+            entity.Property(e => e.Key).HasMaxLength(100);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.ExpireAt).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Notification>(entity =>
@@ -479,17 +575,17 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("ProblemID");
-            entity.Property(e => e.AssignerId)
+            entity.Property(e => e.AssigneeId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
-                .HasColumnName("AssignerID");
+                .HasColumnName("AssigneeID");
             entity.Property(e => e.AttachmentId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
                 .HasColumnName("AttachmentID");
-            entity.Property(e => e.DueTime).HasColumnType("datetime");
+            entity.Property(e => e.CreatedTime).HasColumnType("datetime");
             entity.Property(e => e.GroupId)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -501,18 +597,18 @@ public partial class QuickServiceContext : DbContext
             entity.Property(e => e.Priority)
                 .HasMaxLength(20)
                 .IsUnicode(false);
-            entity.Property(e => e.RequesterId)
+            entity.Property(e => e.Slaid)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .IsFixedLength()
-                .HasColumnName("RequesterID");
+                .HasColumnName("SLAID");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .IsUnicode(false);
             entity.Property(e => e.Title).HasMaxLength(250);
 
-            entity.HasOne(d => d.Assigner).WithMany(p => p.ProblemAssigners)
-                .HasForeignKey(d => d.AssignerId)
+            entity.HasOne(d => d.Assignee).WithMany(p => p.Problems)
+                .HasForeignKey(d => d.AssigneeId)
                 .HasConstraintName("FK_Problems_User");
 
             entity.HasOne(d => d.Attachment).WithMany(p => p.Problems)
@@ -524,10 +620,10 @@ public partial class QuickServiceContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_Problems_Group");
 
-            entity.HasOne(d => d.Requester).WithMany(p => p.ProblemRequesters)
-                .HasForeignKey(d => d.RequesterId)
+            entity.HasOne(d => d.Sla).WithMany(p => p.Problems)
+                .HasForeignKey(d => d.Slaid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Problems_User2");
+                .HasConstraintName("FK__Problems__SLAID__314D4EA8");
         });
 
         modelBuilder.Entity<Query>(entity =>
@@ -803,6 +899,27 @@ public partial class QuickServiceContext : DbContext
                     });
         });
 
+        modelBuilder.Entity<Schema>(entity =>
+        {
+            entity.HasKey(e => e.Version).HasName("PK_HangFire_Schema");
+
+            entity.ToTable("Schema", "HangFire");
+
+            entity.Property(e => e.Version).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<Server>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_HangFire_Server");
+
+            entity.ToTable("Server", "HangFire");
+
+            entity.HasIndex(e => e.LastHeartbeat, "IX_HangFire_Server_LastHeartbeat");
+
+            entity.Property(e => e.Id).HasMaxLength(200);
+            entity.Property(e => e.LastHeartbeat).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Service>(entity =>
         {
             entity.HasKey(e => e.ServiceId).HasName("PK__Services__C51BB0EA8118D865");
@@ -1017,6 +1134,21 @@ public partial class QuickServiceContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<Set>(entity =>
+        {
+            entity.HasKey(e => new { e.Key, e.Value }).HasName("PK_HangFire_Set");
+
+            entity.ToTable("Set", "HangFire");
+
+            entity.HasIndex(e => e.ExpireAt, "IX_HangFire_Set_ExpireAt").HasFilter("([ExpireAt] IS NOT NULL)");
+
+            entity.HasIndex(e => new { e.Key, e.Score }, "IX_HangFire_Set_Score");
+
+            entity.Property(e => e.Key).HasMaxLength(100);
+            entity.Property(e => e.Value).HasMaxLength(256);
+            entity.Property(e => e.ExpireAt).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Sla>(entity =>
         {
             entity.HasKey(e => e.Slaid).HasName("PK__SLAs__2848A22937332E34");
@@ -1078,6 +1210,24 @@ public partial class QuickServiceContext : DbContext
                 .HasForeignKey(d => d.Slaid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__SLAMetric__SLAID__6CD828CA");
+        });
+
+        modelBuilder.Entity<State>(entity =>
+        {
+            entity.HasKey(e => new { e.JobId, e.Id }).HasName("PK_HangFire_State");
+
+            entity.ToTable("State", "HangFire");
+
+            entity.HasIndex(e => e.CreatedAt, "IX_HangFire_State_CreatedAt");
+
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(20);
+            entity.Property(e => e.Reason).HasMaxLength(100);
+
+            entity.HasOne(d => d.Job).WithMany(p => p.States)
+                .HasForeignKey(d => d.JobId)
+                .HasConstraintName("FK_HangFire_State_Job");
         });
 
         modelBuilder.Entity<User>(entity =>

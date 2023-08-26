@@ -1,4 +1,7 @@
-﻿namespace QuickServiceWebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace QuickServiceWebAPI.Models;
 
 public partial class Permission
 {

@@ -12,7 +12,6 @@ namespace QuickServiceWebAPI.Services
         public Task<Dictionary<string, int>> GetRequestTicketByProblemPriorityCount();
         public Task<Dictionary<string, int>> GetRequestTicketByProblemImpactCount();
         public Task<Dictionary<string, int>> GetRequestTicketByChangeStatusCount();
-        public Task<Dictionary<string, int>> GetRequestTicketByChangeChangeTypeCount();
         public Task<Dictionary<string, int>> GetRequestTicketByChangeImpactCount();
         public Task<Dictionary<string, int>> GetRequestTicketByStatusCount();
         public Task<Dictionary<string, int>> GetRequestTicketByPriorityCount();

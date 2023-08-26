@@ -1,4 +1,7 @@
-﻿namespace QuickServiceWebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace QuickServiceWebAPI.Models;
 
 public partial class Sla
 {
@@ -11,6 +14,10 @@ public partial class Sla
     public bool IsDefault { get; set; }
 
     public bool? IsActive { get; set; }
+
+    public virtual ICollection<Change> Changes { get; set; } = new List<Change>();
+
+    public virtual ICollection<Problem> Problems { get; set; } = new List<Problem>();
 
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
 

@@ -65,18 +65,6 @@ namespace QuickServiceWebAPI.Controllers
             });
         }
 
-        [HttpGet("countRequestTicketByChangeChangeType")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
-        public async Task<IActionResult> GetRequestTicketByChangeChangeTypeCount()
-        {
-            var requestTicket = await _dashboardService.GetRequestTicketByChangeChangeTypeCount();
-
-            return Ok(new
-            {
-                RequestTicket = requestTicket
-            });
-        }
-
         [HttpGet("countRequestTicketByChangeImpact")]
         [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> GetRequestTicketByChangeImpactCount()

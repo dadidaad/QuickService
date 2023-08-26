@@ -1,4 +1,7 @@
-﻿namespace QuickServiceWebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace QuickServiceWebAPI.Models;
 
 public partial class User
 {
@@ -36,9 +39,7 @@ public partial class User
 
     public virtual ICollection<AssetAssignment> AssetAssignments { get; set; } = new List<AssetAssignment>();
 
-    public virtual ICollection<Change> ChangeAssigners { get; set; } = new List<Change>();
-
-    public virtual ICollection<Change> ChangeRequesters { get; set; } = new List<Change>();
+    public virtual ICollection<Change> Changes { get; set; } = new List<Change>();
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
@@ -48,9 +49,7 @@ public partial class User
 
     public virtual ICollection<Notification> NotificationToUsers { get; set; } = new List<Notification>();
 
-    public virtual ICollection<Problem> ProblemAssigners { get; set; } = new List<Problem>();
-
-    public virtual ICollection<Problem> ProblemRequesters { get; set; } = new List<Problem>();
+    public virtual ICollection<Problem> Problems { get; set; } = new List<Problem>();
 
     public virtual ICollection<Query> Queries { get; set; } = new List<Query>();
 

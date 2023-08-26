@@ -57,7 +57,7 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.AddComment(comment);
 
             var createdCommentDTO = await _repository.GetCommentById(comment.CommentId);
-            return _mapper.Map<CommentDTO>(createdCommentDTO); ;
+            return _mapper.Map<CommentDTO>(createdCommentDTO);
         }
 
         public async Task UpdateComment(UpdateCommentDTO updateCommentDTO)

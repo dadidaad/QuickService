@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QuickServiceWebAPI.DTOs.Change;
+using QuickServiceWebAPI.DTOs.Comment;
 using QuickServiceWebAPI.Services;
+using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
@@ -18,6 +21,27 @@ namespace QuickServiceWebAPI.Controllers
         {
             var changes = await _changeService.GetAllChanges();
             return Ok(changes);
+        }
+
+        [HttpGet("{changeId}")]
+        public async Task<IActionResult> GetChange(string changeId)
+        {
+            var change = await _changeService.GetChange(changeId);
+            return Ok(change);
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateChange(CreateChangeDTO createChangeDTO)
+        {
+            var createdChange = await _changeService.CreateChange(createChangeDTO);
+            return Ok(createdChange);
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateComment([FromForm] UpdateChangeDTO updateChangeDTO)
+        {
+            await _changeService.UpdateChange(updateChangeDTO);
+            return Ok(new { message = "Update successfully", errorCode = 0 });
         }
     }
 }

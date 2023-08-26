@@ -1,5 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.Group;
+using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.User;
 
 namespace QuickServiceWebAPI.DTOs.Problem
@@ -18,28 +19,16 @@ namespace QuickServiceWebAPI.DTOs.Problem
 
         public string Impact { get; set; } = null!;
 
-        public DateTime DueTime { get; set; }
-
-        public string? GroupId { get; set; }
-
-        public string? AssignerId { get; set; }
-
-        public string RequesterId { get; set; } = null!;
-
-        public string? RootCause { get; set; }
-
-        public string? ImpactAnalysis { get; set; }
-
-        public string? Symptoms { get; set; }
+        public string? AssigneeId { get; set; }
 
         public string? AttachmentId { get; set; }
 
-        public virtual UserDTO? AssignerEntity { get; set; }
+        public string Slaid { get; set; } = null!;
 
-        public virtual AttachmentDTO? AttachmentEntity { get; set; }
+        public string? RootCause { get; set; }
 
-        public virtual GroupDTO? GroupEntity { get; set; }
-
-        public virtual UserDTO RequesterEntity { get; set; } = null!;
+        public virtual UserDTO? Assignee { get; set; }
+        public virtual AttachmentDTO? Attachment { get; set; }
+        public virtual SlaDTO Sla { get; set; } = null!;
     }
 }

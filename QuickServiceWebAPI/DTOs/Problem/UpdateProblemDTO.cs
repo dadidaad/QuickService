@@ -2,13 +2,13 @@
 using QuickServiceWebAPI.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuickServiceWebAPI.DTOs.Change
+namespace QuickServiceWebAPI.DTOs.Problem
 {
-    public class UpdateChangeDTO
+    public class UpdateProblemDTO
     {
         [Required]
         [MaxLength(10)]
-        public string ChangeId { get; set; } = null!;
+        public string ProblemId { get; set; } = null!;
 
         [Required]
         [MaxLength(250)]
@@ -29,9 +29,8 @@ namespace QuickServiceWebAPI.DTOs.Change
         [Required]
         [EnumDataType(typeof(ImpactEnum))]
         public string Impact { get; set; } = null!;
-
         [MaxLength]
-        public string? ReasonForChange { get; set; }
+        public string? RootCause { get; set; }
 
         [Required]
         [MaxLength(10)]

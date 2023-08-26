@@ -6,6 +6,7 @@ using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
+using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -18,9 +19,12 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IGroupRepository _groupRepository;
         private readonly ILogger<ChangeService> _logger;
         private readonly IAttachmentService _attachmentService;
+        private readonly ISlaService _slaService;
+        private readonly IRequestTicketRepository _requestTicketRepository;
         public ChangeService(IChangeRepository repository, IMapper mapper,
             IUserRepository userRepository, IGroupRepository groupRepository,
-            ILogger<ChangeService> logger, IAttachmentService attachmentService)
+            ILogger<ChangeService> logger, IAttachmentService attachmentService, 
+            ISlaService slaService, IRequestTicketRepository requestTicketRepository)
         {
             _repository = repository;
             _mapper = mapper;
@@ -28,43 +32,53 @@ namespace QuickServiceWebAPI.Services.Implements
             _groupRepository = groupRepository;
             _logger = logger;
             _attachmentService = attachmentService;
+            _slaService = slaService;
+            _requestTicketRepository = requestTicketRepository;
         }
 
-        public async Task CreateChange(CreateChangeDTO createChangeDTO)
+        public async Task<ChangeDTO> CreateChange(CreateChangeDTO createChangeDTO)
         {
             await ValidateData(createChangeDTO);
-            var change = _mapper.Map<Change>(createChangeDTO);
-            if (createChangeDTO.AttachmentFile is not null)
-            {
-                change.Attachment = await _attachmentService.CreateAttachment(createChangeDTO.AttachmentFile);
-            }
+            var change = _mapper.Map<Change>(createChangeDTO);                  
             change.ChangeId = await GetNextId();
+            change.Status = StatusEnum.Open.ToString();
+            change.Priority = PriorityEnum.Low.ToString();
+            change.Impact = ImpactEnum.Low.ToString();
             change.CreatedTime = DateTime.Now;
             await _repository.AddChange(change);
+            await AddChangeIdToRequestTicket(change.ChangeId, createChangeDTO.RequestTicketIds);
+
+
+            var createdChangeDTO = await _repository.GetChangeById(change.ChangeId);
+            return _mapper.Map<ChangeDTO>(createdChangeDTO);
+        }
+
+        public async Task AddChangeIdToRequestTicket(string changeId, List<String> RequestTicketIds)
+        {
+            foreach (var requestTicketId in RequestTicketIds)
+            {
+                var requestTicket = await _requestTicketRepository.GetRequestTicketById(requestTicketId);
+                if (requestTicket == null)
+                {
+                    throw new AppException($"Request ticket with id: {requestTicketId} not found");
+
+                }
+                requestTicket.ChangeId = changeId;
+                await _requestTicketRepository.UpdateRequestTicket(requestTicket);
+            }
         }
 
         private async Task ValidateData(CreateChangeDTO createChangeDTO)
         {
-            var requester = _userRepository.GetUserDetails(createChangeDTO.RequesterId);
-            if (requester == null)
+            var assigner = await _userRepository.GetUserDetails(createChangeDTO.AssigneeId);
+            if (assigner == null)
             {
-                throw new AppException($"User with id: {createChangeDTO.RequesterId} not found");
+               throw new AppException($"User with id: {createChangeDTO.AssigneeId} not found");
             }
-            if (!string.IsNullOrEmpty(createChangeDTO.AssignerId))
+            var sla = await _slaService.GetSlaById(createChangeDTO.Slaid);
+            if (sla == null)
             {
-                var assigner = _userRepository.GetUserDetails(createChangeDTO.AssignerId);
-                if (assigner == null)
-                {
-                    throw new AppException($"User with id: {createChangeDTO.AssignerId} not found");
-                }
-            }
-            if (!string.IsNullOrEmpty(createChangeDTO.GroupId))
-            {
-                var group = _groupRepository.GetGroupById(createChangeDTO.GroupId);
-                if (group == null)
-                {
-                    throw new AppException($"Group with id: {createChangeDTO.GroupId} not found");
-                }
+                throw new AppException($"Sla with id: {createChangeDTO.Slaid} not found");
             }
         }
 
@@ -80,39 +94,8 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 id = IDGenerator.ExtractNumberFromId(lastChange.ChangeId) + 1;
             }
-            string changeId = IDGenerator.GenerateServiceId(id);
+            string changeId = IDGenerator.GenerateChangeId(id);
             return changeId;
-        }
-
-        private void ActivitiesEachStatus(Change change, UpdateChangePropertiesDTO updateChangePropertiesDTO)
-        {
-            var currentStatusChange = change.Status.ToEnum(StatusChangeEnum.Open);
-            var updateStatusChange = updateChangePropertiesDTO.Status.ToEnum(StatusChangeEnum.Open);
-            if (currentStatusChange == updateStatusChange)
-            {
-                return;
-            }
-            if ((int)updateStatusChange - (int)currentStatusChange != 1)
-            {
-                throw new AppException("Must update to next status");
-            }
-            if (updateStatusChange == StatusChangeEnum.Planning)
-            {
-                if (//updateChangePropertiesDTO.GroupId == null ||
-                   updateChangePropertiesDTO.AssignerId == null)
-                {
-                    throw new AppException("Must assign to a group and agent");
-                }
-            }
-            if (updateStatusChange == StatusChangeEnum.AwaitingApproval && updateChangePropertiesDTO.PlanningDTO == null)
-            {
-                throw new AppException("Must have a plan");
-            }
-            if (updateStatusChange == StatusChangeEnum.PendingRelease && !change.IsApprovedByCab)
-            {
-                throw new AppException("Change must be approved by CAB before proceeding to the next status.");
-            }
-
         }
 
         public async Task UpdateChange(UpdateChangeDTO updateChangeDTO)
@@ -122,52 +105,23 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Change with id: {updateChangeDTO.ChangeId} not found");
             }
-            var requester = await _userRepository.GetUserDetails(updateChangeDTO.RequesterId);
-            if (requester == null)
+            var assignee = await _userRepository.GetUserDetails(updateChangeDTO.AssigneeId);
+            if (assignee == null)
             {
-                throw new AppException($"User with id: {updateChangeDTO.RequesterId} not found");
+                throw new AppException($"User with id: {updateChangeDTO.AssigneeId} not found");
             }
-
+            if (updateChangeDTO.AttachmentFile is not null)
+            {
+                change.Attachment = await _attachmentService.CreateAttachment(updateChangeDTO.AttachmentFile);
+            }
             var updateChange = _mapper.Map(updateChangeDTO, change);
-            await _repository.UpdateChange(updateChange);
-        }
-
-        public async Task UpdateChangeProperties(UpdateChangePropertiesDTO updateChangePropertiesDTO)
-        {
-            var change = await _repository.GetChangeById(updateChangePropertiesDTO.ChangeId);
-            if (change == null)
-            {
-                throw new AppException($"Change with id: {updateChangePropertiesDTO.ChangeId} not found");
-            }
-            if (updateChangePropertiesDTO.ChangeType != change.ChangeType)
-            {
-                updateChangePropertiesDTO.Status = StatusChangeEnum.Open.ToString();
-            }
-            else
-            {
-                ActivitiesEachStatus(change, updateChangePropertiesDTO);
-            }
-            var assigner = await _userRepository.GetUserDetails(updateChangePropertiesDTO.AssignerId);
-            if (assigner == null)
-            {
-                throw new AppException($"User with id: {updateChangePropertiesDTO.AssignerId} not found");
-            }
-            var updateChange = _mapper.Map(updateChangePropertiesDTO, change);
             await _repository.UpdateChange(updateChange);
         }
 
         public async Task<List<ChangeDTO>> GetAllChanges()
         {
             var changes = await _repository.GetChanges();
-            return changes.Select(x => new ChangeDTO()
-            {
-                ChangeId = x.ChangeId,
-                Title = x.Title,
-                Requester = _mapper.Map<UserDTO>(x.Requester),
-                Status = x.Status,
-                Priority = x.Priority,
-                Assigner = _mapper.Map<UserDTO>(x.Assigner)
-            }).ToList();
+            return changes.Select(change => _mapper.Map<ChangeDTO>(change)).ToList();
         }
 
         public async Task<ChangeDTO> GetChange(string changeId)
@@ -185,9 +139,9 @@ namespace QuickServiceWebAPI.Services.Implements
             throw new NotImplementedException();
         }
 
-        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
-        {
-            return await _repository.GetRequestTicketsQueryAdmin(queryDto);
-        }
+        //public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
+        //{
+        //    return await _repository.GetRequestTicketsQueryAdmin(queryDto);
+        //}
     }
 }

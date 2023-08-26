@@ -1,6 +1,7 @@
 ﻿using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.RequestTicket;
+using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.User;
 
 namespace QuickServiceWebAPI.DTOs.Change
@@ -15,50 +16,22 @@ namespace QuickServiceWebAPI.DTOs.Change
 
         public string Status { get; set; } = null!;
 
-        public string ChangeType { get; set; } = null!;
-
         public string Priority { get; set; } = null!;
 
         public string Impact { get; set; } = null!;
 
-        public string Risk { get; set; } = null!;
-
-        public string? GroupId { get; set; }
-
-        public string RequesterId { get; set; } = null!;
-
-        public string? AssignerId { get; set; }
-
-        public DateTime PlannedStartDate { get; set; }
-
-        public DateTime PlannedEndDate { get; set; }
-
-        public string? ReasonForChange { get; set; }
-
-        public string? ImpactPlanning { get; set; }
-
-        public string? RolloutPlan { get; set; }
-
-        public string? BackoutPlan { get; set; }
-
-        public string? ProblemId { get; set; }
+        public string? AssigneeId { get; set; }
 
         public string? AttachmentId { get; set; }
 
-        public bool IsApprovedByCab { get; set; }
+        public string Slaid { get; set; } = null!;
 
-        public DateTime CreatedTime { get; set; }
+        public string? ReasonForChange { get; set; }
 
-        public virtual UserDTO? Assigner { get; set; }
+        public virtual UserDTO? Assignee { get; set; }
 
         public virtual AttachmentDTO? Attachment { get; set; }
 
-        public virtual GroupDTO? Group { get; set; }
-
-        //public virtual Problem? Problem { get; set; }
-
-        public virtual ICollection<RequestTicketDTO> RequestTickets { get; set; } = new List<RequestTicketDTO>();
-
-        public virtual UserDTO Requester { get; set; } = null!;
+        public virtual SlaDTO Sla { get; set; } = null!;
     }
 }
