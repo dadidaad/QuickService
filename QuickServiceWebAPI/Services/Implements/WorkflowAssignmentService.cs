@@ -86,7 +86,7 @@ namespace QuickServiceWebAPI.Services.Implements
             workflowAssignment.CurrentTaskId = workflowTask.WorkflowTaskId;
             workflowAssignment.WorkflowAssignmentId = await GetNextId();
             await _repository.AddWorkflowAssignment(workflowAssignment);
-            if (!string.IsNullOrEmpty(workflowAssignment.AssigneeId))
+            if (!string.IsNullOrEmpty(workflowAssignment.AssigneeId) || workflowTask.Status == StatusWorkflowTaskEnum.Resolved.ToString())
             {
                 await HandleRequestTicketForCurrentTask(requestTicket, workflowTask, workflowAssignment);
             }
