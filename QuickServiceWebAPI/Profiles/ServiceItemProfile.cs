@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.ServiceItem;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Profiles
@@ -17,7 +18,9 @@ namespace QuickServiceWebAPI.Profiles
             CreateMap<ServiceItem, ServiceItemDTOSecond>();
             CreateMap<CreateUpdateServiceItemDTO, ServiceItem>()
                 .ForMember(dest => dest.Status,
-                opt => opt.MapFrom(src => src.Status ? "Published" : "Draft")).IgnoreAllNonExisting();
+                opt => opt.MapFrom(src => src.Status ? StatusServiceItemEnum.Published.ToString() 
+                : StatusServiceItemEnum.Drafted.ToString()))
+                .IgnoreAllNonExisting();
         }
     }
 }

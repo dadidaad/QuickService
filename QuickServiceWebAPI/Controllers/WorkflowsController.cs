@@ -47,11 +47,11 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
         }
         [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
-        [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteWorkflow(string workflowId)
+        [HttpDelete("toggle")]
+        public async Task<IActionResult> ToggleWorkflow(string workflowId)
         {
-            await _workflowService.DeleteWorkflow(workflowId);
-            return Ok(new { message = "Delete successfully" });
+            await _workflowService.ToggleStatusWorkflow(workflowId);
+            return Ok(new { message = "Toggle successfully" });
         }
 
         [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
