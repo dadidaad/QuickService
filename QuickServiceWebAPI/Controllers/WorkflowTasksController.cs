@@ -53,5 +53,13 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Delete successfully" });
         }
 
+
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        [HttpGet("checkdelete/{workflowTaskId}")]
+        public async Task<IActionResult> CheckDeleteWorkflowTask(string workflowTaskId)
+        {
+            return Ok(await _workflowTaskService.CheckConditionDeleteWorkflowTask(workflowTaskId));
+        }
+
     }
 }

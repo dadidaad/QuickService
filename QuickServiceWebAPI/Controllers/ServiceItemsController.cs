@@ -17,12 +17,21 @@ namespace QuickServiceWebAPI.Controllers
             _serviceItemService = serviceItemService;
         }
 
-        [HttpGet("getall")]
-        public IActionResult GetAllServiceItem()
+        [HttpGet("getallfromrequester")]
+        public IActionResult GetAllServiceItemFromRequester()
         {
-            var serviceItems = _serviceItemService.GetServiceItems();
+            var serviceItems = _serviceItemService.GetServiceItems(true);
             return Ok(serviceItems);
         }
+
+        [HttpGet("getall")]
+        [HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
+        public IActionResult GetAllServiceItemFromAdmin()
+        {
+            var serviceItems = _serviceItemService.GetServiceItems(false);
+            return Ok(serviceItems);
+        }
+
 
         [HttpGet("{serviceItemId}")]
         public async Task<IActionResult> GetServiceItemById(string serviceItemId)
@@ -44,6 +53,14 @@ namespace QuickServiceWebAPI.Controllers
         {
             var serviceItemDto = await _serviceItemService.UpdateServiceItem(serviceItemId, createUpdateServiceItemDTO);
             return Ok(new { message = "Update successfully", ServiceItemDTO = serviceItemDto });
+        }
+
+
+        [HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
+        [HttpPut("toggle/{serviceItemId}")]
+        public async Task<IActionResult> ToggleStatusServiceItem(string serviceItemId)
+        {
+            return Ok(new { message = "Toggle successfully", ServiceItemDTO = await _serviceItemService.ToggleStatusWorkflow(serviceItemId)});
         }
     }
 }

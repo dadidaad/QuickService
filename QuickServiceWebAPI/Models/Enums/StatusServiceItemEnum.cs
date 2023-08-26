@@ -1,6 +1,6 @@
 ﻿namespace QuickServiceWebAPI.Models.Enums
 {
-    public enum StatusWorkflowEnum
+    public enum StatusServiceItemEnum
     {
         Published,
         Drafted

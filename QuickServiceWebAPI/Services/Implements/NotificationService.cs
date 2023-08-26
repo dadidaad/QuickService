@@ -38,7 +38,8 @@ namespace QuickServiceWebAPI.Services.Implements
         }
 
 
-        public static string TargetUrlForRequestTicket = "/admin/tickets/";
+        public static string TargetUrlAdminForRequestTicket = "/admin/tickets/";
+        public static string TargetUrlRequesterForRequestTicket = "/tickets/";
         public async Task AddNotifications(AddNotificationDTO addNotificationDTO)
         {
             try
@@ -137,7 +138,7 @@ namespace QuickServiceWebAPI.Services.Implements
                             notification.NotificationBody = $"You have" +
                                 $" assigned {requestTicket.RequestTicketId}" +
                                 $"\n Request ticket: {requestTicket.Title}";
-                            notification.TargetUrl = $"{TargetUrlForRequestTicket}{requestTicket.RequestTicketId}";
+                            notification.TargetUrl = $"{TargetUrlAdminForRequestTicket}{requestTicket.RequestTicketId}";
                             notification.RelateId = requestTicket.RequestTicketId;
                             notification.ToUserId = toUserId;
                             notification.Relate = requestTicket;
@@ -152,7 +153,24 @@ namespace QuickServiceWebAPI.Services.Implements
                             notification.NotificationBody = $"Request ticket with id " +
                                 $"{requestTicket.RequestTicketId} has been assigned to your group {toGroup?.GroupName}" +
                                 $"\n Request ticket: {requestTicket.Title}";
-                            notification.TargetUrl = $"{TargetUrlForRequestTicket}{requestTicket.RequestTicketId}";
+                            notification.TargetUrl = $"{TargetUrlAdminForRequestTicket}{requestTicket.RequestTicketId}";
+                            notification.RelateId = requestTicket.RequestTicketId;
+                            notification.ToGroupId = toGroup?.GroupId;
+                            notification.Relate = requestTicket;
+                            notification.ToGroup = toGroup;
+
+                        }
+                        break;
+                    }
+                case NotificationTypeEnum.UpdateStatus:
+                    {
+                        if (toUserId != null)
+                        {
+                            notification.NotificationHeader = "Ticket update";
+                            notification.NotificationBody = $"Request ticket with id " +
+                                $"{requestTicket.RequestTicketId} has been update status to {requestTicket.Status} " +
+                                $"\n Request ticket: {requestTicket.Title}";
+                            notification.TargetUrl = $"{TargetUrlRequesterForRequestTicket}{requestTicket.RequestTicketId}";
                             notification.RelateId = requestTicket.RequestTicketId;
                             notification.ToGroupId = toGroup?.GroupId;
                             notification.Relate = requestTicket;
@@ -167,7 +185,7 @@ namespace QuickServiceWebAPI.Services.Implements
                         notification.NotificationBody = $"You have been metioned" +
                             $" in request ticket {requestTicket.RequestTicketId}" +
                             $"\n Request ticket: {requestTicket.Title}";
-                        notification.TargetUrl = $"{TargetUrlForRequestTicket}{requestTicket.RequestTicketId}";
+                        notification.TargetUrl = $"{TargetUrlAdminForRequestTicket}{requestTicket.RequestTicketId}";
                         notification.RelateId = requestTicket.RequestTicketId;
                         notification.Relate = requestTicket;
 

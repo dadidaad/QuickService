@@ -14,8 +14,8 @@ namespace QuickServiceWebAPI.Services
         public Task<RequestTicketDTO> GetDetailsRequestTicket(string requestTicketId);
         public Task<RequestTicketForRequesterDTO> GetDetailsRequestTicketForRequester(RequesterResquestDTO requesterResquestDTO);
         public Task<RequestTicketDTO> UpdateRequestTicket(UpdateRequestTicketDTO updateRequestTicketDTO);
-        public Task DeleteRequestTicket(string requestTicketId);
         public Task CancelRequestTicket(string requestTicketId);
+        public Task ConfirmRequestTicket(string requestTicketId);
         public Task UpdateTicketStateJobAsync();
     }
 }

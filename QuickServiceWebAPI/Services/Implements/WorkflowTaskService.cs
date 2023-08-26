@@ -136,13 +136,23 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Workflow Task with id {workflowTaskId} not found");
             }
-            await HandleEditWorkflowTask(workflowTask.WorkflowId);
             var listWorkflowAssignment = await _workflowAssignmentRepository.GetWorkflowAssignmentsByWorkflowTaskId(workflowTaskId);
             if (listWorkflowAssignment.IsAny())
             {
-                await _workflowAssignmentService.DeleteListWorkflowAssignment(listWorkflowAssignment);
+                throw new AppException($"Workflow task with id {workflowTaskId} already have some records in request ticket");
             }
             await _repository.DeleteWorkflowTask(workflowTask);
+        }
+
+
+        public async Task<bool> CheckConditionDeleteWorkflowTask(string workflowTaskId)
+        {
+            var listWorkflowAssignment = await _workflowAssignmentRepository.GetWorkflowAssignmentsByWorkflowTaskId(workflowTaskId);
+            if (listWorkflowAssignment.IsAny())
+            {
+                return false;
+            }
+            return true;
         }
 
         private async Task HandleEditWorkflowTask(string workflowId)

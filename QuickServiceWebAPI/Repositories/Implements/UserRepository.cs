@@ -109,12 +109,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task UpdateUser(User existingUser, User updateUser)
+        public async Task UpdateUser(User updateUser)
         {
             try
             {
-                _context.Entry(existingUser).CurrentValues.SetValues(updateUser);
-                _context.Users.Update(existingUser);
+                _context.Users.Update(updateUser);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

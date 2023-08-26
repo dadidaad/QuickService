@@ -34,7 +34,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Create successfully" });
         }
 
-        [HasPermission(PermissionEnum.ManageUsers, RoleType.Admin)]
+        [Authorize]
         [HttpGet("getall")]
         public IActionResult GetAllUser()
         {

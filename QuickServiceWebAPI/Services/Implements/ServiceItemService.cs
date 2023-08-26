@@ -39,9 +39,9 @@ namespace QuickServiceWebAPI.Services.Implements
             _attachmentService = attachmentService;
         }
 
-        public List<ServiceItemDTO> GetServiceItems()
+        public List<ServiceItemDTO> GetServiceItems(bool forRequester)
         {
-            var serviceItems = _repository.GetServiceItems();
+            var serviceItems = _repository.GetServiceItems(forRequester);
             return serviceItems.Select(serviceItem => _mapper.Map<ServiceItemDTO>(serviceItem)).ToList();
         }
 
@@ -57,10 +57,22 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task<ServiceItemDTO> CreateServiceItem(CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
         {
-            var serviceCategory = _serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId);
+            var serviceCategory = await _serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId);
             if (serviceCategory == null)
             {
                 throw new AppException("Service category with id " + createUpdateServiceItemDTO.ServiceCategoryId + " not found");
+            }
+            var workflow = await _workflowRepository.GetWorkflowById(createUpdateServiceItemDTO.WorkflowId);
+            if (workflow == null)
+            {
+                throw new AppException($"Workflow with id {createUpdateServiceItemDTO.WorkflowId} not found");
+            }
+            else
+            {
+                if (workflow.Status == StatusWorkflowEnum.Drafted.ToString())
+                {
+                    throw new AppException($"Workflow is in drafted mode, please change it to published first");
+                }
             }
             var serviceItem = _mapper.Map<ServiceItem>(createUpdateServiceItemDTO);
             serviceItem.ServiceItemId = await GetNextId();
@@ -79,23 +91,29 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Service category with id " + createUpdateServiceItemDTO.ServiceCategoryId + " not found");
             }
-            if (createUpdateServiceItemDTO.WorkflowId != null)
+            var workflow = await _workflowRepository.GetWorkflowById(createUpdateServiceItemDTO.WorkflowId);
+            if (workflow == null)
             {
-                var workFlow = await _workflowRepository.GetWorkflowById(createUpdateServiceItemDTO.WorkflowId);
-                if (workFlow == null)
-                {
-                    throw new AppException("Workflow with id " + createUpdateServiceItemDTO.WorkflowId + " not found");
-                }
-                await HandleEditAction(serviceItem.ServiceItemId);
-                serviceItem.Workflow = workFlow;
+                throw new AppException("Workflow with id " + createUpdateServiceItemDTO.WorkflowId + " not found");
             }
-
+            else
+            {
+                if (workflow.Status == StatusWorkflowEnum.Drafted.ToString())
+                {
+                    throw new AppException($"Workflow is in drafted mode, please change it to published first");
+                }
+            }
+            await HandleEditAction(serviceItem.ServiceItemId);
+            if (serviceItem.WorkflowId != createUpdateServiceItemDTO.WorkflowId)
+            {
+                serviceItem.Workflow = workflow;
+            }
             serviceItem = _mapper.Map(createUpdateServiceItemDTO, serviceItem);
             await _repository.UpdateServiceItem(serviceItem);
             return _mapper.Map<ServiceItemDTO>(serviceItem);
         }
 
-        public async Task DeleteServiceItem(string serviceItemId)
+        public async Task<ServiceItemDTO> ToggleStatusWorkflow(string serviceItemId)
         {
             ServiceItem serviceItem = await _repository.GetServiceItemById(serviceItemId);
             if (serviceItem == null)
@@ -103,18 +121,17 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("Service item with id " + serviceItemId + " not found");
             }
             await HandleEditAction(serviceItem.ServiceItemId);
-            var listAttachmnetId = await _workflowAssignmentRepository.DeleteWorkflowAssignmentRelatedToServiceItem(serviceItemId);
-            await _requestTicketRepository.DeleteRequestTicketRelatedToServiceItem(serviceItemId);
-            await _serviceItemCustomFieldRepository.DeleteServiceItemCustomFieldsByServiceItem(serviceItem);
-            await _repository.DeleteServiceItem(serviceItem);
 
-            if (listAttachmnetId.Any())
+            if (serviceItem.Status == StatusServiceItemEnum.Published.ToString())
             {
-                foreach (var attachmentId in listAttachmnetId.ToHashSet())
-                {
-                    await _attachmentService.DeleteAttachment(attachmentId);
-                }
+                serviceItem.Status = StatusServiceItemEnum.Drafted.ToString();
             }
+            else
+            {
+                serviceItem.Status = StatusServiceItemEnum.Published.ToString();
+            }
+            await _repository.UpdateServiceItem(serviceItem);
+            return _mapper.Map<ServiceItemDTO>(serviceItem);
         }
 
 
