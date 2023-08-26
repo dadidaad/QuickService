@@ -47,7 +47,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
         }
         [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
-        [HttpDelete("toggle")]
+        [HttpDelete("toggle/{workflowId}")]
         public async Task<IActionResult> ToggleWorkflow(string workflowId)
         {
             await _workflowService.ToggleStatusWorkflow(workflowId);
@@ -72,10 +72,18 @@ namespace QuickServiceWebAPI.Controllers
 
 
         [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
-        [HttpGet("checkedit")]
+        [HttpGet("checkedit/{workflowId}")]
         public async Task<IActionResult> CheckEditWorkflow(string workflowId)
         {
             return Ok(new { Condition = await _workflowService.CheckStatusRequestTicketToEditWorkflowTask(workflowId) });
         }
+
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        [HttpPost("clone/{workflowId}")]
+        public async Task<IActionResult> CloneWorkflow(string workflowId)
+        {
+            return Ok(new { message = "Clone successfully", WorkflowDTO = await _workflowService.CloneWorkflow(workflowId) });
+        }
+
     }
 }

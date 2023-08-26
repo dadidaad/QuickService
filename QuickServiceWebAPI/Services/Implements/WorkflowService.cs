@@ -16,7 +16,6 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IRequestTicketRepository _requestTicketRepository;
         private readonly IMapper _mapper;
         private readonly Lazy<IWorkflowTaskService> _workflowTaskService;
-
         public WorkflowService(IWorkflowRepository repository, IUserRepository userRepository,
             IServiceItemRepository serviceItemRepository, IRequestTicketRepository requestTicketRepository,
             ISlaRepository slaRepository, IMapper mapper,
@@ -199,6 +198,52 @@ namespace QuickServiceWebAPI.Services.Implements
             var removeServiceItemList = workflow.ServiceItems.Where(si => listServiceItemId.Any(siId => siId == si.ServiceItemId)).ToList();
             workflow.ServiceItems.RemoveAll(si => removeServiceItemList.Contains(si));
             await _repository.UpdateWorkflow(workflow);
+        }
+
+        public async Task<WorkflowDTO> CloneWorkflow(string workflowId)
+        {
+            var workflow = await _repository.GetWorkflowById(workflowId);
+            if (workflow == null)
+            {
+                throw new AppException("Workflow not found");
+            }
+            var workflowClone = workflow.DeepCopy();
+            workflowClone.ServiceItems.Clear();
+            workflowClone.RequestTickets.Clear();
+            var workflowTasksClone = EnumerableUtils.DeepCopy(workflowClone.WorkflowTasks.ToList());
+            workflow.WorkflowTasks.Clear();
+            workflowClone.WorkflowId = await GetNextId();
+            using (var workflowTasks = workflowTasksClone.GetEnumerator())
+            {
+                string currentId = await _workflowTaskService.Value.GetNextId();
+                if (workflowTasks.MoveNext())
+                {
+                    workflowTasks.Current.WorkflowTaskId = currentId;
+                    workflowTasks.Current.WorkflowId = workflowClone.WorkflowId;
+                }
+                while (workflowTasks.MoveNext())
+                {
+                    var nextId = GetNextWorkflowTaskId(currentId);
+                    var workflowTask = workflowTasks.Current;
+                    workflowTask.WorkflowTaskId = nextId;
+                    workflowTask.WorkflowId = workflowClone.WorkflowId;
+                    currentId = nextId;
+                }
+            }
+            workflowClone.WorkflowTasks = workflowTasksClone;
+            var workflowAdded = await _repository.AddWorkflow(workflowClone);
+            if(workflowAdded == null)
+            {
+                throw new AppException($"Clone failed");
+            }
+            return _mapper.Map<WorkflowDTO>(workflowAdded);
+        }
+
+        private string GetNextWorkflowTaskId(string lastWorkflowTaskId)
+        {
+            int id = IDGenerator.ExtractNumberFromId(lastWorkflowTaskId) + 1;
+            string workflowTaskId = IDGenerator.GenerateWorkflowTaskId(id);
+            return workflowTaskId;
         }
     }
 }

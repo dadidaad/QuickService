@@ -13,5 +13,6 @@ namespace QuickServiceWebAPI.Services
         public Task AssignWorkflow(AssignWorkflowDTO assignWorkflowDTO);
         public Task<string> GetNextId();
         public Task<bool> CheckStatusRequestTicketToEditWorkflowTask(string workflowId);
+        public Task<WorkflowDTO> CloneWorkflow(string workflowId);
     }
 }

@@ -10,5 +10,6 @@ namespace QuickServiceWebAPI.Services
         public Task UpdateWorkflowTask(string workflowTaskId, CreateUpdateWorkflowTaskDTO createUpdateWorkflowTaskDTO);
         public Task DeleteWorkflowTask(string workflowTaskId);
         public Task<bool> CheckConditionDeleteWorkflowTask(string workflowTaskId);
+        public Task<string> GetNextId();
     }
 }
