@@ -1,5 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.BusinessHour;
-using QuickServiceWebAPI.DTOs.User;
+﻿using QuickServiceWebAPI.DTOs.User;
 
 namespace QuickServiceWebAPI.DTOs.Group
 {

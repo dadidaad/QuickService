@@ -1,5 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.Group;
-using QuickServiceWebAPI.DTOs.RequestTicketExt;
+﻿using QuickServiceWebAPI.DTOs.RequestTicketExt;
 
 namespace QuickServiceWebAPI.Services
 {

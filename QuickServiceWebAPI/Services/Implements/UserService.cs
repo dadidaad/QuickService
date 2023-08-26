@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
-using QuickServiceWebAPI.DTOs.Role;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
@@ -50,10 +49,13 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             if (existingUser.IsActive.HasValue && existingUser.IsActive.Value)
             {
-                var updateUser = existingUser.DeepCopy();
-                updateUser.IsActive = false;
-                await _repository.UpdateUser(existingUser, updateUser);
+                existingUser.IsActive = false;
             }
+            else if (existingUser.IsActive.HasValue && !existingUser.IsActive.Value)
+            {
+                existingUser.IsActive = true;
+            }
+            await _repository.UpdateUser(existingUser);
         }
 
         private async Task<string> GetNextId()
@@ -128,7 +130,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 updateUser.WallPaper = wallpaperPath;
             }
-            await _repository.UpdateUser(existingUser, updateUser);
+            await _repository.UpdateUser(updateUser);
         }
 
         protected virtual async Task<string?> GetPathImpageUpload(IFormFile image, string userId, string container)
@@ -201,7 +203,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             var updateUser = _mapper.Map<User>(existingUser);
             updateUser.RoleId = assignRoleDTO.RoleId;
-            await _repository.UpdateUser(existingUser, updateUser);
+            await _repository.UpdateUser(updateUser);
         }
 
         public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
@@ -218,7 +220,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var newHassPassword = HashPassword(changePasswordDTO.NewPassword);
             var updateUser = _mapper.Map<User>(existingUser);
             updateUser.Password = newHassPassword;
-            await _repository.UpdateUser(existingUser, updateUser);
+            await _repository.UpdateUser(updateUser);
         }
 
         private const string DEFAULT_PASSWORD = "123";
@@ -232,7 +234,7 @@ namespace QuickServiceWebAPI.Services.Implements
             var newHassPassword = HashPassword(DEFAULT_PASSWORD);
             var updateUser = _mapper.Map<User>(existingUser);
             updateUser.Password = newHassPassword;
-            await _repository.UpdateUser(existingUser, updateUser);
+            await _repository.UpdateUser(updateUser);
         }
 
         public async Task<List<UserDTO>> GetUserByContainString(ContainStringDTO containStringDTO)

@@ -1,5 +1,4 @@
 ﻿using QuickServiceWebAPI.DTOs.User;
-using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Services
 {

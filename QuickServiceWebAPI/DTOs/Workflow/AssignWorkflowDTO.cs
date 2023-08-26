@@ -9,9 +9,7 @@ namespace QuickServiceWebAPI.DTOs.Workflow
         public string WorkflowId { get; set; } = null!;
 
         [MaxLength(10)]
-        public string? ServiceItemId { get; set; }
+        public string ServiceItemId { get; set; } = null!;
 
-        [MaxLength(10)]
-        public string? RequestTicketId { get; set; }
     }
 }

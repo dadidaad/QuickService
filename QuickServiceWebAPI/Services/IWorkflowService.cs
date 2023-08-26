@@ -1,5 +1,4 @@
 ﻿using QuickServiceWebAPI.DTOs.Workflow;
-using QuickServiceWebAPI.Models;
 
 namespace QuickServiceWebAPI.Services
 {
@@ -10,8 +9,9 @@ namespace QuickServiceWebAPI.Services
         public Task<WorkflowDTO> CreateWorkflow(CreateUpdateWorkflowDTO createUpdateWorkflowDTO);
         public Task RemoveWorkflowFromServiceItem(RemoveWorkflowFromServiceItemDTO removeWorkflowFromServiceItemDTO);
         public Task UpdateWorkflow(string workflowId, CreateUpdateWorkflowDTO createUpdateWorkflowDTO);
-        public Task DeleteWorkflow(string workflowId);
+        public Task ToggleStatusWorkflow(string workflowId);
         public Task AssignWorkflow(AssignWorkflowDTO assignWorkflowDTO);
         public Task<string> GetNextId();
+        public Task<bool> CheckStatusRequestTicketToEditWorkflowTask(string workflowId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -34,7 +35,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 ServiceItem serviceItem = await _context.ServiceItems
-                                        .AsNoTracking()
                     .Include(s => s.Workflow)
                     .Include(s => s.ServiceCategory)
                     .FirstOrDefaultAsync(x => x.ServiceItemId == serviceItemId);
@@ -47,11 +47,16 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public List<ServiceItem> GetServiceItems()
+        public List<ServiceItem> GetServiceItems(bool forRequester)
         {
             try
             {
-                return _context.ServiceItems.Include(s => s.ServiceCategory).ToList();
+                IQueryable<ServiceItem> query = _context.ServiceItems.Include(s => s.ServiceCategory);
+                if (forRequester)
+                {
+                    query = query.Where(si => si.Status == StatusServiceItemEnum.Published.ToString());
+                }
+                return query.ToList();
             }
             catch (Exception ex)
             {

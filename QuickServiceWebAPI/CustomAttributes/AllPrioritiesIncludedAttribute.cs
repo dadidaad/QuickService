@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using static QuickServiceWebAPI.DTOs.SLAMetric.CreateSlametricDTO;
-using System.Linq;
-using QuickServiceWebAPI.DTOs.SLAMetric;
+﻿using QuickServiceWebAPI.DTOs.SLAMetric;
 using QuickServiceWebAPI.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.CustomAttributes
 {

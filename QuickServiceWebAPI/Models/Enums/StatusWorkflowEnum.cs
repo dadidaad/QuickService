@@ -2,8 +2,7 @@
 {
     public enum StatusWorkflowEnum
     {
-        Active,
-        InUse,
-        InActive
+        Published,
+        Drafted
     }
 }

@@ -1,10 +1,12 @@
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using QuickServiceWebAPI.Hubs;
+using QuickServiceWebAPI.Hubs.Implements;
 using QuickServiceWebAPI.Middlewares;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
@@ -14,7 +16,6 @@ using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Services.Authentication;
 using QuickServiceWebAPI.Services.Implements;
 using QuickServiceWebAPI.Utilities;
-using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
 //Get connection string from appsettings
@@ -69,6 +70,10 @@ builder.Services.AddSwaggerGen(option =>
 });
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<AzureStorageConfig>(builder.Configuration.GetSection("AzureStorageConfig"));
+
+//add signalR
+builder.Services.AddSignalR(opt => opt.EnableDetailedErrors = true);
+builder.Services.AddSingleton<IUserIdProvider, UserCustomProvider>();
 
 //Add service scoped
 builder.Services.AddScoped<IAssetService, AssetService>();
@@ -127,6 +132,10 @@ builder.Services.AddScoped<IRequestTicketHistoryRepository, RequestTicketHistory
 builder.Services.AddScoped<IRequestTicketHistoryService, RequestTicketHistoryService>();
 builder.Services.AddScoped<IChangeRepository, ChangeRepository>();
 builder.Services.AddScoped<IChangeService, ChangeService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+builder.Services.AddLazyResolution();
 
 builder.Services.AddScoped<IProblemRepository, ProblemRepository>();
 builder.Services.AddScoped<IProblemService, ProblemService>();
@@ -160,6 +169,7 @@ builder.Services.AddHangfireServer();
 //Add authen and author
 builder.Services.AddAuthentication(UserAuthenticationHandler.Schema)
     .AddScheme<UserAuthenticationOptions, UserAuthenticationHandler>(UserAuthenticationHandler.Schema, null);
+
 builder.Services.AddAuthorization();
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
@@ -181,7 +191,7 @@ app.UseHttpsRedirection();
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
 // custom jwt auth middleware
-//app.UseMiddleware<JWTMiddleware>();
+app.UseMiddleware<AuthenticateHubMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -195,11 +205,14 @@ app.UseCors(x => x
 //Do background jobs
 var crons = "0 */12 * * *";
 RecurringJob
-    .AddOrUpdate<IRequestTicketService>("ticket-job", 
-    job =>  job.UpdateTicketStateJobAsync(), crons);
+    .AddOrUpdate<IRequestTicketService>("ticket-job",
+    job => job.UpdateTicketStateJobAsync(), crons);
 
 //Seed database
 SeedDatabase();
+
+//hub signalR
+app.MapHub<NotificationHub>("/hub/notify");
 
 app.MapControllers();
 
@@ -215,5 +228,3 @@ void SeedDatabase() //can be placed at the very bottom under app.Run()
         dbInitializer.SeedSla();
     }
 }
-
-public partial class Program { }

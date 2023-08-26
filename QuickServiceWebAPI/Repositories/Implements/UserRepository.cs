@@ -46,7 +46,10 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.Email == email);
+                User user = await _context.Users
+                    .Include(u => u.Role).ThenInclude(r => r.Permissions)
+                    .Include(u => u.GroupsNavigation)
+                    .FirstOrDefaultAsync(u => u.Email == email);
                 return user;
             }
             catch (Exception ex)
@@ -60,7 +63,9 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                User user = await _context.Users.Include(u => u.GroupsNavigation).Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
+                User user = await _context.Users
+                    .Include(u => u.GroupsNavigation)
+                    .Include(u => u.Role).ThenInclude(r => r.Permissions).FirstOrDefaultAsync(u => u.UserId == userId);
                 return user;
             }
             catch (Exception ex)
@@ -74,7 +79,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Users.Include(r => r.Role).ToList();
+                return _context.Users.Include(r => r.Role).Include(g => g.Groups).ToList();
             }
             catch (Exception ex)
             {
@@ -93,7 +98,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                     query = query.Where(u => u.GroupsNavigation.Any(u => u.GroupId == groupId));
                 }
 
-                query =  query.Where(u => u.Email.Contains(containStr)
+                query = query.Where(u => u.Email.Contains(containStr)
                 || string.Concat(u.FirstName, " ", u.MiddleName, " ", u.LastName).Contains(containStr));
                 return await query.ToListAsync();
             }
@@ -104,12 +109,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task UpdateUser(User existingUser, User updateUser)
+        public async Task UpdateUser(User updateUser)
         {
             try
             {
-                _context.Entry(existingUser).CurrentValues.SetValues(updateUser);
-                _context.Users.Update(existingUser);
+                _context.Users.Update(updateUser);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

@@ -3,7 +3,7 @@ using QuickServiceWebAPI.DTOs.RequestTicket;
 
 namespace QuickServiceWebAPI.Services
 {
-    public interface IQueryService 
+    public interface IQueryService
     {
         public Task<List<RequestTicketDTO>> GetQueryRequestTicket(QueryConfigDTO query);
         public Task<List<QueryDTO>> GetQueryForUser(string userId, string type);

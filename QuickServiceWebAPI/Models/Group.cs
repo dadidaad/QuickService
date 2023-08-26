@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace QuickServiceWebAPI.Models;
+﻿namespace QuickServiceWebAPI.Models;
 
 public partial class Group
 {
@@ -24,6 +21,8 @@ public partial class Group
     public virtual ICollection<Change> Changes { get; set; } = new List<Change>();
 
     public virtual User GroupLeaderNavigation { get; set; } = null!;
+
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     public virtual ICollection<Problem> Problems { get; set; } = new List<Problem>();
 

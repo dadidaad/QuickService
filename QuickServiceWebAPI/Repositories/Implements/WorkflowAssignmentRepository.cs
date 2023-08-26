@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
     public class WorkflowAssignmentRepository : IWorkflowAssignmentRepository
     {
         private readonly QuickServiceContext _context;
-
         private readonly ILogger<WorkflowAssignmentRepository> _logger;
+
         public WorkflowAssignmentRepository(QuickServiceContext context, ILogger<WorkflowAssignmentRepository> logger)
         {
             _context = context;
@@ -220,6 +219,53 @@ namespace QuickServiceWebAPI.Repositories.Implements
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public async Task DeleteWorkflowAssignmentRelatedToTicket(string requestTicketId)
+        {
+            try
+            {
+                _context.WorkflowAssignments.RemoveRange(_context.WorkflowAssignments.Where(wa => wa.ReferenceId == requestTicketId));
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<string>> DeleteWorkflowAssignmentRelatedToServiceItem(string serviceItemId)
+        {
+            try
+            {
+                var attachmentIdList = new List<string>();
+                var listItems = _context.WorkflowAssignments.Include(r => r.Reference)
+                    .Where(wa => wa.Reference.ServiceItemId == serviceItemId);
+
+                foreach (var item in listItems)
+                {
+                    if (item.AttachmentId != null)
+                    {
+                        attachmentIdList.Add(item.AttachmentId);
+                    }
+                    if (item.Reference.AttachmentId != null)
+                    {
+                        attachmentIdList.Add(item.Reference.AttachmentId);
+                    }
+                }
+
+                _context.WorkflowAssignments.RemoveRange(_context.WorkflowAssignments
+                    .Include(r => r.Reference)
+                    .Where(wa => wa.Reference.ServiceItemId == serviceItemId));
+                await _context.SaveChangesAsync();
+                return attachmentIdList;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
                 throw;
             }
         }

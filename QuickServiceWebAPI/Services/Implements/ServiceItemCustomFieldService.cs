@@ -32,12 +32,12 @@ namespace QuickServiceWebAPI.Services.Implements
         {
             var serviceItemId = createUpdateServiceItemCustomFieldDTOs.FirstOrDefault()?.ServiceItemId;
             ServiceItem serviceItem = null;
-            if(serviceItemId!=null) serviceItem = await _serviceItemRepository.GetServiceItemById(serviceItemId);
+            if (serviceItemId != null) serviceItem = await _serviceItemRepository.GetServiceItemById(serviceItemId);
             if (serviceItem == null)
             {
                 throw new AppException("Service item with id {serviceItemId} not found");
             }
-            foreach(var createUpdateServiceItemCustomFieldDTO in createUpdateServiceItemCustomFieldDTOs)
+            foreach (var createUpdateServiceItemCustomFieldDTO in createUpdateServiceItemCustomFieldDTOs)
             {
                 var customField = await _customFieldRepository
                 .GetCustomFieldById(createUpdateServiceItemCustomFieldDTO.CustomFieldId);
@@ -47,7 +47,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 serviceItemCustomField.CreatedTime = DateTime.Now;
                 await _repository.AddServiceItemCustomField(serviceItemCustomField);
             }
-            
+
         }
         public async Task UpdateServiceItemCustomField(List<CreateUpdateServiceItemCustomFieldDTO> createUpdateServiceItemCustomFieldDTOs)
         {
@@ -59,9 +59,9 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException("Service item with id {serviceItemId} not found");
             }
             List<ServiceItemCustomField> serviceItemCustomFields = await _repository.GetServiceItemCustomFieldsByServiceItem(serviceItemId);
-            var listFieldsIdExist = serviceItemCustomFields.Select(x=>x.CustomFieldId).ToList();
-            var listFieldsIdConfig = createUpdateServiceItemCustomFieldDTOs.Select(x=>x.CustomFieldId).ToList();
-            foreach(var serviceItemCustomField in serviceItemCustomFields)
+            var listFieldsIdExist = serviceItemCustomFields.Select(x => x.CustomFieldId).ToList();
+            var listFieldsIdConfig = createUpdateServiceItemCustomFieldDTOs.Select(x => x.CustomFieldId).ToList();
+            foreach (var serviceItemCustomField in serviceItemCustomFields)
             {
                 if (!listFieldsIdConfig.Contains(serviceItemCustomField.CustomFieldId)) await _serviceItemCustomFieldRepository.DeleteServiceItemCustomField(serviceItemCustomField);
             }
@@ -116,6 +116,6 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             List<ServiceItemCustomField> serviceItemCustomFields = await _repository.GetServiceItemCustomFieldsByServiceItem(serviceItemId);
             return _mapper.Map<List<ServiceItemCustomFieldDTO>>(serviceItemCustomFields);
-        }     
+        }
     }
 }

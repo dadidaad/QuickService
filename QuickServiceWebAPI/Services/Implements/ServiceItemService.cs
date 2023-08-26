@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.ServiceItem;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
 
@@ -16,11 +17,15 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IServiceCategoryRepository _serviceCategoryRepository;
         private readonly IServiceItemCustomFieldRepository _serviceItemCustomFieldRepository;
         private readonly IWorkflowRepository _workflowRepository;
+        private readonly IWorkflowAssignmentRepository _workflowAssignmentRepository;
+        private readonly IRequestTicketRepository _requestTicketRepository;
+        private readonly IAttachmentService _attachmentService;
         public ServiceItemService(IServiceItemRepository repository, IMapper mapper,
             IOptions<AzureStorageConfig> storageConfig, ILogger<ServiceItemService> logger,
             IServiceCategoryRepository serviceCategoryRepository,
             IServiceItemCustomFieldRepository serviceItemCustomFieldRepository,
-            IWorkflowRepository workflowRepository)
+            IWorkflowRepository workflowRepository, IRequestTicketRepository requestTicketRepository,
+            IWorkflowAssignmentRepository workflowAssignmentRepository, IAttachmentService attachmentService)
         {
             _repository = repository;
             _mapper = mapper;
@@ -29,11 +34,14 @@ namespace QuickServiceWebAPI.Services.Implements
             _serviceCategoryRepository = serviceCategoryRepository;
             _serviceItemCustomFieldRepository = serviceItemCustomFieldRepository;
             _workflowRepository = workflowRepository;
+            _requestTicketRepository = requestTicketRepository;
+            _workflowAssignmentRepository = workflowAssignmentRepository;
+            _attachmentService = attachmentService;
         }
 
-        public List<ServiceItemDTO> GetServiceItems()
+        public List<ServiceItemDTO> GetServiceItems(bool forRequester)
         {
-            var serviceItems = _repository.GetServiceItems();
+            var serviceItems = _repository.GetServiceItems(forRequester);
             return serviceItems.Select(serviceItem => _mapper.Map<ServiceItemDTO>(serviceItem)).ToList();
         }
 
@@ -49,15 +57,27 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task<ServiceItemDTO> CreateServiceItem(CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
         {
-            var serviceCategory = _serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId);
+            var serviceCategory = await _serviceCategoryRepository.GetServiceCategoryById(createUpdateServiceItemDTO.ServiceCategoryId);
             if (serviceCategory == null)
-             {
+            {
                 throw new AppException("Service category with id " + createUpdateServiceItemDTO.ServiceCategoryId + " not found");
-             }
-             var serviceItem = _mapper.Map<ServiceItem>(createUpdateServiceItemDTO);
-             serviceItem.ServiceItemId = await GetNextId();
-             await _repository.AddServiceItem(serviceItem);
-             return _mapper.Map<ServiceItemDTO>(serviceItem);                 
+            }
+            var workflow = await _workflowRepository.GetWorkflowById(createUpdateServiceItemDTO.WorkflowId);
+            if (workflow == null)
+            {
+                throw new AppException($"Workflow with id {createUpdateServiceItemDTO.WorkflowId} not found");
+            }
+            else
+            {
+                if (workflow.Status == StatusWorkflowEnum.Drafted.ToString())
+                {
+                    throw new AppException($"Workflow is in drafted mode, please change it to published first");
+                }
+            }
+            var serviceItem = _mapper.Map<ServiceItem>(createUpdateServiceItemDTO);
+            serviceItem.ServiceItemId = await GetNextId();
+            await _repository.AddServiceItem(serviceItem);
+            return _mapper.Map<ServiceItemDTO>(serviceItem);
         }
 
         public async Task<ServiceItemDTO> UpdateServiceItem(string serviceItemId, CreateUpdateServiceItemDTO createUpdateServiceItemDTO)
@@ -71,27 +91,59 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException("Service category with id " + createUpdateServiceItemDTO.ServiceCategoryId + " not found");
             }
-            if (createUpdateServiceItemDTO.WorkflowId!=null)
+            var workflow = await _workflowRepository.GetWorkflowById(createUpdateServiceItemDTO.WorkflowId);
+            if (workflow == null)
             {
-                var workFlow = await _workflowRepository.GetWorkflowById(createUpdateServiceItemDTO.WorkflowId);
-                if (workFlow == null) throw new AppException("Workflow with id " + createUpdateServiceItemDTO.WorkflowId + " not found");
-                else serviceItem.Workflow = workFlow;
+                throw new AppException("Workflow with id " + createUpdateServiceItemDTO.WorkflowId + " not found");
             }
-            
+            else
+            {
+                if (workflow.Status == StatusWorkflowEnum.Drafted.ToString())
+                {
+                    throw new AppException($"Workflow is in drafted mode, please change it to published first");
+                }
+            }
+            await HandleEditAction(serviceItem.ServiceItemId);
+            if (serviceItem.WorkflowId != createUpdateServiceItemDTO.WorkflowId)
+            {
+                serviceItem.Workflow = workflow;
+            }
             serviceItem = _mapper.Map(createUpdateServiceItemDTO, serviceItem);
             await _repository.UpdateServiceItem(serviceItem);
             return _mapper.Map<ServiceItemDTO>(serviceItem);
         }
 
-        public async Task DeleteServiceItem(string serviceItemId)
+        public async Task<ServiceItemDTO> ToggleStatusWorkflow(string serviceItemId)
         {
             ServiceItem serviceItem = await _repository.GetServiceItemById(serviceItemId);
             if (serviceItem == null)
             {
                 throw new AppException("Service item with id " + serviceItemId + " not found");
             }
-            await _serviceItemCustomFieldRepository.DeleteServiceItemCustomFieldsByServiceItem(serviceItem);
-            await _repository.DeleteServiceItem(serviceItem);
+            await HandleEditAction(serviceItem.ServiceItemId);
+
+            if (serviceItem.Status == StatusServiceItemEnum.Published.ToString())
+            {
+                serviceItem.Status = StatusServiceItemEnum.Drafted.ToString();
+            }
+            else
+            {
+                serviceItem.Status = StatusServiceItemEnum.Published.ToString();
+            }
+            await _repository.UpdateServiceItem(serviceItem);
+            return _mapper.Map<ServiceItemDTO>(serviceItem);
+        }
+
+
+        private async Task HandleEditAction(string serviceItemId)
+        {
+            var requestTickets = await _requestTicketRepository.GetAllRequestTicketRelatedToServiceItem(serviceItemId);
+            if (requestTickets.Any(r => r.Status != StatusEnum.Resolved.ToString()
+            || r.Status != StatusEnum.Canceled.ToString()
+            || r.Status != StatusEnum.Closed.ToString()))
+            {
+                throw new AppException("Can not edit service item related to working request ticket");
+            }
         }
         public async Task<string> GetNextId()
         {

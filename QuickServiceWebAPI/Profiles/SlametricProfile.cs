@@ -2,7 +2,6 @@
 using QuickServiceWebAPI.DTOs.SLAMetric;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Utilities;
-using static QuickServiceWebAPI.DTOs.SLAMetric.CreateSlametricDTO;
 
 namespace QuickServiceWebAPI.Profiles
 {

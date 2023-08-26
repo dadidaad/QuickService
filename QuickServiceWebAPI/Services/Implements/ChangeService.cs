@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.Change;
 using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
@@ -28,14 +27,14 @@ namespace QuickServiceWebAPI.Services.Implements
             _userRepository = userRepository;
             _groupRepository = groupRepository;
             _logger = logger;
-            _attachmentService = attachmentService; 
+            _attachmentService = attachmentService;
         }
 
         public async Task CreateChange(CreateChangeDTO createChangeDTO)
         {
             await ValidateData(createChangeDTO);
             var change = _mapper.Map<Change>(createChangeDTO);
-            if(createChangeDTO.AttachmentFile is not null)
+            if (createChangeDTO.AttachmentFile is not null)
             {
                 change.Attachment = await _attachmentService.CreateAttachment(createChangeDTO.AttachmentFile);
             }
@@ -93,33 +92,33 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 return;
             }
-            if((int)updateStatusChange - (int)currentStatusChange != 1)
+            if ((int)updateStatusChange - (int)currentStatusChange != 1)
             {
                 throw new AppException("Must update to next status");
             }
-            if(updateStatusChange == StatusChangeEnum.Planning)
+            if (updateStatusChange == StatusChangeEnum.Planning)
             {
-                if(//updateChangePropertiesDTO.GroupId == null ||
+                if (//updateChangePropertiesDTO.GroupId == null ||
                    updateChangePropertiesDTO.AssignerId == null)
                 {
                     throw new AppException("Must assign to a group and agent");
                 }
             }
-            if(updateStatusChange == StatusChangeEnum.AwaitingApproval && updateChangePropertiesDTO.PlanningDTO == null)
+            if (updateStatusChange == StatusChangeEnum.AwaitingApproval && updateChangePropertiesDTO.PlanningDTO == null)
             {
                 throw new AppException("Must have a plan");
             }
-            if(updateStatusChange == StatusChangeEnum.PendingRelease && !change.IsApprovedByCab)
+            if (updateStatusChange == StatusChangeEnum.PendingRelease && !change.IsApprovedByCab)
             {
                 throw new AppException("Change must be approved by CAB before proceeding to the next status.");
             }
-            
+
         }
 
         public async Task UpdateChange(UpdateChangeDTO updateChangeDTO)
         {
             var change = await _repository.GetChangeById(updateChangeDTO.ChangeId);
-            if(change == null)
+            if (change == null)
             {
                 throw new AppException($"Change with id: {updateChangeDTO.ChangeId} not found");
             }
@@ -140,7 +139,7 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Change with id: {updateChangePropertiesDTO.ChangeId} not found");
             }
-            if(updateChangePropertiesDTO.ChangeType != change.ChangeType)
+            if (updateChangePropertiesDTO.ChangeType != change.ChangeType)
             {
                 updateChangePropertiesDTO.Status = StatusChangeEnum.Open.ToString();
             }
@@ -174,7 +173,7 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<ChangeDTO> GetChange(string changeId)
         {
             var change = await _repository.GetChangeById(changeId);
-            if(change == null)
+            if (change == null)
             {
                 throw new AppException($"Change with id: {changeId} not found");
             }
@@ -186,9 +185,9 @@ namespace QuickServiceWebAPI.Services.Implements
             throw new NotImplementedException();
         }
 
-        public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
+        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
         {
-            throw new NotImplementedException();
+            return await _repository.GetRequestTicketsQueryAdmin(queryDto);
         }
     }
 }

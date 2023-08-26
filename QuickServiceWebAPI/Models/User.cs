@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace QuickServiceWebAPI.Models;
+﻿namespace QuickServiceWebAPI.Models;
 
 public partial class User
 {
@@ -46,6 +43,10 @@ public partial class User
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+
+    public virtual ICollection<Notification> NotificationFromUsers { get; set; } = new List<Notification>();
+
+    public virtual ICollection<Notification> NotificationToUsers { get; set; } = new List<Notification>();
 
     public virtual ICollection<Problem> ProblemAssigners { get; set; } = new List<Problem>();
 

@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Utilities;
-using System.Reflection.Metadata.Ecma335;
 
 namespace QuickServiceWebAPI.Profiles
 {
@@ -26,7 +24,7 @@ namespace QuickServiceWebAPI.Profiles
                 opt => opt.MapFrom(src => CalculateDatetime(src, false)))
                 .AfterMap((src, dest) =>
                 {
-                    if(dest.ServiceItemEntity != null && dest.ServiceItemEntity.ServiceCategoryEntity != null )
+                    if (dest.ServiceItemEntity != null && dest.ServiceItemEntity.ServiceCategoryEntity != null)
                     {
                         dest.ServiceItemEntity.ServiceCategoryEntity.ServiceItemEntities.Clear();
                     }

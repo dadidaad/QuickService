@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using QuickServiceWebAPI.DTOs.Group;
 using QuickServiceWebAPI.DTOs.RequestTicketExt;
-using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers

@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace QuickServiceWebAPI.Repositories
+﻿namespace QuickServiceWebAPI.Repositories
 {
     public interface IDashboardRepository
     {
@@ -16,7 +14,7 @@ namespace QuickServiceWebAPI.Repositories
         public Task<Dictionary<string, int>> GetRequestTicketByChangeImpactCount();
         public Task<Dictionary<string, int>> GetRequestTicketByStatusCount();
         public Task<Dictionary<string, int>> GetRequestTicketByPriorityCount();
-        public Task <Dictionary<string, int>> GetRequestTicketByServiceCategoryCount();
+        public Task<Dictionary<string, int>> GetRequestTicketByServiceCategoryCount();
         public Task<List<dynamic>> CountRequestTicketByDay(DateTime fromDate, DateTime toDate);
         public Task<List<dynamic>> CountRequestTicketByDayAndServiceItem(DateTime fromDate, DateTime toDate);
     }

@@ -14,8 +14,10 @@ namespace QuickServiceWebAPI.Repositories
         public Task DeleteRequestTicket(RequestTicket requestTicket);
         public Task<RequestTicket> GetLastRequestTicket();
         public List<RequestTicket> GetRequestTicketsForRequester(string requester);
-
+        public Task<List<RequestTicket>> GetAllRequestTicketRelatedToWorkflow(string workflowId);
+        public Task<List<RequestTicket>> GetAllRequestTicketRelatedToServiceItem(string serviceItemId);
         public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
         public Task<List<TicketQueryAdminDTO>> GetRequestTicketsFilterUser(QueryConfigDTO queryDto);
+        public Task DeleteRequestTicketRelatedToServiceItem(string serviceItemId);
     }
 }

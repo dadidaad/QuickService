@@ -114,7 +114,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                      .Include(u => u.Assigner)
                      .Include(a => a.Attachment)
                      .Include(r => r.Requester)
-                     .Include(g=>g.Group)
+                     .Include(g => g.Group)
                      .Where(x =>
                          (queryConfig.Priority == null || queryConfig.Priority.Length == 0 || queryConfig.Priority.Contains(x.Priority)) &&
                          (queryConfig.TitleSearch == null || (x.Title != null && x.Title.Contains(queryConfig.TitleSearch))) &&

@@ -20,5 +20,10 @@ namespace QuickServiceWebAPI.DTOs.RequestTicket
         [Required]
         [EnumDataType(typeof(UrgencyEnum))]
         public string Urgency { get; set; } = null!;
+
+
+        public string? AssignedTo { get; set; }
+
+        public string? AssignedToGroup { get; set; }
     }
 }

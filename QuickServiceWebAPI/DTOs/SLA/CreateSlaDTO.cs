@@ -1,7 +1,4 @@
-﻿using QuickServiceWebAPI.CustomAttributes;
-using QuickServiceWebAPI.DTOs.SLAMetric;
-using QuickServiceWebAPI.Models.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace QuickServiceWebAPI.DTOs.Sla
 {

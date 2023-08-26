@@ -1,7 +1,4 @@
-﻿using QuickServiceWebAPI.DTOs.BusinessHour;
-using QuickServiceWebAPI.DTOs.Sla;
-
-namespace QuickServiceWebAPI.DTOs.SLAMetric
+﻿namespace QuickServiceWebAPI.DTOs.SLAMetric
 {
     public class SlametricDTO
     {

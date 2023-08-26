@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Update.Internal;
-using QuickServiceWebAPI.DTOs.Sla;
+﻿using QuickServiceWebAPI.DTOs.Sla;
 
 namespace QuickServiceWebAPI.Services
 {

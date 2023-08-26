@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace QuickServiceWebAPI.Models;
+﻿namespace QuickServiceWebAPI.Models;
 
 public partial class RequestTicket
 {
@@ -60,6 +57,8 @@ public partial class RequestTicket
     public virtual Change? Change { get; set; }
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     public virtual Problem? Problem { get; set; }
 

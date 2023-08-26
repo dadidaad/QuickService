@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Sla;
-using QuickServiceWebAPI.DTOs.SLAMetric;
 using QuickServiceWebAPI.Models;
-using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
 
@@ -64,7 +62,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             sla.Slametrics = slametrics;
             var slaAdded = await _repository.AddSLA(sla);
-            if(slaAdded == null)
+            if (slaAdded == null)
             {
                 throw new AppException($"Create failed");
             }
@@ -86,10 +84,30 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task DeleteSLA(string slaId)
         {
             var sla = await _repository.GetSLAById(slaId);
-            if(sla == null)
+            if (sla == null)
             {
                 throw new AppException($"Sla with id {slaId} not found");
             }
+            if (sla.IsDefault)
+            {
+                throw new AppException("Default sla can not delete");
+            }
+            if (sla.ServiceItems.Any() || sla.RequestTickets.Any())
+            {
+                var defaultSla = await _repository.GetDefaultSla();
+                foreach (var item in sla.ServiceItems)
+                {
+                    defaultSla.ServiceItems.Add(item);
+                }
+                foreach (var item in sla.RequestTickets)
+                {
+                    defaultSla.RequestTickets.Add(item);
+                }
+                await _repository.UpdateSLA(defaultSla);
+            }
+            sla.ServiceItems.Clear();
+            sla.RequestTickets.Clear();
+            await _repository.UpdateSLA(sla);
             await _slametricRepository.DeleteSlaMetricsOfSla(sla);
             await _repository.DeleteSLA(sla);
         }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.Workflow;
 using QuickServiceWebAPI.Models.Enums;
@@ -12,6 +11,7 @@ namespace QuickServiceWebAPI.Controllers
     public class WorkflowsController : ControllerBase
     {
         private readonly IWorkflowService _workflowService;
+
         public WorkflowsController(IWorkflowService workflowService)
         {
             _workflowService = workflowService;
@@ -47,11 +47,11 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
         }
         [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
-        [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteWorkflow(string workflowId)
+        [HttpDelete("toggle")]
+        public async Task<IActionResult> ToggleWorkflow(string workflowId)
         {
-            await _workflowService.DeleteWorkflow(workflowId);
-            return Ok(new { message = "Delete successfully" });
+            await _workflowService.ToggleStatusWorkflow(workflowId);
+            return Ok(new { message = "Toggle successfully" });
         }
 
         [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
@@ -68,6 +68,14 @@ namespace QuickServiceWebAPI.Controllers
         {
             await _workflowService.RemoveWorkflowFromServiceItem(removeWorkflowFromServiceItemDTO);
             return Ok(new { message = "Remove successfully" });
+        }
+
+
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        [HttpGet("checkedit")]
+        public async Task<IActionResult> CheckEditWorkflow(string workflowId)
+        {
+            return Ok(new { Condition = await _workflowService.CheckStatusRequestTicketToEditWorkflowTask(workflowId) });
         }
     }
 }

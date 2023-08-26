@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.Dashboard;
 using QuickServiceWebAPI.Models.Enums;
-using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Services;
-using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
@@ -133,7 +129,7 @@ namespace QuickServiceWebAPI.Controllers
                 Incident = incident,
                 Change = changeCount,
                 Problem = problemCount,
-                ServiceRequests  = serviceRequests
+                ServiceRequests = serviceRequests
             });
         }
 

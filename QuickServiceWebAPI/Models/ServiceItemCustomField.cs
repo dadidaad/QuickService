@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace QuickServiceWebAPI.Models;
+﻿namespace QuickServiceWebAPI.Models;
 
 public partial class ServiceItemCustomField
 {

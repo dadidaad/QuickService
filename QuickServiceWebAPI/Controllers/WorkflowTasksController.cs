@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.WorkflowTask;
 using QuickServiceWebAPI.Models.Enums;
@@ -52,6 +51,14 @@ namespace QuickServiceWebAPI.Controllers
         {
             await _workflowTaskService.DeleteWorkflowTask(workflowTaskId);
             return Ok(new { message = "Delete successfully" });
+        }
+
+
+        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        [HttpGet("checkdelete/{workflowTaskId}")]
+        public async Task<IActionResult> CheckDeleteWorkflowTask(string workflowTaskId)
+        {
+            return Ok(await _workflowTaskService.CheckConditionDeleteWorkflowTask(workflowTaskId));
         }
 
     }

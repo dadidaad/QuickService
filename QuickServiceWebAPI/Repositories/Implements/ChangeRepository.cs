@@ -46,11 +46,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public  async Task<List<Change>> GetChanges()
+        public async Task<List<Change>> GetChanges()
         {
             try
             {
-                return  await _context.Changes.Include(c => c.Requester).Include(c => c.Assigner)
+                return await _context.Changes.Include(c => c.Requester).Include(c => c.Assigner)
                     .Include(c => c.Group).Include(c => c.Attachment).Include(g => g.Group)
                     .ToListAsync();
             }
@@ -117,7 +117,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                      .Include(a => a.Attachment)
                      .Include(r => r.Requester)
                      .Include(c => c.Assigner)
-                     .Include(g=>g.Group)
+                     .Include(g => g.Group)
                      .Where(x =>
                          (queryConfig.Priority == null || queryConfig.Priority.Length == 0 || queryConfig.Priority.Contains(x.Priority)) &&
                          (queryConfig.TitleSearch == null || (x.Title != null && x.Title.Contains(queryConfig.TitleSearch))) &&

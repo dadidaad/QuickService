@@ -31,7 +31,7 @@ namespace QuickServiceWebAPI.Services.Implements
                     throw new AppException($"Request ticket item with id {ticketId} not found");
                 }
             }
-            foreach( var requestTicketExtDto in createUpdateRequestTicketExtDTOs)
+            foreach (var requestTicketExtDto in createUpdateRequestTicketExtDTOs)
             {
                 var requestTicketExt = _mapper.Map<RequestTicketExt>(requestTicketExtDto);
                 requestTicketExt.RequestTicketExId = await GetNextId();

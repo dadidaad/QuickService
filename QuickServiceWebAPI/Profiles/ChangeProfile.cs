@@ -11,9 +11,9 @@ namespace QuickServiceWebAPI.Profiles
         {
             CreateMap<CreateChangeDTO, Change>().IgnoreAllNonExisting();
             CreateMap<UpdateChangeDTO, Change>().IgnoreAllNonExisting();
-            CreateMap<UpdateChangePropertiesDTO, Change>().IgnoreAllNonExisting();  
+            CreateMap<UpdateChangePropertiesDTO, Change>().IgnoreAllNonExisting();
             CreateMap<Change, ChangeDTO>().
-                ForMember(dest => dest.Requester, 
+                ForMember(dest => dest.Requester,
                 opt => opt.MapFrom(src => src.Requester)).
                  ForMember(dest => dest.Group,
                 opt => opt.MapFrom(src => src.Group)).

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace QuickServiceWebAPI.Models.Enums
+﻿namespace QuickServiceWebAPI.Models.Enums
 {
     public enum StateEnum
     {

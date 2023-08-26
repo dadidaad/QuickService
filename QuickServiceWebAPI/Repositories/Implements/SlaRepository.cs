@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
 using System.Data;
-using System.Reflection.Metadata;
 
 namespace QuickServiceWebAPI.Repositories.Implements
 {
@@ -35,7 +34,10 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                Sla sla = await _context.Slas.AsNoTracking().Include(s => s.Slametrics).FirstOrDefaultAsync(x => x.Slaid == slaId);
+                Sla sla = await _context.Slas
+                    .Include(s => s.ServiceItems)
+                    .Include(s => s.RequestTickets)
+                    .Include(s => s.Slametrics).AsNoTracking().FirstOrDefaultAsync(x => x.Slaid == slaId);
                 return sla;
             }
             catch (Exception ex)
@@ -72,7 +74,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        
+
         public async Task DeleteSLA(Sla sla)
         {
             try
@@ -104,7 +106,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.Slas.Include(s => s.Slametrics).Where(s => s.IsDefault && s.Slaname.Contains("SLA")).FirstOrDefaultAsync();
+                return await _context.Slas
+                    .Include(s => s.Slametrics)
+                    .Include(s => s.ServiceItems)
+                    .Include(s => s.RequestTickets)
+                    .Where(s => s.IsDefault && s.Slaname.Contains("SLA")).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

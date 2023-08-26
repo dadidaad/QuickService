@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.DTOs.Comment;
-using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers

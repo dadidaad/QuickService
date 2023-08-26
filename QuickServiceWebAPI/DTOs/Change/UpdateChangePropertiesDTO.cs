@@ -36,7 +36,7 @@ namespace QuickServiceWebAPI.DTOs.Change
         [MaxLength(10)]
         public string? AssignerId { get; set; }
 
-        public PlanningDTO? PlanningDTO { get; set; } 
+        public PlanningDTO? PlanningDTO { get; set; }
 
         [Required]
         [DatetimeRange("now", "PlannedEndDate", ErrorMessage = "PlannedStartDate must be in the future and before PlannedEndDate")]

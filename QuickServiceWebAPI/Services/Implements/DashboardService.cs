@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Dashboard;
-using QuickServiceWebAPI.DTOs.ServiceItem;
-using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
-using QuickServiceWebAPI.Repositories.Implements;
 using System.Data.SqlTypes;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -52,7 +48,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task<Dictionary<string, int>> GetRequestTicketByServiceCategoryCount()
         {
-            var requestTicketCounts = await _repository.GetRequestTicketByServiceCategoryCount();                  
+            var requestTicketCounts = await _repository.GetRequestTicketByServiceCategoryCount();
             return requestTicketCounts;
         }
 
@@ -117,7 +113,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return resultListFromDb.Select(x => new CountRequestTicketByDayDTO
             {
                 Date = x.Date,
-                TotalCreated =  x.TotalCreated,
+                TotalCreated = x.TotalCreated,
                 TotalResolved = x.TotalResolved,
                 ServiceItemName = x.ServiceItemName is DBNull ? null : x.ServiceItemName
             }).ToList();

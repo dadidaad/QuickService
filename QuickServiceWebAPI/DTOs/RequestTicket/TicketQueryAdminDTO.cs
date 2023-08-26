@@ -19,10 +19,12 @@
         public string RequesterId { get; set; } = null!;
 
         public string? RequesterFullName { get; set; }
+        public string? RequesterAvatar { get; set; }
 
         public string? AssigneeId { get; set; } = null!;
 
         public string? AssigneeFullName { get; set; }
+        public string? AssigneeAvatar { get; set; }
 
         public string Status { get; set; } = null!;
 

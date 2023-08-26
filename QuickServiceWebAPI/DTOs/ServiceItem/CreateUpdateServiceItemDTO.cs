@@ -18,11 +18,15 @@ namespace QuickServiceWebAPI.DTOs.ServiceItem
 
         public bool Status { get; set; }
 
+        [MaxLength(10)]
         [Required]
         public string ServiceCategoryId { get; set; } = null!;
 
         [MaxLength(100)]
         public string? IconDisplay { get; set; }
-        public string? WorkflowId { get; set; }
+
+        [MaxLength(10)]
+        [Required]
+        public string WorkflowId { get; set; } = null!;
     }
 }

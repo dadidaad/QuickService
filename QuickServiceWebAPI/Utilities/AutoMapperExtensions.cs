@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.SLAMetric;
-using QuickServiceWebAPI.Models;
 using System.Reflection;
 
 namespace QuickServiceWebAPI.Utilities

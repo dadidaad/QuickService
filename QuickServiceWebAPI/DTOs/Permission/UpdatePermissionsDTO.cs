@@ -9,7 +9,7 @@ namespace QuickServiceWebAPI.DTOs.Permission
         [MaxLength(10)]
         public string? RoleId { get; set; }
 
-        [ListHasElements]        
+        [ListHasElements]
         public List<PermissionDTO> Permissions { get; set; } = new List<PermissionDTO>();
     }
 }

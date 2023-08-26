@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using QuickServiceWebAPI.DTOs.RequestTicket;
+using QuickServiceWebAPI.DTOs.Notification;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.DTOs.WorkflowAssignment;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Repositories;
-using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Services.Implements
@@ -23,6 +22,8 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IUserRepository _userRepository;
         private readonly IRequestTicketHistoryService _requestTicketHistoryService;
         private readonly IRequestTicketHistoryRepository _requestTicketHistoryRepository;
+        private readonly INotificationService _notificationService;
+
         public WorkflowAssignmentService(IWorkflowAssignmentRepository repository
             , IWorkflowRepository workflowRepository
             , IRequestTicketRepository requestTicketRepository
@@ -33,7 +34,8 @@ namespace QuickServiceWebAPI.Services.Implements
             , ISlaRepository slaRepository
             , IUserRepository userRepository
             , IRequestTicketHistoryService requestTicketHistoryService
-            , IRequestTicketHistoryRepository requestTicketHistoryRepository)
+            , IRequestTicketHistoryRepository requestTicketHistoryRepository
+            , INotificationService notificationService)
         {
             _repository = repository;
             _workflowRepository = workflowRepository;
@@ -46,6 +48,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _userRepository = userRepository;
             _requestTicketHistoryService = requestTicketHistoryService;
             _requestTicketHistoryRepository = requestTicketHistoryRepository;
+            _notificationService = notificationService;
         }
 
         private static readonly Dictionary<StatusEnum, StatusWorkflowTaskEnum> StatusMapping = new Dictionary<StatusEnum, StatusWorkflowTaskEnum>
@@ -83,6 +86,46 @@ namespace QuickServiceWebAPI.Services.Implements
             workflowAssignment.CurrentTaskId = workflowTask.WorkflowTaskId;
             workflowAssignment.WorkflowAssignmentId = await GetNextId();
             await _repository.AddWorkflowAssignment(workflowAssignment);
+            if (!string.IsNullOrEmpty(workflowAssignment.AssigneeId) || workflowTask.Status == StatusWorkflowTaskEnum.Resolved.ToString())
+            {
+                await HandleRequestTicketForCurrentTask(requestTicket, workflowTask, workflowAssignment);
+            }
+            await HandleNotificationWhenAssignWorkflow(workflowTask, requestTicket);
+        }
+
+
+        private async Task HandleNotificationWhenAssignWorkflow(WorkflowTask workflowTask, RequestTicket requestTicket)
+        {
+            var notificationDto = new AddNotificationDTO();
+            bool needSendNoti = false;
+            if (!string.IsNullOrEmpty(workflowTask.GroupId))
+            {
+                notificationDto.ToGroupId = workflowTask.GroupId;
+                notificationDto.NotificationType = NotificationTypeEnum.AssignGroup;
+                needSendNoti = true;
+            }
+            if (!string.IsNullOrEmpty(workflowTask.AssignerId))
+            {
+                notificationDto.ToUserId = workflowTask.AssignerId;
+                notificationDto.NotificationType = NotificationTypeEnum.AssignUser;
+                needSendNoti = true;
+            }
+            notificationDto.RelateId = requestTicket.RequestTicketId;
+            if (needSendNoti)
+            {
+                await _notificationService.AddNotifications(notificationDto);
+            }
+
+        }
+
+
+        private async Task HandleNotificationForUpdateStatus(RequestTicket requestTicket)
+        {
+            var notificationDto = new AddNotificationDTO();
+            notificationDto.ToUserId = requestTicket.RequesterId;
+            notificationDto.NotificationType = NotificationTypeEnum.UpdateStatus;
+            notificationDto.RelateId = requestTicket.RequestTicketId;
+            await _notificationService.AddNotifications(notificationDto);
         }
 
         public async Task CompleteWorkflowTask(CheckWorkflowAssignmentDTO checkWorkflowAssignmentDTO)
@@ -95,7 +138,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             var requestTicket = await _requestTicketRepository.GetRequestTicketById(workflowAssignment.ReferenceId);
 
-            if(requestTicket.Status == StatusEnum.Canceled.ToString())
+            if (requestTicket.Status == StatusEnum.Canceled.ToString())
             {
                 throw new AppException($"Request ticket with id {requestTicket.RequestTicketId} canceled");
             }
@@ -113,7 +156,7 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             if (currentWorkflowTask.GroupId != null)
             {
-                if (!user.Groups.Any(g => g.GroupId == currentWorkflowTask.GroupId))
+                if (!user.GroupsNavigation.Any(g => g.GroupId == currentWorkflowTask.GroupId))
                 {
                     throw new AppException($"User with id {checkWorkflowAssignmentDTO.FinisherId} not in group assign");
                 }
@@ -142,29 +185,32 @@ namespace QuickServiceWebAPI.Services.Implements
             }
         }
 
+
         private async Task HandleRequestTicketForCurrentTask(RequestTicket requestTicket, WorkflowTask currentWorkTask, WorkflowAssignment workflowAssignment)
         {
             requestTicket.Status = MappingWorkflowTaskStatusToRequestTicketStatus(currentWorkTask.Status.ToEnum(StatusWorkflowTaskEnum.Open)).ToString();
             requestTicket.AssignedToGroup = currentWorkTask.GroupId;
             requestTicket.AssignedTo = workflowAssignment.AssigneeId;
             requestTicket.LastUpdateAt = DateTime.Now;
-            var history = new RequestTicketHistory
+            if (!string.IsNullOrEmpty(requestTicket.AssignedTo))
             {
-                Content = $"Assigned to",
-                RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
-                RequestTicketId = requestTicket.RequestTicketId,
-                LastUpdate = DateTime.Now,
-                UserId = requestTicket.AssignedTo
-            };
-                
-            
-            await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+                var history = new RequestTicketHistory
+                {
+                    Content = $"Assigned to",
+                    RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
+                    RequestTicketId = requestTicket.RequestTicketId,
+                    LastUpdate = DateTime.Now,
+                    UserId = requestTicket.AssignedTo
+                };
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
 
-            if(requestTicket.Status == StatusEnum.Resolved.ToString())
+            if (requestTicket.Status == StatusEnum.Resolved.ToString())
             {
                 requestTicket.ResolvedTime = DateTime.Now;
             }
             await _requestTicketRepository.UpdateRequestTicket(requestTicket);
+            await HandleNotificationForUpdateStatus(requestTicket);
         }
 
         private StatusEnum MappingWorkflowTaskStatusToRequestTicketStatus(StatusWorkflowTaskEnum statusWorkflowTaskEnum)
@@ -229,7 +275,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException($"Workflow assignment with id {assignTaskToAgentDTO.WorkflowAssignmentId} not found");
             }
             var user = await _userRepository.GetUserDetails(assignTaskToAgentDTO.AssigneeId);
-            if(user == null)
+            if (user == null)
             {
                 throw new AppException($"User with id {assignTaskToAgentDTO.AssigneeId} not found");
             }
@@ -246,16 +292,6 @@ namespace QuickServiceWebAPI.Services.Implements
             await _repository.UpdateWorkflowAssignment(updateWorkflowAssignment);
             var requestTicket = await _requestTicketRepository.GetRequestTicketById(workflowAssignment.ReferenceId);
             await HandleRequestTicketForCurrentTask(requestTicket, currentWorkflowTask, workflowAssignment);
-
-            var history = new RequestTicketHistory
-            {
-                Content = $"Assigned to {requestTicket.AssignedToNavigation.FirstName}",
-                RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
-                RequestTicketId = requestTicket.RequestTicketId,
-                LastUpdate = DateTime.Now,
-                UserId = requestTicket.AssignedTo
-            };
-            await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
             return _mapper.Map<UserDTO>(user);
         }
     }
