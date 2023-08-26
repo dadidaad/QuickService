@@ -454,8 +454,9 @@ namespace QuickServiceWebAPI.Services.Implements
                     queryDto.QueryStatement = query.QueryStatement;
                 }
             }
-            //Xử lý riêng service request
-            if(queryDtoInput.QueryStatement != null && queryDtoInput.QueryType == "service")
+
+            if(!string.IsNullOrEmpty(queryDtoInput.QueryStatement))
+
             {
                 queryDto.QueryStatement = queryDtoInput.QueryStatement;
             }
