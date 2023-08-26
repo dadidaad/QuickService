@@ -37,7 +37,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 Sla sla = await _context.Slas
                     .Include(s => s.ServiceItems)
                     .Include(s => s.RequestTickets)
-                    .Include(s => s.Slametrics).FirstOrDefaultAsync(x => x.Slaid == slaId);
+                    .Include(s => s.Slametrics).AsNoTracking().FirstOrDefaultAsync(x => x.Slaid == slaId);
                 return sla;
             }
             catch (Exception ex)
