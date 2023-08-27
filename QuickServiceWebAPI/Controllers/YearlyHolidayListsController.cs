@@ -6,7 +6,6 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageYearlyHolidayList, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class YearlyHolidayListsController : ControllerBase

@@ -6,7 +6,6 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageSlametrics, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class SlametricsController : ControllerBase

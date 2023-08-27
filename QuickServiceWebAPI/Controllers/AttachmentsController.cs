@@ -6,7 +6,6 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageAttachments, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class AttachmentsController : ControllerBase

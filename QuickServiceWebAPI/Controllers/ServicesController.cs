@@ -7,7 +7,6 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageServices, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServicesController : ControllerBase

@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QuickServiceWebAPI.DTOs.Permission;
 using QuickServiceWebAPI.DTOs.Role;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Utilities;
+using CreateDTO = QuickServiceWebAPI.DTOs.Role.CreateDTO;
 using PermissionEnum = QuickServiceWebAPI.Models.Enums.PermissionEnum;
 
 namespace QuickServiceWebAPI.Seeds
@@ -17,7 +19,10 @@ namespace QuickServiceWebAPI.Seeds
         private readonly IUserService _userService;
         private readonly IRoleService _roleService;
         private JObject? jsonData;
-        public DbInitializer(QuickServiceContext context, IHostEnvironment hostEnvironment, IRoleService roleService, IUserService userService)
+        private readonly IPermissionService _permissionService;
+        public DbInitializer(QuickServiceContext context, IHostEnvironment hostEnvironment, 
+            IRoleService roleService, IUserService userService
+            , IPermissionService permissionService)
         {
             _context = context;
             _hostEnvironment = hostEnvironment;
@@ -32,6 +37,7 @@ namespace QuickServiceWebAPI.Seeds
             jsonData = JsonConvert.DeserializeObject<JObject>(data);
             _roleService = roleService;
             _userService = userService;
+            _permissionService = permissionService;
         }
 
         public void SeedPermissions()
@@ -116,6 +122,23 @@ namespace QuickServiceWebAPI.Seeds
                 assignDTO.RoleId = roleId;
                 await _userService.AssignRole(assignDTO);
             }
+            List<Permission> permissions = _context.Permissions.ToList();
+
+            List<PermissionDTO> permissionDTOs = new List<PermissionDTO>();
+
+            foreach(var permission in permissions)
+            {
+                var permisisonDTO = new PermissionDTO();
+                permisisonDTO.PermissionId = permission.PermissionId;
+                permisisonDTO.PermissionName = permission.PermissionName;
+                permisisonDTO.IsGranted = true;
+                permissionDTOs.Add(permisisonDTO);
+            }
+
+            var updatePermisisonRoleDTO = new UpdatePermissionsDTO();
+            updatePermisisonRoleDTO.RoleId = roleId;
+            updatePermisisonRoleDTO.Permissions = permissionDTOs;
+            await _permissionService.UpdatePermissionsToRole(updatePermisisonRoleDTO);
         }
     }
 }

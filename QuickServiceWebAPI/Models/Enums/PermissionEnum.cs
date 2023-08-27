@@ -22,44 +22,14 @@ namespace QuickServiceWebAPI.Models.Enums
         [Display(Name = "Manage custom fields")]
         ManageCustomFields,
 
-        [Display(Name = "Manage attachments")]
-        ManageAttachments,
-
         [Display(Name = "Manage groups")]
         ManageGroups,
-
-        [Display(Name = "Manage service desk hours")]
-        ManageServiceDeskHours,
-
-        [Display(Name = "Manage services")]
-        ManageServices,
-
-        [Display(Name = "Manage service types")]
-        ManageServiceTypes,
-
-        [Display(Name = "Manage slametrics")]
-        ManageSlametrics,
 
         [Display(Name = "Manage slas")]
         ManageSlas,
 
         [Display(Name = "Manage workflows")]
         ManageWorkflows,
-
-        [Display(Name = "Manage workflow steps")]
-        ManageWorkflowSteps,
-
-        [Display(Name = "Manage yearly holiday list")]
-        ManageYearlyHolidayList,
-
-        [Display(Name = "Manage business hours")]
-        ManageBusinessHours,
-
-        [Display(Name = "Manage comments")]
-        ManageComments,
-
-        [Display(Name = "Only need login")]
-        OnlyNeedLogin,
 
         [Display(Name = "Manage dashboard")]
         ManageDashboard,
