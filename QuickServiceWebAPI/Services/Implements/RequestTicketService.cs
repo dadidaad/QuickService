@@ -480,7 +480,12 @@ namespace QuickServiceWebAPI.Services.Implements
             switch (typeTicket)
             {
                 case "all":
-                    listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    var listTicket1 = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    var listTicket2 = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
+                    var listTicket3 = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
+                    listTicket.AddRange(listTicket1);
+                    listTicket.AddRange(listTicket2);
+                    listTicket.AddRange(listTicket3);
                     break;
                 case "service":
                     listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
@@ -489,17 +494,17 @@ namespace QuickServiceWebAPI.Services.Implements
                     listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "problem":
-                    //listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
+                    listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "change":
-                    //listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
+                    listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 default:
                     break;
             }
 
 
-            return listTicket;
+            return listTicket.OrderByDescending(x => x.CreatedAt).ToList();
         }
 
         public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsAdmin(string ticketType, string queryId)
@@ -516,7 +521,12 @@ namespace QuickServiceWebAPI.Services.Implements
             switch (typeTicket)
             {
                 case "all":
-                    listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    var listTicket1 =  await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
+                    var listTicket2 = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
+                    var listTicket3 = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
+                    listTicket.AddRange(listTicket1);
+                    listTicket.AddRange(listTicket2);
+                    listTicket.AddRange(listTicket3);
                     break;
                 case "service":
                     listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
@@ -525,16 +535,16 @@ namespace QuickServiceWebAPI.Services.Implements
                     listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "problem":
-                    //listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
+                    listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "change":
-                    //listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
+                    listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 default:
                     break;
             }
             //var listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
-            return listTicket;
+            return listTicket.OrderByDescending(x=>x.CreatedAt).ToList();
         }
 
         public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsFilterUser(QueryConfigDTO queryDto)

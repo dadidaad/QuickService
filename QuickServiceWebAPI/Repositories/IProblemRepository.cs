@@ -12,6 +12,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateProblem(Problem problem);
         public Task DeleteProblem(Problem problem);
         public Task<Problem> GetLastProblem();
-        //public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
+        public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
     }
 }

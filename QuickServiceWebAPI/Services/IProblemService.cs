@@ -13,6 +13,6 @@ namespace QuickServiceWebAPI.Services
         public Task<ProblemDTO> CreateProblem(CreateProblemDTO createProblemDTO);
         public Task<ProblemDTO> UpdateProblem(UpdateProblemDTO updateProblemDTO);
 
-        //public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
+        public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
     }
 }
