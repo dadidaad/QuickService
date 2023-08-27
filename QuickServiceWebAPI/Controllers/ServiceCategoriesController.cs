@@ -7,7 +7,7 @@ using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
+    //[HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceCategoriesController : ControllerBase
@@ -18,7 +18,6 @@ namespace QuickServiceWebAPI.Controllers
             _serviceCategoryService = serviceCategoryService;
         }
 
-        [AllowAnonymous]
         [HttpGet("getall")]
         public IActionResult GetAllServiceCategory()
         {
@@ -26,7 +25,6 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(serviceCategories);
         }
 
-        [AllowAnonymous]
         [HttpGet("{serviceCategoryId}")]
         public async Task<IActionResult> GetServiceCategoryById(string serviceCategoryId)
         {
@@ -34,6 +32,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(serviceCategory);
         }
 
+        [HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateServiceCategory(CreateUpdateServiceCategoryDTO createUpdateServiceCategoryDTO)
         {
@@ -46,6 +45,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(serviceCategory);
         }
 
+        [HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateServiceCategory(string serviceCategoryId, CreateUpdateServiceCategoryDTO createUpdateServiceCategoryDTO)
         {
@@ -54,6 +54,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(serviceCategory);
         }
 
+        [HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteServiceCategory(string serviceCategoryId)
         {

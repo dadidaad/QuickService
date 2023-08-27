@@ -16,7 +16,7 @@ namespace QuickServiceWebAPI.Controllers
         {
             _workflowService = workflowService;
         }
-        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        //[HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpGet("getall")]
         public async Task<IActionResult> GetAllWorkflow()
         {
@@ -24,7 +24,7 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(workflows);
         }
 
-        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        //[HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpGet("{workflowId}")]
         public async Task<IActionResult> GetWorkflowById(string workflowId)
         {
@@ -71,7 +71,7 @@ namespace QuickServiceWebAPI.Controllers
         }
 
 
-        [HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
+        //[HasPermission(PermissionEnum.ManageWorkflows, RoleType.Admin)]
         [HttpGet("checkedit/{workflowId}")]
         public async Task<IActionResult> CheckEditWorkflow(string workflowId)
         {
