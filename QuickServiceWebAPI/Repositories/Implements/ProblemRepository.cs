@@ -35,8 +35,13 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return await _context.Problems.Include(c => c.Assignee).Include(c => c.Sla)
-                    .Include(c => c.Attachment).Include(c => c.Attachment).Include(u => u.Requester).Include(r => r.RequestTickets).FirstOrDefaultAsync(x => x.ProblemId == problemId);
+                return await _context.Problems.Include(c => c.Assignee)
+                    .Include(c => c.Sla).ThenInclude(s => s.Slametrics)
+                    .Include(c => c.Attachment)
+                    .Include(c => c.Attachment)
+                    .Include(u => u.Requester)
+                    .Include(r => r.RequestTickets)
+                    .FirstOrDefaultAsync(x => x.ProblemId == problemId);
             }
             catch (Exception ex)
             {
@@ -49,8 +54,12 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Problems.Include(c => c.Assignee).Include(c => c.Sla)
-                    .Include(c => c.Attachment).Include(u => u.Requester).Include(r => r.RequestTickets).Include(c => c.Attachment).ToList();
+                return _context.Problems.Include(c => c.Assignee)
+                    .Include(c => c.Sla).ThenInclude(s => s.Slametrics)
+                    .Include(c => c.Attachment)
+                    .Include(u => u.Requester)
+                    .Include(r => r.RequestTickets)
+                    .Include(c => c.Attachment).ToList();
             }
             catch (Exception ex)
             {
