@@ -30,6 +30,6 @@ namespace QuickServiceWebAPI.DTOs.ServiceItem
         public string WorkflowId { get; set; } = null!;
         [MaxLength(10)]
         [Required]
-        public string SlaId { get; set; } = null!;
+        public string Slaid { get; set; } = null!;
     }
 }

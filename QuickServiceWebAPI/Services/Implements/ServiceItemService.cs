@@ -137,13 +137,25 @@ namespace QuickServiceWebAPI.Services.Implements
 
         private async Task HandleEditAction(string serviceItemId)
         {
+            string[] statusNotAllowEdit = { StatusEnum.Open.ToString(), StatusEnum.InProgress.ToString(), StatusEnum.Pending.ToString() };
             var requestTickets = await _requestTicketRepository.GetAllRequestTicketRelatedToServiceItem(serviceItemId);
-            if (requestTickets.Any(r => r.Status != StatusEnum.Resolved.ToString()
-            || r.Status != StatusEnum.Canceled.ToString()
-            || r.Status != StatusEnum.Closed.ToString()))
+            if (requestTickets.Any(r => statusNotAllowEdit.Contains(r.Status)))
             {
                 throw new AppException("Can not edit service item related to working request ticket");
             }
+        }
+        public async Task<bool> CheckStatusRequestTicketToEditRequestType(string serviceItemId)
+        {
+            string[] statusNotAllowEdit = { StatusEnum.Open.ToString(), StatusEnum.InProgress.ToString(), StatusEnum.Pending.ToString() };
+            ServiceItem serviceItem = await _repository.GetServiceItemById(serviceItemId);
+            if (serviceItem == null)
+            {
+                throw new AppException("Service item with id " + serviceItemId + " not found");
+            }
+            var requestTickets = await _requestTicketRepository.GetAllRequestTicketRelatedToServiceItem(serviceItemId);
+            if (requestTickets.Any(r => statusNotAllowEdit.Contains(r.Status)))
+                return false;
+            return true;
         }
         public async Task<string> GetNextId()
         {
