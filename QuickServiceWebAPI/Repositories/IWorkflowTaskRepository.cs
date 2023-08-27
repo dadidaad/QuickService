@@ -12,6 +12,7 @@ namespace QuickServiceWebAPI.Repositories
         public Task DeleteWorkflowTask(WorkflowTask workflowTask);
         public Task<WorkflowTask> GetLastWorkflowTask();
         public Task<List<WorkflowTask>> GetWorkflowTaskByWorkflow(string workflowId);
+        public Task<ICollection<WorkflowTask>> AddRangeWorkflowTask(ICollection<WorkflowTask> workflowTasks);
 
     }
 }

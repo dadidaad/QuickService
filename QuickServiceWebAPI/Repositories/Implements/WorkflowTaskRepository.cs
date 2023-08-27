@@ -30,6 +30,21 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        public async Task<ICollection<WorkflowTask>> AddRangeWorkflowTask(ICollection<WorkflowTask> workflowTasks)
+        {
+            try
+            {
+                _context.WorkflowTasks.AddRange(workflowTasks);
+                await _context.SaveChangesAsync();
+                return workflowTasks;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
         public async Task<WorkflowTask> GetWorkflowTaskById(string workflowTaskId)
         {
             try

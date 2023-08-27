@@ -16,11 +16,12 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IRequestTicketRepository _requestTicketRepository;
         private readonly IMapper _mapper;
         private readonly Lazy<IWorkflowTaskService> _workflowTaskService;
+        private readonly IWorkflowTaskRepository _workflowTaskRepository;
         public WorkflowService(IWorkflowRepository repository, IUserRepository userRepository,
             IServiceItemRepository serviceItemRepository, IRequestTicketRepository requestTicketRepository,
             ISlaRepository slaRepository, IMapper mapper,
             Lazy<IWorkflowTaskService> workflowTaskService,
-            IWorkflowAssignmentRepository workflowAssignmentRepository)
+            IWorkflowAssignmentRepository workflowAssignmentRepository, IWorkflowTaskRepository workflowTaskRepository)
         {
             _repository = repository;
             _userRepository = userRepository;
@@ -28,6 +29,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _requestTicketRepository = requestTicketRepository;
             _mapper = mapper;
             _workflowTaskService = workflowTaskService;
+            _workflowTaskRepository = workflowTaskRepository;
         }
 
         public async Task<List<WorkflowDTO>> GetWorkflows()
@@ -209,6 +211,8 @@ namespace QuickServiceWebAPI.Services.Implements
             var workflowClone = workflow.DeepCopy();
             workflowClone.ServiceItems.Clear();
             workflowClone.RequestTickets.Clear();
+            workflowClone.CreatedAt = DateTime.Now;
+            workflowClone.LastUpdate = null;
             var workflowTasksClone = EnumerableUtils.DeepCopy(workflowClone.WorkflowTasks.ToList());
             workflow.WorkflowTasks.Clear();
             workflowClone.WorkflowId = await GetNextId();
@@ -229,12 +233,17 @@ namespace QuickServiceWebAPI.Services.Implements
                     currentId = nextId;
                 }
             }
-            workflowClone.WorkflowTasks = workflowTasksClone;
+            //workflowClone.WorkflowTasks = workflowTasksClone;
+            
+            var requester = await _userRepository.GetUserDetails(workflowClone.CreatedBy);
+            workflowClone.CreatedBy = workflow.CreatedBy;
+            workflowClone.CreatedByNavigation = requester;
             var workflowAdded = await _repository.AddWorkflow(workflowClone);
             if(workflowAdded == null)
             {
                 throw new AppException($"Clone failed");
             }
+            await _workflowTaskRepository.AddRangeWorkflowTask(workflowTasksClone);
             return _mapper.Map<WorkflowDTO>(workflowAdded);
         }
 
