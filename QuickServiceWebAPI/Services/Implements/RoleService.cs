@@ -22,7 +22,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private static readonly List<PermissionEnum> DefaultPermissionForRoles = new List<PermissionEnum>()
         { PermissionEnum.ManageTickets, PermissionEnum.ManageChange, PermissionEnum.ManageProblems};
 
-        public async Task CreateRole(CreateDTO createDTO)
+        public async Task<RoleDTO> CreateRole(CreateDTO createDTO)
         {
             var role = _mapper.Map<Role>(createDTO);
             role.RoleId = await GetNextId();
@@ -30,6 +30,7 @@ namespace QuickServiceWebAPI.Services.Implements
                 .Where(p => DefaultPermissionForRoles.Any(pE => pE.GetDisplayName() == p.PermissionName)).ToList();
             role.Permissions = permissionDefaults;
             await _repository.CreateRole(role);
+            return _mapper.Map<RoleDTO>(role);
         }
 
         public async Task DeleteRole(string roleId)

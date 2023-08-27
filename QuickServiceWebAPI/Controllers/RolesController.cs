@@ -21,8 +21,7 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateRole(CreateDTO createDTO)
         {
-            await _roleService.CreateRole(createDTO);
-            return Ok(new { message = "Create successfully" });
+            return Ok(new { message = "Create successfully", RoleDTO = await _roleService.CreateRole(createDTO) });
         }
 
         [HttpGet("getall")]

@@ -30,8 +30,11 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser(RegisterDTO registerDTO)
         {
-            await _userService.CreateUser(registerDTO);
-            return Ok(new { message = "Create successfully" });
+            return Ok(new
+            {
+                message = "Create successfully",
+                UserDTO = await _userService.CreateUser(registerDTO)
+            });
         }
 
         [Authorize]

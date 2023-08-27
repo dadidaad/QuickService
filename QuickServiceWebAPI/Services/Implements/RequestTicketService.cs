@@ -283,9 +283,14 @@ namespace QuickServiceWebAPI.Services.Implements
             bool needSendNoti = false;
             if (!string.IsNullOrEmpty(updateRequestTicketDTO.AssignedTo))
             {
-                if (await _userRepository.GetUserDetails(updateRequestTicketDTO.AssignedTo) == null)
+                var assignee = await _userRepository.GetUserDetails(updateRequestTicketDTO.AssignedTo);
+                if (assignee == null)
                 {
                     throw new AppException($"User with id {updateRequestTicketDTO.AssignedTo} not found");
+                    if(assignee.Role == null)
+                    {
+                        throw new AppException($"User with id {updateRequestTicketDTO.AssignedTo} isn't an agent");
+                    }
                 }
                 needSendNoti = true;
             }

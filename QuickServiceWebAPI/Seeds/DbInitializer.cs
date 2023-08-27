@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QuickServiceWebAPI.DTOs.Role;
+using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Services;
 using QuickServiceWebAPI.Utilities;
 using PermissionEnum = QuickServiceWebAPI.Models.Enums.PermissionEnum;
 
@@ -11,8 +14,10 @@ namespace QuickServiceWebAPI.Seeds
         private const string JsonData = "Seeds/data.json";
         private readonly QuickServiceContext _context;
         private readonly IHostEnvironment _hostEnvironment;
+        private readonly IUserService _userService;
+        private readonly IRoleService _roleService;
         private JObject? jsonData;
-        public DbInitializer(QuickServiceContext context, IHostEnvironment hostEnvironment)
+        public DbInitializer(QuickServiceContext context, IHostEnvironment hostEnvironment, IRoleService roleService, IUserService userService)
         {
             _context = context;
             _hostEnvironment = hostEnvironment;
@@ -25,6 +30,8 @@ namespace QuickServiceWebAPI.Seeds
             if (string.IsNullOrWhiteSpace(data)) throw new AppException("Error while creating data");
 
             jsonData = JsonConvert.DeserializeObject<JObject>(data);
+            _roleService = roleService;
+            _userService = userService;
         }
 
         public void SeedPermissions()
@@ -78,6 +85,37 @@ namespace QuickServiceWebAPI.Seeds
                 }
             }
             _context.SaveChanges();
+        }
+
+        public async Task SeedDefaultAdmin()
+        {
+            var roleDTO = jsonData.Value<JToken>("role").ToObject<CreateDTO>();
+            if(roleDTO == null)
+            {
+                return;
+            }
+            string? roleId = null;
+            if(!_context.Roles.Any(r => r.RoleName == roleDTO.RoleName))
+            {
+                roleId = (await _roleService.CreateRole(roleDTO)).RoleId;
+            }
+            var userDTO = jsonData.Value<JToken>("user").ToObject<RegisterDTO>();
+            if(userDTO == null)
+            {
+                return;
+            }
+            string? userId = null;
+            if(!_context.Users.Any(u => u.Email == userDTO.Email))
+            {
+                userId = (await _userService.CreateUser(userDTO)).UserId;
+            }
+            if(userId != null && roleId != null)
+            {
+                var assignDTO = new AssignRoleDTO();
+                assignDTO.UserId = userId;
+                assignDTO.RoleId = roleId;
+                await _userService.AssignRole(assignDTO);
+            }
         }
     }
 }

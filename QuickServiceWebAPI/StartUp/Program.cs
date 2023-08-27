@@ -218,7 +218,7 @@ app.MapControllers();
 
 app.Run();
 
-void SeedDatabase() //can be placed at the very bottom under app.Run()
+async void SeedDatabase() //can be placed at the very bottom under app.Run()
 {
     using (var scope = app.Services.CreateScope())
     {
@@ -226,5 +226,6 @@ void SeedDatabase() //can be placed at the very bottom under app.Run()
         dbInitializer.SeedPermissions();
         dbInitializer.SeedServiceCategories();
         dbInitializer.SeedSla();
+        await dbInitializer.SeedDefaultAdmin();
     }
 }

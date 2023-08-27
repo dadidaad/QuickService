@@ -1,4 +1,19 @@
 ﻿{
+  "user": {
+    "Email": "admin@quickservice.com",
+    "Password": "123",
+    "FirstName": "Super",
+    "LastName": "Admin",
+    "IsActive": true
+  },
+
+  "role": {
+    "Description": "Manage all configuration of system",
+    "RoleName": "Super Admin",
+    "RoleType": 0
+  },
+
+
   "serviceCategories": [
     {
       "serviceCategoryID": "SECA000001",
@@ -31,25 +46,25 @@
       "Slametrics": [
         {
           "SlametricId": "SLAM000001",
-          "Piority": "Low",
+          "Priority": "Low",
           "ResponseTime": 7200,
           "ResolutionTime": 259200
         },
         {
           "SlametricId": "SLAM000002",
-          "Piority": "Medium",
+          "Priority": "Medium",
           "ResponseTime": 28800,
           "ResolutionTime": 86400
         },
         {
           "SlametricId": "SLAM000003",
-          "Piority": "High",
+          "Priority": "High",
           "ResponseTime": 14400,
           "ResolutionTime": 43200
         },
         {
           "SlametricId": "SLAM000004",
-          "Piority": "Urgency",
+          "Priority": "Urgency",
           "ResponseTime": 3600,
           "ResolutionTime": 14400
         }

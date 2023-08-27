@@ -5,7 +5,7 @@ namespace QuickServiceWebAPI.Services
     public interface IUserService
     {
         public Task<List<UserDTO>> GetUserByContainString(ContainStringDTO containStringDTO);
-        public Task CreateUser(RegisterDTO registerDTO);
+        public Task<UserDTO> CreateUser(RegisterDTO registerDTO);
         public Task UpdateUser(UpdateUserDTO updateDTO);
         public Task<AuthenticateResponseDTO> Authenticate(AuthenticateRequestDTO authenticateRequestDTO);
         public Task<UserDTO> GetUserById(string userId);

@@ -27,7 +27,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _roleRepository = roleRepository;
         }
 
-        public async Task CreateUser(RegisterDTO registerDTO)
+        public async Task<UserDTO> CreateUser(RegisterDTO registerDTO)
         {
             if (await _repository.GetUserByEmail(registerDTO.Email) != null)
             {
@@ -38,6 +38,7 @@ namespace QuickServiceWebAPI.Services.Implements
             user.CreatedTime = DateTime.Now;
             user.UserId = await GetNextId();
             await _repository.AddUser(user);
+            return _mapper.Map<UserDTO>(user);
         }
 
         public async Task DeactiveUser(string userId)
