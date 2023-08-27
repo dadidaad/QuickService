@@ -197,6 +197,11 @@ namespace QuickServiceWebAPI.Services.Implements
                     throw new AppException($"Request ticket with id: {requestTicketId} not found");
                     
                 }
+                if (!string.IsNullOrEmpty(requestTicket.ProblemId))
+                {
+                    throw new AppException($"Request ticket already in another problem");
+
+                }
                 requestTicket.ProblemId = problemId;
                 await _requestTicketRepository.UpdateRequestTicket(requestTicket);
             }
