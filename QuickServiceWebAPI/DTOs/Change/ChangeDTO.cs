@@ -20,20 +20,15 @@ namespace QuickServiceWebAPI.DTOs.Change
 
         public string Impact { get; set; } = null!;
 
-        public string? AssigneeId { get; set; }
+        public DateTime ResolutionTime { get; set; }
 
-        public string? AttachmentId { get; set; }
-
-        public string Slaid { get; set; } = null!;
-
-        public string RequesterId { get; set; } = null!;
+        public DateTime ResponseTime { get; set; }
 
         public string? ReasonForChange { get; set; }
 
         public virtual UserDTO? Assignee { get; set; }
 
         public virtual AttachmentDTO? Attachment { get; set; }
-        public virtual SlaDTO Sla { get; set; } = null!;
 
         public virtual ICollection<RequestTicketDTO> RequestTickets { get; set; } = new List<RequestTicketDTO>();
 
