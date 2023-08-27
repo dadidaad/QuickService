@@ -121,24 +121,24 @@ namespace QuickServiceWebAPI.Seeds
                 assignDTO.UserId = userId;
                 assignDTO.RoleId = roleId;
                 await _userService.AssignRole(assignDTO);
+                List<Permission> permissions = _context.Permissions.ToList();
+
+                List<PermissionDTO> permissionDTOs = new List<PermissionDTO>();
+
+                foreach (var permission in permissions)
+                {
+                    var permisisonDTO = new PermissionDTO();
+                    permisisonDTO.PermissionId = permission.PermissionId;
+                    permisisonDTO.PermissionName = permission.PermissionName;
+                    permisisonDTO.IsGranted = true;
+                    permissionDTOs.Add(permisisonDTO);
+                }
+
+                var updatePermisisonRoleDTO = new UpdatePermissionsDTO();
+                updatePermisisonRoleDTO.RoleId = roleId;
+                updatePermisisonRoleDTO.Permissions = permissionDTOs;
+                await _permissionService.UpdatePermissionsToRole(updatePermisisonRoleDTO);
             }
-            List<Permission> permissions = _context.Permissions.ToList();
-
-            List<PermissionDTO> permissionDTOs = new List<PermissionDTO>();
-
-            foreach(var permission in permissions)
-            {
-                var permisisonDTO = new PermissionDTO();
-                permisisonDTO.PermissionId = permission.PermissionId;
-                permisisonDTO.PermissionName = permission.PermissionName;
-                permisisonDTO.IsGranted = true;
-                permissionDTOs.Add(permisisonDTO);
-            }
-
-            var updatePermisisonRoleDTO = new UpdatePermissionsDTO();
-            updatePermisisonRoleDTO.RoleId = roleId;
-            updatePermisisonRoleDTO.Permissions = permissionDTOs;
-            await _permissionService.UpdatePermissionsToRole(updatePermisisonRoleDTO);
         }
     }
 }
