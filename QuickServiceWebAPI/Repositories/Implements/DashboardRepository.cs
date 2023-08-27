@@ -168,31 +168,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task<Dictionary<string, int>> GetRequestTicketByChangeChangeTypeCount()
-        {
-            try
-            {
-                var changeTypeValues = Enum.GetValues(typeof(ChangeTypeEnum)).Cast<ChangeTypeEnum>().Select(s => s.ToString());
-
-                var query = from changeType in changeTypeValues
-                            join change in _context.Changes on changeType equals ((ChangeTypeEnum)Enum.Parse(typeof(ChangeTypeEnum), change.ChangeType.ToString())).ToString() into tickets
-                            from ticket in tickets.DefaultIfEmpty()
-                            group ticket by changeType into ticketGroup
-                            select new
-                            {
-                                ChangeType = ticketGroup.Key,
-                                TotalTickets = ticketGroup.Count(t => t != null)
-                            };
-                var resultDictionary = query.ToDictionary(s => s.ChangeType, r => r.TotalTickets);
-                return resultDictionary;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred");
-                throw;
-            }
-        }
-
         public async Task<Dictionary<string, int>> GetRequestTicketByChangeImpactCount()
         {
             try

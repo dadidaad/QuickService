@@ -1,4 +1,7 @@
-﻿namespace QuickServiceWebAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace QuickServiceWebAPI.Models;
 
 public partial class Problem
 {
@@ -14,31 +17,33 @@ public partial class Problem
 
     public string Impact { get; set; } = null!;
 
-    public DateTime DueTime { get; set; }
-
-    public string? GroupId { get; set; }
-
-    public string? AssignerId { get; set; }
-
-    public string RequesterId { get; set; } = null!;
-
-    public string? RootCause { get; set; }
-
-    public string? ImpactAnalysis { get; set; }
-
-    public string? Symptoms { get; set; }
+    public string? AssigneeId { get; set; }
 
     public string? AttachmentId { get; set; }
 
-    public virtual User? Assigner { get; set; }
+    public string Slaid { get; set; } = null!;
+
+    public string? RootCause { get; set; }
+
+    public string? GroupId { get; set; }
+
+    public DateTime CreatedTime { get; set; }
+
+    public string? RequesterId { get; set; }
+
+    public virtual User? Assignee { get; set; }
 
     public virtual Attachment? Attachment { get; set; }
 
-    public virtual ICollection<Change> Changes { get; set; } = new List<Change>();
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     public virtual Group? Group { get; set; }
 
+    public virtual ICollection<RequestTicketHistory> RequestTicketHistories { get; set; } = new List<RequestTicketHistory>();
+
     public virtual ICollection<RequestTicket> RequestTickets { get; set; } = new List<RequestTicket>();
 
-    public virtual User Requester { get; set; } = null!;
+    public virtual User? Requester { get; set; }
+
+    public virtual Sla Sla { get; set; } = null!;
 }

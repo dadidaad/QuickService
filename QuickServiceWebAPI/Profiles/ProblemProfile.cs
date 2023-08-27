@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.Problem;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Utilities;
 
 namespace QuickServiceWebAPI.Profiles
 {
@@ -9,14 +10,18 @@ namespace QuickServiceWebAPI.Profiles
         public ProblemProfile()
         {
             CreateMap<Problem, ProblemDTO>().
-                ForMember(dest => dest.AssignerEntity,
-                opt => opt.MapFrom(src => src.Assigner)).
-                 ForMember(dest => dest.AttachmentEntity,
+                ForMember(dest => dest.Assignee,
+                opt => opt.MapFrom(src => src.Assignee)).
+                 ForMember(dest => dest.Sla,
+                opt => opt.MapFrom(src => src.Sla)).
+                 ForMember(dest => dest.Attachment,
                 opt => opt.MapFrom(src => src.Attachment)).
-                 ForMember(dest => dest.GroupEntity,
-                opt => opt.MapFrom(src => src.Group)).
-                  ForMember(dest => dest.RequesterEntity,
-                opt => opt.MapFrom(src => src.Requester));
+                ForMember(dest => dest.Requester,
+                opt => opt.MapFrom(src => src.Requester)).
+                ForMember(dest => dest.RequestTickets,
+                opt => opt.MapFrom(src => src.RequestTickets));
+            CreateMap<CreateProblemDTO, Problem>().IgnoreAllNonExisting();
+            CreateMap<UpdateProblemDTO, Problem>().IgnoreAllNonExisting();
         }
     }
 }

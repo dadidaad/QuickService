@@ -54,7 +54,12 @@ namespace QuickServiceWebAPI.Controllers
             var serviceItemDto = await _serviceItemService.UpdateServiceItem(serviceItemId, createUpdateServiceItemDTO);
             return Ok(new { message = "Update successfully", ServiceItemDTO = serviceItemDto });
         }
-
+        [HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
+        [HttpGet("checkedit/{serviceItemId}")]
+        public async Task<IActionResult> CheckEditWorkflow(string serviceItemId)
+        {
+            return Ok(new { Condition = await _serviceItemService.CheckStatusRequestTicketToEditRequestType(serviceItemId) });
+        }
 
         [HasPermission(PermissionEnum.ManageServiceItems, RoleType.Admin)]
         [HttpPut("toggle/{serviceItemId}")]

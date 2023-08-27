@@ -1,5 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.ServiceCategory;
+using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.Workflow;
 
 namespace QuickServiceWebAPI.DTOs.ServiceItem
@@ -28,5 +29,6 @@ namespace QuickServiceWebAPI.DTOs.ServiceItem
 
         public virtual ServiceCategoryDTO ServiceCategoryEntity { get; set; } = null!;
         public virtual WorkflowDTO? WorkflowEntity { get; set; }
+        public virtual SlaDTO? SlaEntity { get; set; }
     }
 }

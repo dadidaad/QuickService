@@ -14,7 +14,9 @@ namespace QuickServiceWebAPI.Profiles
                 .ForMember(dest => dest.ServiceCategoryEntity,
                 opt => opt.MapFrom(src => src.ServiceCategory))
                 .ForMember(dest => dest.WorkflowEntity,
-                opt => opt.MapFrom(src => src.Workflow));
+                opt => opt.MapFrom(src => src.Workflow))
+                .ForMember(dest => dest.SlaEntity,
+                opt => opt.MapFrom(src => src.Sla));
             CreateMap<ServiceItem, ServiceItemDTOSecond>();
             CreateMap<CreateUpdateServiceItemDTO, ServiceItem>()
                 .ForMember(dest => dest.Status,

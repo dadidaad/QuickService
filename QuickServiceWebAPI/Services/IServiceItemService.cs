@@ -9,6 +9,7 @@ namespace QuickServiceWebAPI.Services
         public Task<ServiceItemDTO> CreateServiceItem(CreateUpdateServiceItemDTO createUpdateServiceItemDTO);
         public Task<ServiceItemDTO> UpdateServiceItem(string serviceItemId, CreateUpdateServiceItemDTO createUpdateServiceItemDTO);
         public Task<ServiceItemDTO> ToggleStatusWorkflow(string serviceItemId);
+        Task<bool> CheckStatusRequestTicketToEditRequestType(string serviceItemId);
         public Task<string> GetNextId();
     }
 }

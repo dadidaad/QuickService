@@ -1,9 +1,8 @@
-﻿using QuickServiceWebAPI.CustomAttributes;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace QuickServiceWebAPI.DTOs.Change
+namespace QuickServiceWebAPI.DTOs.Problem
 {
-    public class CreateChangeDTO
+    public class CreateProblemDTO
     {
         [Required]
         [MaxLength(250)]
@@ -24,11 +23,11 @@ namespace QuickServiceWebAPI.DTOs.Change
         [MaxLength(10)]
         public string? Slaid { get; set; }
 
+        [MaxLength]
+        public string? RootCause { get; set; }
+
         [Required]
         [MaxLength(10)]
         public string RequesterId { get; set; } = null!;
-
-        [MaxLength]
-        public string? ReasonForChange { get; set; }
     }
 }

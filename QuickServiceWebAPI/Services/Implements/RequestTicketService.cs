@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.DTOs.Notification;
 using QuickServiceWebAPI.DTOs.Query;
 using QuickServiceWebAPI.DTOs.RequestTicket;
@@ -59,7 +60,6 @@ namespace QuickServiceWebAPI.Services.Implements
             _changeService = changeService;
             _problemService = problemService;
         }
-
         public async Task<RequestTicketDTO> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO)
         {
             var requester = await _userRepository.GetUserByEmail(createRequestTicketDTO.RequesterEmail);
@@ -472,10 +472,10 @@ namespace QuickServiceWebAPI.Services.Implements
                     listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "problem":
-                    listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
+                    //listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "change":
-                    listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
+                    //listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 default:
                     break;
@@ -508,10 +508,10 @@ namespace QuickServiceWebAPI.Services.Implements
                     listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "problem":
-                    listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
+                    //listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "change":
-                    listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
+                    //listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 default:
                     break;

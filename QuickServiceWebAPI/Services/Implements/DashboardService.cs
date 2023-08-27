@@ -58,12 +58,6 @@ namespace QuickServiceWebAPI.Services.Implements
             return requestTicketCounts;
         }
 
-        public async Task<Dictionary<string, int>> GetRequestTicketByChangeChangeTypeCount()
-        {
-            var requestTicketCounts = await _repository.GetRequestTicketByChangeChangeTypeCount();
-            return requestTicketCounts;
-        }
-
         public async Task<Dictionary<string, int>> GetRequestTicketByChangeImpactCount()
         {
             var requestTicketCounts = await _repository.GetRequestTicketByChangeImpactCount();

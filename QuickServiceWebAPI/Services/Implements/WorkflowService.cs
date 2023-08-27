@@ -103,10 +103,9 @@ namespace QuickServiceWebAPI.Services.Implements
             {
                 throw new AppException($"Workflow with id {workflowId} not found");
             }
+            string[] statusNotAllowEdit = { StatusEnum.Open.ToString(), StatusEnum.InProgress.ToString(), StatusEnum.Pending.ToString() };
             var requestTickets = await _requestTicketRepository.GetAllRequestTicketRelatedToWorkflow(workflowId);
-            if (requestTickets.Any(r => r.Status == StatusEnum.Resolved.ToString()
-            || r.Status == StatusEnum.Canceled.ToString()
-            || r.Status == StatusEnum.Closed.ToString()))
+            if (requestTickets.Any(r => statusNotAllowEdit.Contains(r.Status)))
             {
                 return false;
             }
