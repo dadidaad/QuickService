@@ -36,7 +36,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 return await _context.Changes.Include(u => u.Assignee).Include(u => u.Attachment)
-                    .Include(u => u.Sla).FirstOrDefaultAsync(c => c.ChangeId == changeId);
+                    .Include(u => u.Sla).Include(u => u.Requester).Include(r => r.RequestTickets).FirstOrDefaultAsync(c => c.ChangeId == changeId);
             }
             catch (Exception ex)
             {
@@ -50,7 +50,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 return await _context.Changes.Include(u => u.Assignee).Include(u => u.Attachment)
-                    .Include(u => u.Sla).ToListAsync();
+                    .Include(u => u.Sla).Include(u => u.Requester).Include(r => r.RequestTickets).ToListAsync();
             }
             catch (Exception ex)
             {

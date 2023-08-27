@@ -1,5 +1,6 @@
 ﻿using QuickServiceWebAPI.DTOs.Attachment;
 using QuickServiceWebAPI.DTOs.Group;
+using QuickServiceWebAPI.DTOs.RequestTicket;
 using QuickServiceWebAPI.DTOs.Sla;
 using QuickServiceWebAPI.DTOs.User;
 
@@ -24,11 +25,14 @@ namespace QuickServiceWebAPI.DTOs.Problem
         public string? AttachmentId { get; set; }
 
         public string Slaid { get; set; } = null!;
+        public string RequesterId { get; set; } = null!;
 
         public string? RootCause { get; set; }
 
         public virtual UserDTO? Assignee { get; set; }
         public virtual AttachmentDTO? Attachment { get; set; }
         public virtual SlaDTO Sla { get; set; } = null!;
+        public virtual UserDTO? Requester { get; set; }
+        public virtual ICollection<RequestTicketDTO> RequestTickets { get; set; } = new List<RequestTicketDTO>();
     }
 }

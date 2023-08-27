@@ -7,6 +7,7 @@ using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Repositories.Implements;
 using QuickServiceWebAPI.Utilities;
+using QuickServiceWebAPI.DTOs.Change;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -18,9 +19,12 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly ISlaService _slaService;
         private readonly IRequestTicketRepository _requestTicketRepository;
         private readonly IAttachmentService _attachmentService;
+        private readonly IRequestTicketHistoryService _requestTicketHistoryService;
+        private readonly IRequestTicketHistoryRepository _requestTicketHistoryRepository;
 
         public ProblemService(IProblemRepository repository, IMapper mapper, IUserRepository userRepository, 
-            ISlaService slaService, IRequestTicketRepository requestTicketRepository, IAttachmentService attachmentService)
+            ISlaService slaService, IRequestTicketRepository requestTicketRepository, IAttachmentService attachmentService,
+            IRequestTicketHistoryService requestTicketHistoryService, IRequestTicketHistoryRepository requestTicketHistoryRepository)
         {
             _repository = repository;
             _mapper = mapper;
@@ -28,10 +32,17 @@ namespace QuickServiceWebAPI.Services.Implements
             _slaService = slaService;
             _requestTicketRepository = requestTicketRepository;
             _attachmentService = attachmentService;
+            _requestTicketHistoryService = requestTicketHistoryService;
+            _requestTicketHistoryRepository = requestTicketHistoryRepository;
         }
 
         public async Task<ProblemDTO> CreateProblem(CreateProblemDTO createProblemDTO)
         {
+            var requester = await _userRepository.GetUserDetails(createProblemDTO.RequesterId);
+            if (requester == null)
+            {
+                throw new AppException($"User with id {createProblemDTO.RequesterId} not found");
+            }
             await ValidateData(createProblemDTO);
             var problem = _mapper.Map<Problem>(createProblemDTO);
             problem.ProblemId = await GetNextId();
@@ -39,9 +50,31 @@ namespace QuickServiceWebAPI.Services.Implements
             problem.Priority = PriorityEnum.Low.ToString();
             problem.Impact = ImpactEnum.Low.ToString();
             problem.CreatedTime = DateTime.Now;
+            problem.RequesterId = requester.UserId;
             await _repository.AddProblem(problem);
             await AddProblemIdIdToRequestTicket(problem.ProblemId, createProblemDTO.RequestTicketIds);
 
+            var historyFirst = new RequestTicketHistory
+            {
+
+                RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
+                ProblemId = problem.ProblemId,
+                Content = $"Create problem",
+                LastUpdate = problem.CreatedTime,
+                UserId = problem.RequesterId
+            };
+            await _requestTicketHistoryRepository.AddRequestTicketHistory(historyFirst);
+
+            var historySecond = new RequestTicketHistory
+            {
+
+                RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
+                ProblemId = problem.ProblemId,
+                Content = $"Assigned to",
+                LastUpdate = problem.CreatedTime,
+                UserId = problem.AssigneeId
+            };
+            await _requestTicketHistoryRepository.AddRequestTicketHistory(historySecond);
 
             var createdProblemDTO = await _repository.GetProblemById(problem.ProblemId);
             return _mapper.Map<ProblemDTO>(createdProblemDTO);
@@ -65,8 +98,8 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task UpdateProblem(UpdateProblemDTO updateProblemDTO)
         {
-            var problem = await _repository.GetProblemById(updateProblemDTO.ProblemId);
-            if (problem == null)
+            var existingProblem = await _repository.GetProblemById(updateProblemDTO.ProblemId);
+            if (existingProblem == null)
             {
                 throw new AppException($"Problem with id: {updateProblemDTO.ProblemId} not found");
             }
@@ -77,9 +110,66 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             if (updateProblemDTO.AttachmentFile is not null)
             {
-                problem.Attachment = await _attachmentService.CreateAttachment(updateProblemDTO.AttachmentFile);
+                existingProblem.Attachment = await _attachmentService.CreateAttachment(updateProblemDTO.AttachmentFile);
             }
-            var updateChange = _mapper.Map(updateProblemDTO, problem);
+
+            if (existingProblem.AssigneeId != updateProblemDTO.AssigneeId)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Assigned to";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ProblemId = updateProblemDTO.ProblemId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = updateProblemDTO.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+
+            if (updateProblemDTO.Status == StatusEnum.Resolved.ToString())
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Problem is Completed";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ProblemId = existingProblem.ProblemId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingProblem.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            if (existingProblem.Status != updateProblemDTO.Status && updateProblemDTO.Status != StatusEnum.Resolved.ToString())
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Status to {updateProblemDTO.Status}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ProblemId = existingProblem.ProblemId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingProblem.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            if (existingProblem.Impact != updateProblemDTO.Impact)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Impact to {updateProblemDTO.Impact}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ProblemId = existingProblem.ProblemId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingProblem.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            if (existingProblem.Priority != updateProblemDTO.Priority)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Priority to {updateProblemDTO.Priority}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ProblemId = updateProblemDTO.ProblemId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = updateProblemDTO.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            var updateChange = _mapper.Map(updateProblemDTO, existingProblem);
             await _repository.UpdateProblem(updateChange);
         }
 

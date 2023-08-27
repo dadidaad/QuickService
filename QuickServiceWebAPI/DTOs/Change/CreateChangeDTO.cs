@@ -24,6 +24,10 @@ namespace QuickServiceWebAPI.DTOs.Change
         [MaxLength(10)]
         public string? Slaid { get; set; }
 
+        [Required]
+        [MaxLength(10)]
+        public string RequesterId { get; set; } = null!;
+
         [MaxLength]
         public string? ReasonForChange { get; set; }
     }

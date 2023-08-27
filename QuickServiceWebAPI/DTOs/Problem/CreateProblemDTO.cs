@@ -25,5 +25,9 @@ namespace QuickServiceWebAPI.DTOs.Problem
 
         [MaxLength]
         public string? RootCause { get; set; }
+
+        [Required]
+        [MaxLength(10)]
+        public string RequesterId { get; set; } = null!;
     }
 }

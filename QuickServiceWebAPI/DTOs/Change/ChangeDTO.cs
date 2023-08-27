@@ -26,12 +26,17 @@ namespace QuickServiceWebAPI.DTOs.Change
 
         public string Slaid { get; set; } = null!;
 
+        public string RequesterId { get; set; } = null!;
+
         public string? ReasonForChange { get; set; }
 
         public virtual UserDTO? Assignee { get; set; }
 
         public virtual AttachmentDTO? Attachment { get; set; }
-
         public virtual SlaDTO Sla { get; set; } = null!;
+
+        public virtual ICollection<RequestTicketDTO> RequestTickets { get; set; } = new List<RequestTicketDTO>();
+
+        public virtual UserDTO? Requester { get; set; }
     }
 }

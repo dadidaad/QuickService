@@ -21,10 +21,14 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IAttachmentService _attachmentService;
         private readonly ISlaService _slaService;
         private readonly IRequestTicketRepository _requestTicketRepository;
+        private readonly IRequestTicketHistoryService _requestTicketHistoryService;
+        private readonly IRequestTicketHistoryRepository _requestTicketHistoryRepository;
         public ChangeService(IChangeRepository repository, IMapper mapper,
             IUserRepository userRepository, IGroupRepository groupRepository,
             ILogger<ChangeService> logger, IAttachmentService attachmentService, 
-            ISlaService slaService, IRequestTicketRepository requestTicketRepository)
+            ISlaService slaService, IRequestTicketRepository requestTicketRepository,
+            IRequestTicketHistoryService requestTicketHistoryService,
+            IRequestTicketHistoryRepository requestTicketHistoryRepository)
         {
             _repository = repository;
             _mapper = mapper;
@@ -34,20 +38,49 @@ namespace QuickServiceWebAPI.Services.Implements
             _attachmentService = attachmentService;
             _slaService = slaService;
             _requestTicketRepository = requestTicketRepository;
+            _requestTicketHistoryService = requestTicketHistoryService;
+            _requestTicketHistoryRepository = requestTicketHistoryRepository;
         }
 
         public async Task<ChangeDTO> CreateChange(CreateChangeDTO createChangeDTO)
         {
+            var requester = await _userRepository.GetUserDetails(createChangeDTO.RequesterId);
+            if (requester == null)
+            {
+                throw new AppException($"User with id {createChangeDTO.RequesterId} not found");
+            }
             await ValidateData(createChangeDTO);
             var change = _mapper.Map<Change>(createChangeDTO);                  
-            change.ChangeId = await GetNextId();
+            change.ChangeId = await GetNextId();         
             change.Status = StatusEnum.Open.ToString();
             change.Priority = PriorityEnum.Low.ToString();
             change.Impact = ImpactEnum.Low.ToString();
             change.CreatedTime = DateTime.Now;
+            change.RequesterId = requester.UserId;
             await _repository.AddChange(change);
             await AddChangeIdToRequestTicket(change.ChangeId, createChangeDTO.RequestTicketIds);
 
+            var historyFirst = new RequestTicketHistory
+            {
+
+                RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
+                ChangeId = change.ChangeId,
+                Content = $"Create change",
+                LastUpdate = change.CreatedTime,
+                UserId = change.RequesterId
+            };
+            await _requestTicketHistoryRepository.AddRequestTicketHistory(historyFirst);
+
+            var historySecond = new RequestTicketHistory
+            {
+
+                RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory(),
+                ChangeId = change.ChangeId,
+                Content = $"Assigned to",
+                LastUpdate = change.CreatedTime,
+                UserId = change.AssigneeId
+            };
+            await _requestTicketHistoryRepository.AddRequestTicketHistory(historySecond);
 
             var createdChangeDTO = await _repository.GetChangeById(change.ChangeId);
             return _mapper.Map<ChangeDTO>(createdChangeDTO);
@@ -100,8 +133,8 @@ namespace QuickServiceWebAPI.Services.Implements
 
         public async Task UpdateChange(UpdateChangeDTO updateChangeDTO)
         {
-            var change = await _repository.GetChangeById(updateChangeDTO.ChangeId);
-            if (change == null)
+            var existingChange = await _repository.GetChangeById(updateChangeDTO.ChangeId);
+            if (existingChange == null)
             {
                 throw new AppException($"Change with id: {updateChangeDTO.ChangeId} not found");
             }
@@ -112,9 +145,65 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             if (updateChangeDTO.AttachmentFile is not null)
             {
-                change.Attachment = await _attachmentService.CreateAttachment(updateChangeDTO.AttachmentFile);
+                existingChange.Attachment = await _attachmentService.CreateAttachment(updateChangeDTO.AttachmentFile);
             }
-            var updateChange = _mapper.Map(updateChangeDTO, change);
+            if (existingChange.AssigneeId != updateChangeDTO.AssigneeId)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Assigned to";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ChangeId = updateChangeDTO.ChangeId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = updateChangeDTO.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+
+            if (updateChangeDTO.Status == StatusEnum.Resolved.ToString())
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change is Completed";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ChangeId = existingChange.ChangeId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingChange.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            if (existingChange.Status != updateChangeDTO.Status && updateChangeDTO.Status != StatusEnum.Resolved.ToString())
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Status to {updateChangeDTO.Status}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ChangeId = existingChange.ChangeId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingChange.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            if (existingChange.Impact != updateChangeDTO.Impact)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Impact to {updateChangeDTO.Impact}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ChangeId = existingChange.ChangeId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingChange.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            if (existingChange.Priority != updateChangeDTO.Priority)
+            {
+                var history = new RequestTicketHistory();
+                history.Content = $"Change Priority to {updateChangeDTO.Priority}";
+                history.RequestTicketHistoryId = await _requestTicketHistoryService.GetNextIdRequestTicketHistory();
+                history.ChangeId = existingChange.ChangeId;
+                history.LastUpdate = DateTime.Now;
+                history.UserId = existingChange.AssigneeId;
+                await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
+            }
+
+            var updateChange = _mapper.Map(updateChangeDTO, existingChange);
             await _repository.UpdateChange(updateChange);
         }
 

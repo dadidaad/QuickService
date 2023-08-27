@@ -17,7 +17,11 @@ namespace QuickServiceWebAPI.Profiles
                  ForMember(dest => dest.Attachment,
                 opt => opt.MapFrom(src => src.Attachment)).
                  ForMember(dest => dest.Sla,
-                opt => opt.MapFrom(src => src.Sla));
+                opt => opt.MapFrom(src => src.Sla)).
+                ForMember(dest => dest.Requester,
+                opt => opt.MapFrom(src => src.Requester)).
+                 ForMember(dest => dest.RequestTickets,
+                opt => opt.MapFrom(src => src.RequestTickets));
         }
     }
 }
