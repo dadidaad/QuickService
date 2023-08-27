@@ -85,6 +85,64 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
+        public List<Comment> GetCommentsByProblem(string problemId)
+        {
+            try
+            {
+                return _context.Comments.AsQueryable().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
+                                 .Include(r => r.Problem).ThenInclude(sla => sla.Sla).ThenInclude(slm => slm.Slametrics)
+                                 .Where(x => x.ProblemId == problemId).OrderByDescending(x => x.CommentTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public List<Comment> GetCustomerCommentsByProblem(string problemId)
+        {
+            try
+            {
+                return _context.Comments.AsQueryable().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
+                                 .Include(r => r.Problem).Where(x => x.ProblemId == problemId && x.IsInternal == false).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public List<Comment> GetCommentsByChange(string changeId)
+        {
+            try
+            {
+                return _context.Comments.AsQueryable().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
+                                 .Include(r => r.Problem).ThenInclude(sla => sla.Sla).ThenInclude(slm => slm.Slametrics)
+                                 .Where(x => x.ChangeId == changeId).OrderByDescending(x => x.CommentTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
+        public List<Comment> GetCustomerCommentsByChange(string changeId)
+        {
+            try
+            {
+                return _context.Comments.AsQueryable().Include(a => a.Attachment).Include(u => u.CommentByNavigation)
+                                 .Include(r => r.Problem).Where(x => x.ChangeId == changeId && x.IsInternal == false).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                throw;
+            }
+        }
+
         public async Task UpdateComment(Comment comment)
         {
             try
