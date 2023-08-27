@@ -18,7 +18,6 @@ namespace QuickServiceWebAPI.Repositories.Implements
             try
             {
                 _context.Workflows.Add(workflow);
-                _context.WorkflowTasks.AddRange(workflow.WorkflowTasks);
                 await _context.SaveChangesAsync();
                 return workflow;
             }
