@@ -37,6 +37,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
                 ServiceItem serviceItem = await _context.ServiceItems
                     .Include(s => s.Workflow)
                     .Include(s => s.ServiceCategory)
+                    .Include(s=>s.Sla).ThenInclude(s=>s.Slametrics)
                     .FirstOrDefaultAsync(x => x.ServiceItemId == serviceItemId);
                 return serviceItem;
             }
