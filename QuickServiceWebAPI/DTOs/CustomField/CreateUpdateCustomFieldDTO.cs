@@ -23,21 +23,21 @@ namespace QuickServiceWebAPI.DTOs.CustomField
         [MaxLength(10)]
         public string ValType { get; set; } = null!;
 
-        public int? MinVal { get; set; }
+        public int? MinVal { get; set; } = null;
 
-        public int? MaxVal { get; set; }
+        public int? MaxVal { get; set; } = null;
 
-        public int? MinLength { get; set; }
+        public int? MinLength { get; set; } = null;
 
-        public int? MaxLength { get; set; }
-
-        [MaxLength(500)]
-        public string? DefaultValue { get; set; }
+        public int? MaxLength { get; set; } = null;
 
         [MaxLength(500)]
-        public string? ListOfValue { get; set; }
+        public string? DefaultValue { get; set; } = null;
+
+        [MaxLength(500)]
+        public string? ListOfValue { get; set; } = null;
 
         [MaxLength(2500)]
-        public string? ListOfValueDisplay { get; set; }
+        public string? ListOfValueDisplay { get; set; } = null;
     }
 }

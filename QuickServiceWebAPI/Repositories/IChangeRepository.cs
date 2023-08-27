@@ -12,6 +12,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateChange(Change change);
         public Task DeleteChange(Change change);
         public Task<Change> GetLastChange();
-        //public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
+        public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
     }
 }

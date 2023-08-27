@@ -234,9 +234,9 @@ namespace QuickServiceWebAPI.Services.Implements
             throw new NotImplementedException();
         }
 
-        //public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
-        //{
-        //    return await _repository.GetRequestTicketsQueryAdmin(queryDto);
-        //}
+        public async Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto)
+        {
+            return await _repository.GetRequestTicketsQueryAdmin(queryDto);
+        }
     }
 }

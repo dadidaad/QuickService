@@ -484,10 +484,10 @@ namespace QuickServiceWebAPI.Services.Implements
                     listTicket = await _requestTicketRepository.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "problem":
-                    //listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
+                    listTicket = await _problemService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 case "change":
-                    //listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
+                    listTicket = await _changeService.GetRequestTicketsQueryAdmin(queryDto);
                     break;
                 default:
                     break;
