@@ -20,7 +20,7 @@ namespace QuickServiceWebAPI.Services.Implements
         }
 
         private static readonly List<PermissionEnum> DefaultPermissionForRoles = new List<PermissionEnum>()
-        { PermissionEnum.ManageTickets, PermissionEnum.ManageChange, PermissionEnum.ManageProblems};
+        { PermissionEnum.ManageTickets, PermissionEnum.ManageChange, PermissionEnum.ManageProblems, PermissionEnum.OnlyNeedLogin};
 
         public async Task<RoleDTO> CreateRole(CreateDTO createDTO)
         {

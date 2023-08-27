@@ -38,6 +38,9 @@ namespace QuickServiceWebAPI.Models.Enums
         ManageChange,
 
         [Display(Name = "Manage problems")]
-        ManageProblems
+        ManageProblems,
+
+        [Display(Name = "Only need login")]
+        OnlyNeedLogin
     }
 }

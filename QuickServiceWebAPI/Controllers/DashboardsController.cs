@@ -18,7 +18,6 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("countRequestTicketByProblemStatus")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> GetRequestTicketByProblemStatusCount()
         {
             var requestTicket = await _dashboardService.GetRequestTicketByProblemStatusCount();
@@ -30,7 +29,6 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("countRequestTicketByProblemPriority")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> GetRequestTicketByProblemPriorityCount()
         {
             var requestTicket = await _dashboardService.GetRequestTicketByProblemPriorityCount();
@@ -42,7 +40,6 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("countRequestTicketByProblemImpact")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> GetRequestTicketByProblemImpactCount()
         {
             var requestTicket = await _dashboardService.GetRequestTicketByProblemImpactCount();
@@ -54,7 +51,6 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("countRequestTicketByChangeStatus")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> GetRequestTicketByChangeStatusCount()
         {
             var requestTicket = await _dashboardService.GetRequestTicketByChangeStatusCount();
@@ -66,7 +62,6 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("countRequestTicketByChangeImpact")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> GetRequestTicketByChangeImpactCount()
         {
             var requestTicket = await _dashboardService.GetRequestTicketByChangeImpactCount();
@@ -78,7 +73,6 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("countRequestTicketByStatus")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> GetRequestTicketByStatusCount()
         {
             var requestTicket = await _dashboardService.GetRequestTicketByStatusCount();
@@ -90,7 +84,6 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("countRequestTicketByPriority")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> GetRequestTicketByPriorityCount()
         {
             var requestTicket = await _dashboardService.GetRequestTicketByPriorityCount();
@@ -102,7 +95,6 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpGet("countRequestTicket")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> GetRequestTicketCount()
         {
             var requestTicketCount = await _dashboardService.GetRequestTicketCount();
@@ -122,7 +114,6 @@ namespace QuickServiceWebAPI.Controllers
         }
 
         [HttpPost("countbyday")]
-        [HasPermission(PermissionEnum.ManageDashboard, RoleType.Admin)]
         public async Task<IActionResult> CountRequestTicketByDay(CountByDayDTO countByDayDTO)
         {
             return Ok(await _dashboardService.CountRequestTicketByDay(countByDayDTO));
