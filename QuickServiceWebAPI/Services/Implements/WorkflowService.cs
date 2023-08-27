@@ -104,9 +104,9 @@ namespace QuickServiceWebAPI.Services.Implements
                 throw new AppException($"Workflow with id {workflowId} not found");
             }
             var requestTickets = await _requestTicketRepository.GetAllRequestTicketRelatedToWorkflow(workflowId);
-            if (requestTickets.Any(r => r.Status != StatusEnum.Resolved.ToString()
-            || r.Status != StatusEnum.Canceled.ToString()
-            || r.Status != StatusEnum.Closed.ToString()))
+            if (requestTickets.Any(r => r.Status == StatusEnum.Resolved.ToString()
+            || r.Status == StatusEnum.Canceled.ToString()
+            || r.Status == StatusEnum.Closed.ToString()))
             {
                 return false;
             }
