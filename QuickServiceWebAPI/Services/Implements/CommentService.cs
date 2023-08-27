@@ -60,6 +60,32 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<CommentDTO>(createdCommentDTO);
         }
 
+        public async Task<CommentDTO> CreateCommentProblem(CreateCommentProblemDTO createCommentProblemDTO)
+        {
+
+            var comment = _mapper.Map<Comment>(createCommentProblemDTO);
+            comment.CommentId = await GetNextId();
+            comment.CommentTime = DateTime.Now;
+            await _repository.AddComment(comment);
+
+            var createdCommentDTO = await _repository.GetCommentById(comment.CommentId);
+            return _mapper.Map<CommentDTO>(createdCommentDTO);
+        }
+
+        public async Task<CommentDTO> CreateCommentChange(CreateCommentChangeDTO createCommentChangeDTO)
+        {
+
+            var comment = _mapper.Map<Comment>(createCommentChangeDTO);
+            comment.CommentId = await GetNextId();
+            comment.CommentTime = DateTime.Now;
+            await _repository.AddComment(comment);
+
+            var createdCommentDTO = await _repository.GetCommentById(comment.CommentId);
+            return _mapper.Map<CommentDTO>(createdCommentDTO);
+        }
+
+
+
         public async Task UpdateComment(UpdateCommentDTO updateCommentDTO)
         {
             Comment comment = await _repository.GetCommentById(updateCommentDTO.CommentId);
@@ -95,6 +121,46 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             string commentId = IDGenerator.GenerateCommentId(id);
             return commentId;
+        }
+
+        public List<CommentDTO> GetCommentsByProblem(string problemId)
+        {
+            var comments = _repository.GetCommentsByProblem(problemId);
+            if (comments == null)
+            {
+                throw new AppException($"problem with Id {problemId} not found");
+            }
+            return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
+        }
+
+        public List<CommentDTO> GetCustomerCommentsByProblem(string problemId)
+        {
+            var comments = _repository.GetCustomerCommentsByProblem(problemId);
+            if (comments == null)
+            {
+                throw new AppException($"problem with Id {problemId} not found");
+            }
+            return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
+        }
+
+        public List<CommentDTO> GetCommentsByChange(string changeId)
+        {
+            var comments = _repository.GetCommentsByChange(changeId);
+            if (comments == null)
+            {
+                throw new AppException($"change with Id {changeId} not found");
+            }
+            return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
+        }
+
+        public List<CommentDTO> GetCustomerCommentsByChange(string changeId)
+        {
+            var comments = _repository.GetCustomerCommentsByChange(changeId);
+            if (comments == null)
+            {
+                throw new AppException($"change with Id {changeId} not found");
+            }
+            return comments.Select(comment => _mapper.Map<CommentDTO>(comment)).ToList();
         }
     }
 }

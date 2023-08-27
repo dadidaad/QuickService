@@ -16,8 +16,22 @@ namespace QuickServiceWebAPI.Controllers
         [HttpGet("{requestTicketId}")]
         public async Task<IActionResult> GetRequestTicketHistoryByRequestTicketId(string requestTicketId)
         {
-            var serviceCategories = await _requestTicketHistoryService.GetRequestTicketHistoryByRequestTicketId(requestTicketId);
-            return Ok(serviceCategories);
+            var requestTicketHistories = await _requestTicketHistoryService.GetRequestTicketHistoryByRequestTicketId(requestTicketId);
+            return Ok(requestTicketHistories);
+        }
+
+        [HttpGet("change/{changeId}")]
+        public async Task<IActionResult> GetRequestTicketHistoryByChangeId(string changeId)
+        {
+            var requestTicketHistories = await _requestTicketHistoryService.GetRequestTicketHistoryByChangeId(changeId);
+            return Ok(requestTicketHistories);
+        }
+
+        [HttpGet("problem/{problemId}")]
+        public async Task<IActionResult> GetRequestTicketHistoryByProblemId(string problemId)
+        {
+            var requestTicketHistories = await _requestTicketHistoryService.GetRequestTicketHistoryByProblemId(problemId);
+            return Ok(requestTicketHistories);
         }
     }
 }

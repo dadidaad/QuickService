@@ -2,7 +2,7 @@
 
 namespace QuickServiceWebAPI.DTOs.Comment
 {
-    public class CreateCommentDTO
+    public class CreateCommentProblemDTO
     {
         [Required]
         [MaxLength(255)]
@@ -17,6 +17,6 @@ namespace QuickServiceWebAPI.DTOs.Comment
 
         [Required]
         [MaxLength(10)]
-        public string RequestTicketId { get; set; } = null!;
+        public string ProblemId { get; set; } 
     }
 }
