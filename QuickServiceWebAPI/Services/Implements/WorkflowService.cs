@@ -209,8 +209,10 @@ namespace QuickServiceWebAPI.Services.Implements
             var workflowClone = workflow.DeepCopy();
             workflowClone.ServiceItems.Clear();
             workflowClone.RequestTickets.Clear();
+            workflowClone.CreatedAt = DateTime.Now;
+            workflowClone.LastUpdate = null;
             var workflowTasksClone = EnumerableUtils.DeepCopy(workflowClone.WorkflowTasks.ToList());
-            workflow.WorkflowTasks.Clear();
+            workflowClone.WorkflowTasks.Clear();
             workflowClone.WorkflowId = await GetNextId();
             using (var workflowTasks = workflowTasksClone.GetEnumerator())
             {
@@ -230,6 +232,10 @@ namespace QuickServiceWebAPI.Services.Implements
                 }
             }
             workflowClone.WorkflowTasks = workflowTasksClone;
+            
+            var requester = await _userRepository.GetUserDetails(workflowClone.CreatedBy);
+            workflowClone.CreatedBy = workflow.CreatedBy;
+            workflowClone.CreatedByNavigation = requester;
             var workflowAdded = await _repository.AddWorkflow(workflowClone);
             if(workflowAdded == null)
             {

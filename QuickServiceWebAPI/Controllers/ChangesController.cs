@@ -40,8 +40,11 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> UpdateComment([FromForm] UpdateChangeDTO updateChangeDTO)
         {
-            await _changeService.UpdateChange(updateChangeDTO);
-            return Ok(new { message = "Update successfully", errorCode = 0 });
+            return Ok(new
+            {
+                message = "Update successfully",
+                ChangeDTO = await _changeService.UpdateChange(updateChangeDTO)
+            });
         }
     }
 }

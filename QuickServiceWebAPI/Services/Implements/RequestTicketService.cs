@@ -193,6 +193,12 @@ namespace QuickServiceWebAPI.Services.Implements
             return requestTickets.Select(x => _mapper.Map<RequestTicketDTO>(x)).OrderByDescending(x => x.CreatedAt).ToList();
         }
 
+        public async Task<List<RequestTicketDTO>> GetAllListIncidentRequestTicket()
+        {
+            var requestTickets = _requestTicketRepository.GetRequestTickets();
+            return requestTickets.Where(e=>e.IsIncident).Select(x => _mapper.Map<RequestTicketDTO>(x)).OrderByDescending(x => x.CreatedAt).ToList();
+        }
+
         public async Task<List<RequestTicketForRequesterDTO>> GetAllListRequestTicketForRequester(RequesterResquestDTO requesterResquestDTO)
         {
             var user = await _userRepository.GetUserByEmail(requesterResquestDTO.Requester);

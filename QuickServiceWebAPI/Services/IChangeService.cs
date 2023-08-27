@@ -7,7 +7,7 @@ namespace QuickServiceWebAPI.Services
     public interface IChangeService
     {
         public Task<ChangeDTO> CreateChange(CreateChangeDTO createChangeDTO);
-        public Task UpdateChange(UpdateChangeDTO updateChangeDTO);
+        public Task<ChangeDTO> UpdateChange(UpdateChangeDTO updateChangeDTO);
         public Task<List<ChangeDTO>> GetAllChanges();
         public Task<ChangeDTO> GetChange(string changeId);
         public Task DeleteChange(string changeId);

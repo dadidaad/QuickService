@@ -131,7 +131,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return changeId;
         }
 
-        public async Task UpdateChange(UpdateChangeDTO updateChangeDTO)
+        public async Task<ChangeDTO> UpdateChange(UpdateChangeDTO updateChangeDTO)
         {
             var existingChange = await _repository.GetChangeById(updateChangeDTO.ChangeId);
             if (existingChange == null)
@@ -205,6 +205,7 @@ namespace QuickServiceWebAPI.Services.Implements
 
             var updateChange = _mapper.Map(updateChangeDTO, existingChange);
             await _repository.UpdateChange(updateChange);
+            return _mapper.Map<ChangeDTO>(updateChange);
         }
 
         public async Task<List<ChangeDTO>> GetAllChanges()
