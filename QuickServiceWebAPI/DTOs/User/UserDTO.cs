@@ -1,4 +1,5 @@
 ﻿using QuickServiceWebAPI.DTOs.Group;
+using QuickServiceWebAPI.DTOs.Role;
 
 namespace QuickServiceWebAPI.DTOs.User
 {
@@ -26,6 +27,9 @@ namespace QuickServiceWebAPI.DTOs.User
 
         public string? WallPaper { get; set; }
         public bool? IsActive { get; set; }
+
+        public virtual RoleDTO? Role { get; set; }
+
         public virtual List<GroupDTO> GroupDTOs { get; set; } = new List<GroupDTO>();
     }
 }

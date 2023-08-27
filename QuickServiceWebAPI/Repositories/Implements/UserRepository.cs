@@ -92,7 +92,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                IQueryable<User> query = _context.Users.Include(u => u.GroupsNavigation);
+                IQueryable<User> query = _context.Users.Include(u => u.GroupsNavigation).Include(u => u.Role);
                 if (!string.IsNullOrEmpty(groupId))
                 {
                     query = query.Where(u => u.GroupsNavigation.Any(u => u.GroupId == groupId));
