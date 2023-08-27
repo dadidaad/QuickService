@@ -209,6 +209,8 @@ namespace QuickServiceWebAPI.Services.Implements
             var workflowClone = workflow.DeepCopy();
             workflowClone.ServiceItems.Clear();
             workflowClone.RequestTickets.Clear();
+            workflowClone.WorkflowName = $"{workflow.WorkflowName} clone";
+            workflowClone.Description = $"{workflow.Description} clone";
             workflowClone.CreatedAt = DateTime.Now;
             workflowClone.LastUpdate = null;
             var workflowTasksClone = EnumerableUtils.DeepCopy(workflowClone.WorkflowTasks.ToList());
