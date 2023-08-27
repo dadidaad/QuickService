@@ -11,7 +11,7 @@ namespace QuickServiceWebAPI.Services
         public List<ProblemDTO> GetAllProblems();
         public Task<ProblemDTO> GetProblemById(string problemId);
         public Task<ProblemDTO> CreateProblem(CreateProblemDTO createProblemDTO);
-        public Task UpdateProblem(UpdateProblemDTO updateProblemDTO);
+        public Task<ProblemDTO> UpdateProblem(UpdateProblemDTO updateProblemDTO);
 
         //public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
     }

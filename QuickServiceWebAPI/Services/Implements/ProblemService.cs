@@ -96,7 +96,7 @@ namespace QuickServiceWebAPI.Services.Implements
             return _mapper.Map<ProblemDTO>(problem);
         }
 
-        public async Task UpdateProblem(UpdateProblemDTO updateProblemDTO)
+        public async Task<ProblemDTO> UpdateProblem(UpdateProblemDTO updateProblemDTO)
         {
             var existingProblem = await _repository.GetProblemById(updateProblemDTO.ProblemId);
             if (existingProblem == null)
@@ -169,8 +169,9 @@ namespace QuickServiceWebAPI.Services.Implements
                 await _requestTicketHistoryRepository.AddRequestTicketHistory(history);
             }
 
-            var updateChange = _mapper.Map(updateProblemDTO, existingProblem);
-            await _repository.UpdateProblem(updateChange);
+            var updateProblem = _mapper.Map(updateProblemDTO, existingProblem);
+            await _repository.UpdateProblem(updateProblem);
+            return _mapper.Map<ProblemDTO>(updateProblem);
         }
 
         private async Task ValidateData(CreateProblemDTO createProblemDTO)

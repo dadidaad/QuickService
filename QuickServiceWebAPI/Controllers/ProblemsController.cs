@@ -41,8 +41,7 @@ namespace QuickServiceWebAPI.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> UpdateProblem([FromForm] UpdateProblemDTO updateProblemDTO)
         {
-            await _problemService.UpdateProblem(updateProblemDTO);
-            return Ok(new { message = "Update successfully", errorCode = 0 });
+            return Ok(new { message = "Update successfully", ProblemDTO = await _problemService.UpdateProblem(updateProblemDTO) });
         }
     }
 }
