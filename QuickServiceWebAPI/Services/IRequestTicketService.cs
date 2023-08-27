@@ -7,6 +7,7 @@ namespace QuickServiceWebAPI.Services
     {
         public Task<RequestTicketDTO> SendRequestTicket(CreateRequestTicketDTO createRequestTicketDTO);
         public Task<List<RequestTicketDTO>> GetAllListRequestTicket();
+        public Task<List<RequestTicketDTO>> GetAllListIncidentRequestTicket();
         public Task<List<TicketQueryAdminDTO>> GetRequestTicketsAdmin(string ticketType, string queryId);
         public Task<List<TicketQueryAdminDTO>> GetRequestTicketsQueryAdmin(QueryDTO queryDto);
         public Task<List<TicketQueryAdminDTO>> GetRequestTicketsFilterUser(QueryConfigDTO queryDto);
