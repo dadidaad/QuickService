@@ -41,5 +41,25 @@ namespace QuickServiceWebAPI.Services.Implements
             }
             return requestTicketHistories.Select(requestTicketHistory => _mapper.Map<RequestTicketHistoryDTO>(requestTicketHistory)).ToList();
         }
+
+        public async Task<List<RequestTicketHistoryDTO>> GetRequestTicketHistoryByProblemId(string problemId)
+        {
+            var requestTicketHistories = await _repository.GetRequestTicketHistoryByProblemId(problemId);
+            if (requestTicketHistories == null)
+            {
+                throw new AppException("Request ticket history not found");
+            }
+            return requestTicketHistories.Select(requestTicketHistory => _mapper.Map<RequestTicketHistoryDTO>(requestTicketHistory)).ToList();
+        }
+
+        public async Task<List<RequestTicketHistoryDTO>> GetRequestTicketHistoryByChangeId(string changeId)
+        {
+            var requestTicketHistories = await _repository.GetRequestTicketHistoryByChangeId(changeId);
+            if (requestTicketHistories == null)
+            {
+                throw new AppException("Request ticket history not found");
+            }
+            return requestTicketHistories.Select(requestTicketHistory => _mapper.Map<RequestTicketHistoryDTO>(requestTicketHistory)).ToList();
+        }
     }
 }
