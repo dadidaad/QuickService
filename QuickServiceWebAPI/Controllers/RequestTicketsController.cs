@@ -38,11 +38,18 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(await _requestTicketService.GetAllListRequestTicket());
         }
 
-        [Route("incidents")]
+        [Route("changes")]
         [HttpGet]
-        public async Task<IActionResult> GetAllIncidentTickets()
+        public async Task<IActionResult> GetAllIncidentTicketsForChange()
         {
-            return Ok(await _requestTicketService.GetAllListIncidentRequestTicket());
+            return Ok(await _requestTicketService.GetAllListIncidentRequestTicketForChange());
+        }
+
+        [Route("problems")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllIncidentTicketsForProblem()
+        {
+            return Ok(await _requestTicketService.GetAllListIncidentRequestTicketForProblem());
         }
 
 
