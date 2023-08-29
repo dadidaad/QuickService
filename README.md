@@ -5,11 +5,11 @@ Welcome to the QuickService - ITSM Software Project repository! This project aim
 
 ## Features
 
-FE-01: User and Access Management
-FE-02: Configuration Management Center for Request Ticket
-FE-03: Workflow Management Hub
-FE-04: Ticket Lifecycle Management
-FE-05: Dashboard and Report
+1. FE-01: User and Access Management.
+2. FE-02: Configuration Management Center for Request Ticket.
+3. FE-03: Workflow Management Hub.
+4. FE-04: Ticket Lifecycle Management.
+5. FE-05: Dashboard and Report.
 
 ## Getting Started
 
