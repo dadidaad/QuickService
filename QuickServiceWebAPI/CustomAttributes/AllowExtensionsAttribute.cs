@@ -21,7 +21,7 @@ namespace QuickServiceWebAPI.CustomAttributes
                 {
                     return new ValidationResult($"Your image's filetype is not valid.");
                 }
-                if(file.Length >= 2097152)
+                if (file.Length >= 2097152)
                 {
                     return new ValidationResult($"Not allowed larger than 2MB");
                 }

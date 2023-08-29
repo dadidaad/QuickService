@@ -22,4 +22,28 @@ namespace QuickServiceWebAPI.Utilities
             return expression;
         }
     }
+
+    //public class CreateSlametricsToSlametricsListConverter :
+    //         ITypeConverter<CreateSlametricDTO, IEnumerable<Slametric>>
+    //{
+    //    public IEnumerable<Slametric> Convert
+    //    (CreateSlametricDTO source, IEnumerable<Slametric> destination, ResolutionContext context)
+    //    {
+    //        /*first mapp from People, then from Team*/
+    //        foreach (var model in source.SlametricsDetails.Select
+    //                (e => context.Mapper.Map<Slametric>(e)))
+    //        {
+    //            context.Mapper.Map(source, model);
+    //            yield return model;
+    //        }
+
+    //        /*first mapp from Team, then from People*/
+    //        //foreach (var member in source.Members)
+    //        //{
+    //        //    var model = context.Mapper.Map<TeamMember>(source);
+    //        //    context.Mapper.Map(member, model);
+    //        //    yield return model;
+    //        //}
+    //    }
+    //}
 }

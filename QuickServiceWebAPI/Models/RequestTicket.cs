@@ -33,7 +33,7 @@ public partial class RequestTicket
 
     public string RequesterId { get; set; } = null!;
 
-    public string ServiceItemId { get; set; } = null!;
+    public string? ServiceItemId { get; set; }
 
     public string? AssignedTo { get; set; }
 
@@ -43,19 +43,39 @@ public partial class RequestTicket
 
     public string? AttachmentId { get; set; }
 
+    public string Title { get; set; } = null!;
+
+    public string? ChangeId { get; set; }
+
+    public string? ProblemId { get; set; }
+
+    public string? WorkflowId { get; set; }
+
     public virtual Group? AssignedToGroupNavigation { get; set; }
 
     public virtual User? AssignedToNavigation { get; set; }
 
     public virtual Attachment? Attachment { get; set; }
 
+    public virtual Change? Change { get; set; }
+
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+    public virtual Problem? Problem { get; set; }
+
+    public virtual ICollection<RequestTicketExt> RequestTicketExts { get; set; } = new List<RequestTicketExt>();
+
+    public virtual ICollection<RequestTicketHistory> RequestTicketHistories { get; set; } = new List<RequestTicketHistory>();
 
     public virtual User Requester { get; set; } = null!;
 
-    public virtual ServiceItem ServiceItem { get; set; } = null!;
+    public virtual ServiceItem? ServiceItem { get; set; }
 
     public virtual Sla Sla { get; set; } = null!;
+
+    public virtual Workflow? Workflow { get; set; }
 
     public virtual ICollection<WorkflowAssignment> WorkflowAssignments { get; set; } = new List<WorkflowAssignment>();
 }

@@ -7,17 +7,29 @@ public partial class WorkflowAssignment
 {
     public string WorkflowAssignmentId { get; set; } = null!;
 
+    public string ReferenceId { get; set; } = null!;
+
+    public string CurrentTaskId { get; set; } = null!;
+
     public bool IsCompleted { get; set; }
 
-    public string RequestTicketId { get; set; } = null!;
+    public string? Message { get; set; }
 
-    public string WorkflowId { get; set; } = null!;
+    public DateTime? CompletedTime { get; set; }
 
-    public string CurrentStepId { get; set; } = null!;
+    public string? AttachmentId { get; set; }
 
-    public virtual WorkflowStep CurrentStep { get; set; } = null!;
+    public DateTime? DueDate { get; set; }
 
-    public virtual RequestTicket RequestTicket { get; set; } = null!;
+    public string? AssigneeId { get; set; }
 
-    public virtual Workflow Workflow { get; set; } = null!;
+    public DateTime? HandleTime { get; set; }
+
+    public virtual User? Assignee { get; set; }
+
+    public virtual Attachment? Attachment { get; set; }
+
+    public virtual WorkflowTask CurrentTask { get; set; } = null!;
+
+    public virtual RequestTicket Reference { get; set; } = null!;
 }

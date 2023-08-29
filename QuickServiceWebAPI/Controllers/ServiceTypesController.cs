@@ -1,11 +1,8 @@
-﻿using AutoMapper;
-using AutoMapper.Execution;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.ServiceType;
-using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Services;
-using QuickServiceWebAPI.Services.Implements;
 
 namespace QuickServiceWebAPI.Controllers
 {
@@ -24,6 +21,13 @@ namespace QuickServiceWebAPI.Controllers
         {
             var serviceTypes = _serviceTypeService.GetServiceTypes();
             return Ok(serviceTypes);
+        }
+
+        [HttpGet("{serviceTypeId}")]
+        public async Task<IActionResult> GetServiceTypeById(string serviceTypeId)
+        {
+            var serviceType = await _serviceTypeService.GetServiceTypeById(serviceTypeId);
+            return Ok(serviceType);
         }
 
         [HttpPost("create")]

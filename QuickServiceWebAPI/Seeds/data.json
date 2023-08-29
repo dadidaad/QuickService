@@ -1,0 +1,74 @@
+﻿{
+  "user": {
+    "Email": "admin@quickservice.com",
+    "Password": "123",
+    "FirstName": "Super",
+    "LastName": "Admin",
+    "IsActive": true
+  },
+
+  "role": {
+    "Description": "Manage all configuration of system",
+    "RoleName": "Super Admin",
+    "RoleType": 0
+  },
+
+
+  "serviceCategories": [
+    {
+      "serviceCategoryID": "SECA000001",
+      "serviceCategoryName": "Hardware provisioning",
+      "description": "All about hardware"
+    },
+    {
+      "serviceCategoryID": "SECA000002",
+      "serviceCategoryName": "Software installation",
+      "description": "All about software"
+    },
+    {
+      "serviceCategoryID": "SECA000003",
+      "serviceCategoryName": "Data services",
+      "description": "All about data"
+    },
+    {
+      "serviceCategoryID": "SECA000004",
+      "serviceCategoryName": "Application access",
+      "description": "All about permission access"
+    }
+  ],
+  "Sla": [
+    {
+      "Slaid": "SELA000001",
+      "Slaname": "Default SLA policy",
+      "Description": "Default policy",
+      "IsActive": true,
+      "IsDefault": true,
+      "Slametrics": [
+        {
+          "SlametricId": "SLAM000001",
+          "Priority": "Low",
+          "ResponseTime": 7200,
+          "ResolutionTime": 259200
+        },
+        {
+          "SlametricId": "SLAM000002",
+          "Priority": "Medium",
+          "ResponseTime": 28800,
+          "ResolutionTime": 86400
+        },
+        {
+          "SlametricId": "SLAM000003",
+          "Priority": "High",
+          "ResponseTime": 14400,
+          "ResolutionTime": 43200
+        },
+        {
+          "SlametricId": "SLAM000004",
+          "Priority": "Urgency",
+          "ResponseTime": 3600,
+          "ResolutionTime": 14400
+        }
+      ]
+    }
+  ]
+}

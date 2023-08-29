@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.Role;
-using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
-    [Authorize]
+    [HasPermission(PermissionEnum.ManageRoles, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
@@ -19,22 +18,18 @@ namespace QuickServiceWebAPI.Controllers
             _roleService = roleService;
         }
 
-        [AllowAnonymous]
         [HttpPost("create")]
         public async Task<IActionResult> CreateRole(CreateDTO createDTO)
         {
-            await _roleService.CreateRole(createDTO);
-            return Ok(new { message = "Create successfully" });
+            return Ok(new { message = "Create successfully", RoleDTO = await _roleService.CreateRole(createDTO) });
         }
 
-        [AllowAnonymous]
         [HttpGet("getall")]
         public IActionResult GetAllRoles()
         {
             return Ok(_roleService.GetRoles());
         }
 
-        [AllowAnonymous]
         [HttpGet("get/{roleId}")]
         public async Task<IActionResult> GetRole(string roleId)
         {
@@ -42,7 +37,6 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(role);
         }
 
-        [AllowAnonymous]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateRole(UpdateDTO updateDTO)
         {
@@ -50,15 +44,13 @@ namespace QuickServiceWebAPI.Controllers
             return Ok(new { message = "Update successfully" });
         }
 
-        [AllowAnonymous]
-        [HttpDelete("delete/{roleId}")] 
+        [HttpDelete("delete/{roleId}")]
         public async Task<IActionResult> DeleteRole(string roleId)
         {
             await _roleService.DeleteRole(roleId);
             return Ok(new { message = "Delete successfully" });
         }
 
-        [AllowAnonymous]
         [HttpGet("get/{roleType:int}")]
         public IActionResult GetRoleByType(RoleType roleType)
         {

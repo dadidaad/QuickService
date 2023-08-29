@@ -22,6 +22,22 @@ namespace QuickServiceWebAPI.Services.Implements
             return serviceCategories.Select(serviceCategory => _mapper.Map<ServiceCategoryDTO>(serviceCategory)).ToList();
         }
 
+        public async Task<ServiceCategoryDTO> GetServiceCategoryById(string serviceCategoryId)
+        {
+            var serviceCategory = await _repository.GetServiceCategoryById(serviceCategoryId);
+            if (serviceCategory == null)
+            {
+                throw new AppException("ServiceCategory not found");
+            }
+            return _mapper.Map<ServiceCategoryDTO>(serviceCategory);
+        }
+
+        public async Task<ServiceCategoryDTO> GetLastServiceCategoryWithServiceItems()
+        {
+            var serviceCategory = await _repository.GetLastServiceCategoryWithServiceItems();
+            return _mapper.Map<ServiceCategoryDTO>(serviceCategory);
+        }
+
         public async Task CreateServiceCategory(CreateUpdateServiceCategoryDTO createUpdateServiceCategoryDTO)
         {
             var serviceCategory = _mapper.Map<ServiceCategory>(createUpdateServiceCategoryDTO);
@@ -34,23 +50,23 @@ namespace QuickServiceWebAPI.Services.Implements
             ServiceCategory serviceCategory = await _repository.GetServiceCategoryById(serviceCategoryId);
             if (serviceCategory == null)
             {
-                throw new AppException("Service not found");
+                throw new AppException("ServiceCategory not found");
             }
-            if (!String.IsNullOrEmpty(createUpdateServiceCategoryDTO.ServiceCategoryName))
-            {
-                serviceCategory.ServiceCategoryName = createUpdateServiceCategoryDTO.ServiceCategoryName;
-            }
-            if (!String.IsNullOrEmpty(createUpdateServiceCategoryDTO.Description))
-            {
-                serviceCategory.Description = createUpdateServiceCategoryDTO.Description;
-            }
-            serviceCategory = _mapper.Map<CreateUpdateServiceCategoryDTO, ServiceCategory>(createUpdateServiceCategoryDTO, serviceCategory);
+            serviceCategory = _mapper.Map(createUpdateServiceCategoryDTO, serviceCategory);
             await _repository.UpdateServiceCategory(serviceCategory);
         }
 
         public async Task DeleteServiceCategory(string serviceCategoryId)
         {
             var serviceCategory = await _repository.GetServiceCategoryById(serviceCategoryId);
+            if (serviceCategory == null)
+            {
+                throw new AppException("ServiceCategory not found");
+            }
+            if (serviceCategory.ServiceItems.Any())
+            {
+                throw new AppException($"Can not delete service category have service items inside");
+            }
             await _repository.DeleteServiceCategory(serviceCategory);
         }
         public async Task<string> GetNextId()

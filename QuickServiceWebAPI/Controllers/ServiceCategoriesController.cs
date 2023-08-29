@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuickServiceWebAPI.CustomAttributes;
 using QuickServiceWebAPI.DTOs.ServiceCategory;
+using QuickServiceWebAPI.Models.Enums;
 using QuickServiceWebAPI.Services;
 
 namespace QuickServiceWebAPI.Controllers
 {
+    //[HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceCategoriesController : ControllerBase
@@ -18,24 +21,40 @@ namespace QuickServiceWebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAllServiceCategory()
         {
-            var services = _serviceCategoryService.GetServiceCategories();
-            return Ok(services);
+            var serviceCategories = _serviceCategoryService.GetServiceCategories();
+            return Ok(serviceCategories);
         }
 
+        [HttpGet("{serviceCategoryId}")]
+        public async Task<IActionResult> GetServiceCategoryById(string serviceCategoryId)
+        {
+            var serviceCategory = await _serviceCategoryService.GetServiceCategoryById(serviceCategoryId);
+            return Ok(serviceCategory);
+        }
+
+        [HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateServiceCategory(CreateUpdateServiceCategoryDTO createUpdateServiceCategoryDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+            }
             await _serviceCategoryService.CreateServiceCategory(createUpdateServiceCategoryDTO);
-            return Ok(new { message = "Create successfully" });
+            var serviceCategory = await _serviceCategoryService.GetLastServiceCategoryWithServiceItems();
+            return Ok(serviceCategory);
         }
 
+        [HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateServiceCategory(string serviceCategoryId, CreateUpdateServiceCategoryDTO createUpdateServiceCategoryDTO)
         {
             await _serviceCategoryService.UpdateServiceCategory(serviceCategoryId, createUpdateServiceCategoryDTO);
-            return Ok(new { message = "Update successfully" });
+            var serviceCategory = await _serviceCategoryService.GetServiceCategoryById(serviceCategoryId);
+            return Ok(serviceCategory);
         }
 
+        [HasPermission(PermissionEnum.ManageServiceCategories, RoleType.Admin)]
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteServiceCategory(string serviceCategoryId)
         {

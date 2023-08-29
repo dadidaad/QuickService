@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuickServiceWebAPI.Models;
+using QuickServiceWebAPI.Models.Enums;
 using System.Data;
 
 namespace QuickServiceWebAPI.Repositories.Implements
@@ -17,8 +18,16 @@ namespace QuickServiceWebAPI.Repositories.Implements
 
         public int CountUserHaveRole(string roleId)
         {
-            return _context.Users.GroupBy(u => u.RoleId)
-                .Where(u => u.Key == roleId).Count();
+            try
+            {
+                return _context.Users.GroupBy(u => u.RoleId)
+                    .Where(u => u.Key == roleId).Count();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
         }
 
         public async Task CreateRole(Role role)
@@ -56,12 +65,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
             {
                 await _context.Entry(role).Collection("Permissions").LoadAsync();
 
-                List<Permission> permissions = _context.Permissions
-                    .Where(p => role.Permissions.All(pr => pr.PermissionId == p.PermissionId)).ToList();
-                foreach (var permission in permissions)
-                {
-                    role.Permissions.Remove(permission);
-                }
+                role.Permissions.Clear();
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -114,7 +118,7 @@ namespace QuickServiceWebAPI.Repositories.Implements
         {
             try
             {
-                return _context.Roles.Where(r => r.RoleType == roleType).ToList();
+                return _context.Roles.Where(r => r.RoleType == roleType.ToString()).ToList();
             }
             catch (Exception ex)
             {
@@ -123,11 +127,11 @@ namespace QuickServiceWebAPI.Repositories.Implements
             }
         }
 
-        public async Task UpdateRole(Role existingRole, Role updateRole)
+        public async Task UpdateRole(Role updateRole)
         {
             try
             {
-                _context.Entry(existingRole).CurrentValues.SetValues(updateRole);
+                _context.Roles.Update(updateRole);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

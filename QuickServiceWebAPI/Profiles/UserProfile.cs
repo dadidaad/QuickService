@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Models;
-using System.Reflection;
 using QuickServiceWebAPI.Utilities;
 namespace QuickServiceWebAPI.Profiles
 {
@@ -9,9 +8,16 @@ namespace QuickServiceWebAPI.Profiles
     {
         public UserProfile()
         {
+            CreateMap<User, UserDTO>()
+                .ForMember(dest => dest.FullName,
+                opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+                .ForMember(dest => dest.GroupDTOs,
+                opt => opt.MapFrom(src => src.GroupsNavigation))
+                .ForMember(dest => dest.Role,
+                opt => opt.MapFrom(src => src.Role));
             CreateMap<User, AuthenticateResponseDTO>();
             CreateMap<RegisterDTO, User>();
-            CreateMap<UpdateDTO, User>().IgnoreAllNonExisting();
+            CreateMap<UpdateUserDTO, User>().IgnoreAllNonExisting();
         }
     }
 }

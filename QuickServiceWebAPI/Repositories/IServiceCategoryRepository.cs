@@ -10,5 +10,6 @@ namespace QuickServiceWebAPI.Repositories
         public Task UpdateServiceCategory(ServiceCategory serviceCategory);
         public Task DeleteServiceCategory(ServiceCategory serviceCategory);
         public Task<ServiceCategory> GetLastServiceCategory();
+        public Task<ServiceCategory> GetLastServiceCategoryWithServiceItems();
     }
 }

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using BCrypt.Net;
 using Microsoft.Extensions.Options;
 using QuickServiceWebAPI.DTOs.User;
 using QuickServiceWebAPI.Helpers;
 using QuickServiceWebAPI.Models;
 using QuickServiceWebAPI.Repositories;
 using QuickServiceWebAPI.Utilities;
+using UpdateUserDTO = QuickServiceWebAPI.DTOs.User.UpdateUserDTO;
 
 namespace QuickServiceWebAPI.Services.Implements
 {
@@ -16,7 +16,7 @@ namespace QuickServiceWebAPI.Services.Implements
         private readonly IMapper _mapper;
         private IJWTUtils _jWTUtils;
         private readonly AzureStorageConfig _storageConfig;
-        private readonly IRoleRepository _roleRepository;   
+        private readonly IRoleRepository _roleRepository;
         public UserService(IUserRepository repository, ILogger<UserService> logger, IJWTUtils jWTUtils, IMapper mapper, IOptions<AzureStorageConfig> storageConfig, IRoleRepository roleRepository)
         {
             _repository = repository;
@@ -27,7 +27,7 @@ namespace QuickServiceWebAPI.Services.Implements
             _roleRepository = roleRepository;
         }
 
-        public async Task CreateUser(RegisterDTO registerDTO)
+        public async Task<UserDTO> CreateUser(RegisterDTO registerDTO)
         {
             if (await _repository.GetUserByEmail(registerDTO.Email) != null)
             {
@@ -36,20 +36,35 @@ namespace QuickServiceWebAPI.Services.Implements
             var user = _mapper.Map<User>(registerDTO);
             user.Password = HashPassword(registerDTO.Password);
             user.CreatedTime = DateTime.Now;
-            user.UserId =  await GetNextId();
+            user.UserId = await GetNextId();
             await _repository.AddUser(user);
+            return _mapper.Map<UserDTO>(user);
         }
 
-        public Task<User> DeactiveUser(string userId)
+        public async Task DeactiveUser(string userId)
         {
-            throw new NotImplementedException();
+            var existingUser = await _repository.GetUserDetails(userId);
+            if (existingUser == null)
+            {
+                throw new AppException($"User with id {userId} not found");
+            }
+            if (existingUser.IsActive.HasValue && existingUser.IsActive.Value)
+            {
+                existingUser.IsActive = false;
+            }
+            else if (existingUser.IsActive.HasValue && !existingUser.IsActive.Value)
+            {
+                existingUser.IsActive = true;
+            }
+            await _repository.UpdateUser(existingUser);
         }
 
         private async Task<string> GetNextId()
         {
             User lastUser = await _repository.GetLastUser();
             int id = 0;
-            if(lastUser == null){
+            if (lastUser == null)
+            {
                 id = 1;
             }
             else
@@ -63,28 +78,34 @@ namespace QuickServiceWebAPI.Services.Implements
         public async Task<AuthenticateResponseDTO> Authenticate(AuthenticateRequestDTO authenticateRequestDTO)
         {
             var user = await _repository.GetUserByEmail(authenticateRequestDTO.Email);
-            if(user == null  || !BCrypt.Net.BCrypt.Verify(authenticateRequestDTO.Password, user.Password))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(authenticateRequestDTO.Password, user.Password))
             {
                 throw new AppException("Email or password is incorrect");
             }
+            if (!user.IsActive.HasValue || !user.IsActive.Value)
+            {
+                throw new AppException($"User with email {authenticateRequestDTO.Email} has been deactive from system");
+            }
             var response = _mapper.Map<AuthenticateResponseDTO>(user);
-            response.Token = _jWTUtils.GenerateToken(user);
+            response.Token = await _jWTUtils.GenerateToken(user);
             return response;
         }
 
-        public async Task<User> GetUserById(string userId)
+        public async Task<UserDTO> GetUserById(string userId)
         {
             User user = await _repository.GetUserDetails(userId);
-            if(user == null)
+            if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
             }
-            return user;
+            return _mapper.Map<UserDTO>(user);
         }
 
-        public List<User> GetUsers()
+        public List<UserDTO> GetUsers()
         {
-            return _repository.GetUsers();
+            //return _repository.GetUsers();
+            var users = _repository.GetUsers();
+            return users.Select(user => _mapper.Map<UserDTO>(user)).ToList();
         }
 
         private string HashPassword(string password)
@@ -92,48 +113,38 @@ namespace QuickServiceWebAPI.Services.Implements
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        public async Task UpdateUser(UpdateDTO updateDTO)
+        public async Task UpdateUser(UpdateUserDTO updateDTO)
         {
-            User existingUser = await _repository.GetUserByEmail(updateDTO.Email);
-            if(existingUser == null)
+            User existingUser = await _repository.GetUserDetails(updateDTO.UserId);
+            if (existingUser == null)
             {
                 throw new AppException("User not found");
             }
-            string filePath = "";
-            if(updateDTO.AvatarUpload != null && CloudHelper.IsImage(updateDTO.AvatarUpload))
+            string? avatarPath = await GetPathImpageUpload(updateDTO.AvatarUpload, updateDTO.UserId, _storageConfig.ImageContainer);
+            string? wallpaperPath = await GetPathImpageUpload(updateDTO.WallpaperUpload, updateDTO.UserId, _storageConfig.WallpaperContainer);
+            var updateUser = _mapper.Map(updateDTO, existingUser);
+            if (!string.IsNullOrEmpty(avatarPath))
             {
-                filePath = await UpdateAvatar(updateDTO.AvatarUpload, existingUser.UserId);
+                updateUser.Avatar = avatarPath;
             }
-            if (!String.IsNullOrEmpty(updateDTO.Password))
+            if (!string.IsNullOrEmpty(wallpaperPath))
             {
-                updateDTO.Password = HashPassword(updateDTO.Password);
+                updateUser.WallPaper = wallpaperPath;
             }
-            else
-            {
-                updateDTO.Password = existingUser.Password;
-            }
-            if (!string.IsNullOrEmpty(updateDTO.RoleId))
-            {
-                var existingRole = await _roleRepository.GetRoleById(updateDTO.RoleId);
-                if(existingRole == null)
-                {
-                    throw new AppException("Role not found");
-                }
-                existingUser.RoleId = updateDTO.RoleId;
-                var updateRole = _mapper.Map<Role>(existingRole);
-                await _roleRepository.UpdateRole(existingRole, updateRole);
-            }
-            var updateUser = _mapper.Map<UpdateDTO, User>(updateDTO, existingUser);
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                updateUser.Avatar = filePath;
-            }
-            await _repository.UpdateUser(existingUser, updateUser);
+            await _repository.UpdateUser(updateUser);
         }
 
-        public async Task<string> UpdateAvatar(IFormFile image, string userId)
+        protected virtual async Task<string?> GetPathImpageUpload(IFormFile image, string userId, string container)
         {
-            string filePath = null;
+            if (image != null && CloudHelper.IsImage(image))
+            {
+                return await UpdateImage(image, userId, container);
+            }
+            return null;
+        }
+        private async Task<string> UpdateImage(IFormFile image, string userId, string container)
+        {
+            string? filePath = null;
 
             try
             {
@@ -150,7 +161,7 @@ namespace QuickServiceWebAPI.Services.Implements
                         using (Stream stream = image.OpenReadStream())
                         {
                             string fileName = userId + Path.GetExtension(image.FileName);
-                            filePath = await CloudHelper.UploadImageToStorage(stream, fileName, _storageConfig);
+                            filePath = await CloudHelper.UploadFileToStorage(stream, fileName, _storageConfig, container);
                         }
                     }
                     else
@@ -177,6 +188,60 @@ namespace QuickServiceWebAPI.Services.Implements
                 _logger.LogError(ex.Message);
                 throw new AppException("Error when try to upload image!!");
             }
+        }
+
+        public async Task AssignRole(AssignRoleDTO assignRoleDTO)
+        {
+            var existingUser = await _repository.GetUserDetails(assignRoleDTO.UserId);
+            if (existingUser == null)
+            {
+                throw new AppException("User not found");
+            }
+            var existingRole = await _roleRepository.GetRoleById(assignRoleDTO.RoleId);
+            if (existingRole == null)
+            {
+                throw new AppException("Role not found");
+            }
+            var updateUser = _mapper.Map<User>(existingUser);
+            updateUser.RoleId = assignRoleDTO.RoleId;
+            await _repository.UpdateUser(updateUser);
+        }
+
+        public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            var existingUser = await _repository.GetUserDetails(changePasswordDTO.UserId);
+            if (existingUser == null)
+            {
+                throw new AppException("User not found");
+            }
+            if (!BCrypt.Net.BCrypt.Verify(changePasswordDTO.OldPassword, existingUser.Password))
+            {
+                throw new AppException("Old password not correct");
+            }
+            var newHassPassword = HashPassword(changePasswordDTO.NewPassword);
+            var updateUser = _mapper.Map<User>(existingUser);
+            updateUser.Password = newHassPassword;
+            await _repository.UpdateUser(updateUser);
+        }
+
+        private const string DEFAULT_PASSWORD = "123";
+        public async Task ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        {
+            var existingUser = await _repository.GetUserDetails(resetPasswordDTO.UserId);
+            if (existingUser == null)
+            {
+                throw new AppException("User not found");
+            }
+            var newHassPassword = HashPassword(DEFAULT_PASSWORD);
+            var updateUser = _mapper.Map<User>(existingUser);
+            updateUser.Password = newHassPassword;
+            await _repository.UpdateUser(updateUser);
+        }
+
+        public async Task<List<UserDTO>> GetUserByContainString(ContainStringDTO containStringDTO)
+        {
+            var listUserRelated = await _repository.GetUsersByContainString(containStringDTO.containStr, containStringDTO.GroupId);
+            return _mapper.Map<List<UserDTO>>(listUserRelated);
         }
     }
 }
