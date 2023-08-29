@@ -20,14 +20,19 @@ using QuickServiceWebAPI.Utilities;
 var builder = WebApplication.CreateBuilder(args);
 //Get connection string from appsettings
 var connection = String.Empty;
+
+var localConnection = String.Empty;
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.Development.json");
     connection = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+    localConnection = builder.Configuration.GetConnectionString("SQL_SERVER_CONNECTIONSTRING");
+
 }
 else
 {
     connection = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
+    localConnection = Environment.GetEnvironmentVariable("SQL_SERVER_CONNECTIONSTRING");
 }
 
 
