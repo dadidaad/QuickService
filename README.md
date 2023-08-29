@@ -5,7 +5,7 @@ SEP490_G8 - IT Service Management System
 
 Welcome to the QuickService - ITSM Software Project repository! This project aims to develop an IT Service Management (ITSM) software solution using .NET 6 Web API. The software will help organizations streamline their IT operations, manage service requests, and improve overall efficiency.
 
-This is only backend solution, if you prefer with FE, read ## Integrating with Front-End.
+This is only backend solution, if you prefer with FE, read  [Integrating with Front-End](#integrating-with-front-end)
 
 ## Features
 
